@@ -6,7 +6,7 @@ int main()
     SetTargetFPS(60);
     InitAudioDevice();
     
-    Music musica = LoadMusicStream("bin/Resources/Audio/Musica/MusciaTableroFin.mp3");  // archivo en bin/
+    Music musica = LoadMusicStream("bin/Resources/Audio/Musica/MusicaBatalla1V1.mp3");  // archivo en bin/
     PlayMusicStream(musica);
 
     while (!WindowShouldClose()) {
@@ -26,4 +26,6 @@ int main()
     CloseAudioDevice();
     CloseWindow();
     return 0;
+
+    //prueba commit
 }

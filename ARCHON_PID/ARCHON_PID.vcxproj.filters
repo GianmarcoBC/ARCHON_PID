@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ARCHON_PID.cpp">
+    <ClCompile Include="src\ARCHON_PID.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>
