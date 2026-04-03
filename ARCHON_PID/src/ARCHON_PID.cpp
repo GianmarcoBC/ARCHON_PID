@@ -1,5 +1,5 @@
 #include <raylib.h>
-#include "Archer.h"
+#include "Pereza.h"
 
 int main()
 {
@@ -8,7 +8,7 @@ int main()
     SetTargetFPS(60);
     InitAudioDevice();
 
-    Archer A1;
+    goblin A1;
     Music musica = LoadMusicStream("bin/Resources/Audio/Musica/MusicaBatalla1V1.mp3");  // archivo en bin/
     PlayMusicStream(musica);
 
