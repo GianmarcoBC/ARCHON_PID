@@ -10,7 +10,6 @@ int main()
 
     Archer A1;
     Music musica = LoadMusicStream("bin/Resources/Audio/Musica/MusicaBatalla1V1.mp3");  // archivo en bin/
-    //Texture2D Sprite = LoadTexture("bin/Resources/Graficos/Sprites/26-267686_tortugas-ninja-png-imagenes-de-tortugas-ninja-png.png");
     PlayMusicStream(musica);
 
 
