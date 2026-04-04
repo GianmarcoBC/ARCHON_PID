@@ -16,6 +16,8 @@
 #include "Valkyrie.h"
 #include "ShapeShifter.h"
 #include "goblin.h"
+#include "Game.h"
+#include "Disparo.h"
 
 
 
