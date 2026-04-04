@@ -23,8 +23,10 @@
     <ClCompile Include="src\ARCHON_PID.cpp" />
     <ClCompile Include="src\Banshee.cpp" />
     <ClCompile Include="src\Basilisk.cpp" />
+    <ClCompile Include="src\Disparo.cpp" />
     <ClCompile Include="src\Djinni.cpp" />
     <ClCompile Include="src\Dragon.cpp" />
+    <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\goblin.cpp" />
     <ClCompile Include="src\Golem.cpp" />
     <ClCompile Include="src\Knight.cpp" />
@@ -41,8 +43,10 @@
     <ClInclude Include="src\Archer.h" />
     <ClInclude Include="src\Banshee.h" />
     <ClInclude Include="src\Basilisk.h" />
+    <ClInclude Include="src\Disparo.h" />
     <ClInclude Include="src\Djinni.h" />
     <ClInclude Include="src\Dragon.h" />
+    <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\goblin.h" />
     <ClInclude Include="src\Golem.h" />
     <ClInclude Include="src\Knight.h" />
@@ -157,7 +161,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>lib;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -178,6 +182,7 @@ opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>lib;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
