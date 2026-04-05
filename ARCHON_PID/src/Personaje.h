@@ -1,17 +1,25 @@
 #pragma once
 #include "raylib.h"
 #include "Disparo.h"
+#include "Pj.h"
 
-class Archer
+class Personaje
 {
-	Texture2D Sprite = LoadTexture("bin/Resources/Graficos/Sprites/SpriteArcherpxo.png");
-    Texture2D Flecha = LoadTexture("bin/Resources/Graficos/Sprites/SpriteFlecha.png");
+	Texture2D Sprite;
+    Texture2D Ataque;
     Vector2 pos{};
     Vector2 l_dir{ 1.0f, 0.0f }; // Vector de dirección inicializado a derecha
-    float speed = 500.0f;
+    float speed;
+    float vida;
 public:
     //Constructor
-    Archer(Vector2 p) {pos = p;}
+    Personaje(Pj p) 
+    {
+        Sprite = LoadTexture(p.Sprite);
+        Ataque = LoadTexture(p.Ataque);
+        speed = p.vel;
+        vida = p.vida;
+    }
 
     //Actualización del arquero
     void Update(float dt);
@@ -23,9 +31,9 @@ public:
     Disparo Shoot();
 
     //Destructor
-    ~Archer() { 
+    ~Personaje() {
         UnloadTexture(Sprite); 
-        UnloadTexture(Flecha);
+        UnloadTexture(Ataque);
     }
 };
 
