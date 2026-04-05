@@ -1,6 +1,6 @@
-#include "Archer.h"
+#include "Personaje.h"
 
-void Archer::Update(float dt)
+void Personaje::Update(float dt)
 {
     
     if (IsKeyDown(KEY_RIGHT)) { pos.x += speed * dt; l_dir = { 1.0f, 0.0f }; } // Mover a la derecha y actualizar dirección
@@ -9,7 +9,7 @@ void Archer::Update(float dt)
     if (IsKeyDown(KEY_DOWN)) { pos.y += speed * dt; l_dir = { 0.0f, 1.0f }; } // Mover hacia abajo y actualizar dirección
 }
 
-void Archer::Draw() 
+void Personaje::Draw()
 {
     float angulo = 0.0f;
 
@@ -32,9 +32,9 @@ void Archer::Draw()
     );
 }
 
-Disparo Archer::Shoot()
+Disparo Personaje::Shoot()
 {
     float v = 10.0f; // Velocidad de la flecha
     Vector2 vel = { v * l_dir.x, v * l_dir.y }; // Velocidad de la flecha hacia arriba
-    return Disparo ({ pos.x, pos.y }, vel, &Flecha);;
+    return Disparo ({ pos.x, pos.y }, vel, &Ataque);
 }
