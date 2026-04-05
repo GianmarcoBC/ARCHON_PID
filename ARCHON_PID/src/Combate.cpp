@@ -1,12 +1,12 @@
-#include "Game.h"
+#include "Combate.h"
 
-void Game::Update()
+void Combate::Update()
 {
     float dt = GetFrameTime();
 
-    A1.Update(dt);
+    P1.Update(dt);
     if (IsKeyPressed(KEY_SPACE)) {
-       Disparos.push_back(A1.Shoot()); // Agrega un nuevo disparo al vector
+       Disparos.push_back(P1.Shoot()); // Agrega un nuevo disparo al vector
     }
 
     for (auto& b : Disparos) {
@@ -17,10 +17,10 @@ void Game::Update()
     
 }
 
-void Game::Draw()
+void Combate::Draw()
 {
     DrawTexture(Fondo, 0, 0, WHITE);
-    A1.Draw();
+    P1.Draw();
     
 
     for (auto& b : Disparos) {

@@ -1,5 +1,5 @@
-#include <raylib.h>
-#include "Game.h"
+//#include <raylib.h>
+#include "Pereza.h"
 
 int main()
 {
@@ -8,7 +8,7 @@ int main()
     SetTargetFPS(60);
     InitAudioDevice();
 
-    Game game;
+    Combate game;
     Music musica = LoadMusicStream("bin/Resources/Audio/Musica/MusicaBatalla1V1.mp3");  // archivo en bin/
     PlayMusicStream(musica);
 

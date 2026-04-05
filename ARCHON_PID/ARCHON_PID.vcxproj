@@ -19,46 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Archer.cpp" />
+    <ClCompile Include="src\Personaje.cpp" />
     <ClCompile Include="src\ARCHON_PID.cpp" />
-    <ClCompile Include="src\Banshee.cpp" />
-    <ClCompile Include="src\Basilisk.cpp" />
     <ClCompile Include="src\Disparo.cpp" />
-    <ClCompile Include="src\Djinni.cpp" />
-    <ClCompile Include="src\Dragon.cpp" />
-    <ClCompile Include="src\Game.cpp" />
-    <ClCompile Include="src\goblin.cpp" />
-    <ClCompile Include="src\Golem.cpp" />
-    <ClCompile Include="src\Knight.cpp" />
-    <ClCompile Include="src\Manticore.cpp" />
-    <ClCompile Include="src\MH.cpp" />
-    <ClCompile Include="src\Phoenix.cpp" />
-    <ClCompile Include="src\Platero.cpp" />
-    <ClCompile Include="src\ShapeShifter.cpp" />
-    <ClCompile Include="src\Troll.cpp" />
-    <ClCompile Include="src\Unicorn.cpp" />
-    <ClCompile Include="src\Valkyrie.cpp" />
+    <ClCompile Include="src\Combate.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Archer.h" />
-    <ClInclude Include="src\Banshee.h" />
-    <ClInclude Include="src\Basilisk.h" />
+    <ClInclude Include="src\Personaje.h" />
     <ClInclude Include="src\Disparo.h" />
-    <ClInclude Include="src\Djinni.h" />
-    <ClInclude Include="src\Dragon.h" />
-    <ClInclude Include="src\Game.h" />
-    <ClInclude Include="src\goblin.h" />
-    <ClInclude Include="src\Golem.h" />
-    <ClInclude Include="src\Knight.h" />
-    <ClInclude Include="src\Manticore.h" />
-    <ClInclude Include="src\MH.h" />
+    <ClInclude Include="src\Combate.h" />
     <ClInclude Include="src\Pereza.h" />
-    <ClInclude Include="src\Phoenix.h" />
-    <ClInclude Include="src\Platero.h" />
-    <ClInclude Include="src\ShapeShifter.h" />
-    <ClInclude Include="src\Troll.h" />
-    <ClInclude Include="src\Unicorn.h" />
-    <ClInclude Include="src\Valkyrie.h" />
+    <ClInclude Include="src\Pj.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
