@@ -5,20 +5,21 @@
 
 class Personaje
 {
-	Texture2D Sprite;
+    Pj Player;
+    cntrl Controles;
+    Texture2D Sprite;
     Texture2D Ataque;
     Vector2 pos{};
     Vector2 l_dir{ 1.0f, 0.0f }; // Vector de dirección inicializado a derecha
-    float speed;
-    float vida;
 public:
     //Constructor
-    Personaje(Pj p) 
+    Personaje(Pj p, cntrl c, Vector2 po) 
     {
-        Sprite = LoadTexture(p.Sprite);
-        Ataque = LoadTexture(p.Ataque);
-        speed = p.vel;
-        vida = p.vida;
+        Player = p;
+        Controles = c;
+        Sprite = LoadTexture(Player.Sprite);
+        Ataque = LoadTexture(Player.Ataque);
+        pos = po; // Posición inicial del personaje
     }
 
     //Actualización del arquero
@@ -26,10 +27,10 @@ public:
 
     //Dibuja el Sprite del arquero en pantalla
     void Draw();
-    
+
     // Crea un nuevo disparo con la posición y la textura de la flecha
     Disparo Shoot();
-
+ 
     //Destructor
     ~Personaje() {
         UnloadTexture(Sprite); 

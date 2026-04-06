@@ -1,9 +1,21 @@
 #pragma once
 
+//Constantes de características de los personajes
 inline constexpr float Velocidad_media = 500.0f, Velocidad_baja=200.0f;
 inline constexpr float Vida_muyalta=2000.0f, Vida_alta = 1000.0f, Vida_media = 500.0f, Vida_baja = 200.0f;
 
+//Hitbox de los personajes (64x64 píxeles)
+inline constexpr struct {
+    float x{ 32.0f }, y{ 32.0f };
+}Hitbox;
 
+//Controles de los personajes
+struct cntrl
+{
+    int up, down, left, right;
+};
+
+//Estructura para almacenar las características de cada personaje
 struct Pj
 {
     const char* Sprite;

@@ -3,10 +3,10 @@
 void Personaje::Update(float dt)
 {
     
-    if (IsKeyDown(KEY_RIGHT)) { pos.x += speed * dt; l_dir = { 1.0f, 0.0f }; } // Mover a la derecha y actualizar dirección
-    if (IsKeyDown(KEY_LEFT)) { pos.x -= speed * dt; l_dir = { -1.0f, 0.0f }; } // Mover a la izquierda y actualizar dirección
-    if (IsKeyDown(KEY_UP)) { pos.y -= speed * dt; l_dir = { 0.0f, -1.0f }; } // Mover hacia arriba y actualizar dirección
-    if (IsKeyDown(KEY_DOWN)) { pos.y += speed * dt; l_dir = { 0.0f, 1.0f }; } // Mover hacia abajo y actualizar dirección
+    if (IsKeyDown(Controles.right)) { pos.x += Player.vel * dt; l_dir = { 1.0f, 0.0f }; } // Mover a la derecha y actualizar dirección
+    if (IsKeyDown(Controles.left)) { pos.x -= Player.vel * dt; l_dir = { -1.0f, 0.0f }; } // Mover a la izquierda y actualizar dirección
+    if (IsKeyDown(Controles.up)) { pos.y -= Player.vel * dt; l_dir = { 0.0f, -1.0f }; } // Mover hacia arriba y actualizar dirección
+    if (IsKeyDown(Controles.down)) { pos.y += Player.vel * dt; l_dir = { 0.0f, 1.0f }; } // Mover hacia abajo y actualizar dirección
 }
 
 void Personaje::Draw()
