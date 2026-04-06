@@ -1,13 +1,9 @@
 #pragma once
 
 //Constantes de características de los personajes
-inline constexpr float Velocidad_media = 500.0f, Velocidad_baja=200.0f;
-inline constexpr float Vida_muyalta=2000.0f, Vida_alta = 1000.0f, Vida_media = 500.0f, Vida_baja = 200.0f;
-
-//Hitbox de los personajes (64x64 píxeles)
-inline constexpr struct {
-    float x{ 32.0f }, y{ 32.0f };
-}Hitbox;
+inline constexpr float Velocidad_media = 500.0f, Velocidad_baja = 200.0f;
+inline constexpr float Vida_muyalta = 2000.0f, Vida_alta = 1000.0f, Vida_media = 500.0f, Vida_baja = 200.0f;
+inline constexpr float Fuerza_muyalta = 80.0f, Fuerza_alta = 50.0f, Fuerza_media = 10.0f, Fuerza_baja = 5.0f;
 
 //Controles de los personajes
 struct cntrl
@@ -22,6 +18,7 @@ struct Pj
     const char* Ataque;
     float vel;
     float vida;
+    float fuerza;
     bool rango; // Rango (TRUE) o cuerpo a cuerpo (FALSE)
     bool vuela; // Puede volar (TRUE) o no (FALSE)
 };
@@ -32,6 +29,7 @@ inline constexpr Pj MH = {
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
     Vida_media,
+    Fuerza_alta,
     true, // Rango
     true // Vuela
 };
@@ -41,6 +39,7 @@ inline constexpr Pj Phoenix = {
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
     Vida_alta,
+    Fuerza_alta,
     false, // No rango
     true // Vuela
 };
@@ -50,6 +49,7 @@ inline constexpr Pj Golem = {
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_baja,
     Vida_alta,
+    Fuerza_alta,
     true, // Rango
     false // No vuela
 };
@@ -59,6 +59,7 @@ inline constexpr Pj Djinni = {
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
     Vida_alta,
+    Fuerza_media,
     true, // Rango
     true // Vuela
 };
@@ -68,6 +69,7 @@ inline constexpr Pj Unicorn = {
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
     Vida_media,
+    Fuerza_media,
     true, // Rango
     false // No vuela
 };
@@ -77,6 +79,7 @@ inline constexpr Pj Valkyrie = {
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
     Vida_media,
+    Fuerza_media,
     true, // Rango
     true // Vuela
 };
@@ -86,6 +89,7 @@ inline constexpr Pj Archer = {
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
     Vida_baja,
+    Fuerza_baja,
     true, // Rango
     false // No vuela
 };
@@ -95,6 +99,7 @@ inline constexpr Pj Knight = {
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
     Vida_baja,
+    Fuerza_baja,
     false, // No rango
     false // No vuela
 };
@@ -106,6 +111,7 @@ inline constexpr Pj Platero = {
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
     Vida_media,
+    Fuerza_muyalta,
     true, // Rango
     true // Vuela
 };
@@ -115,6 +121,7 @@ inline constexpr Pj ShapeShifter = {
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
     Vida_alta,
+    Fuerza_alta,
     false, // No rango
     true // Vuela
 };
@@ -124,6 +131,7 @@ inline constexpr Pj Troll = {
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_baja,
     Vida_alta,
+    Fuerza_alta,
     true, // Rango
     false // No vuela
 };
@@ -133,6 +141,7 @@ inline constexpr Pj Dragon = {
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
     Vida_muyalta,
+    Fuerza_muyalta,
     true, // Rango
     true // Vuela
 };
@@ -142,6 +151,7 @@ inline constexpr Pj Basilisk = {
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
     Vida_baja,
+    Fuerza_alta,
     true, // Rango
     false // No vuela
 };
@@ -151,6 +161,7 @@ inline constexpr Pj Banshee = {
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
     Vida_media,
+    Fuerza_media,
     true, // Rango
     true // Vuela
 };
@@ -160,6 +171,7 @@ inline constexpr Pj Manticore = {
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
     Vida_media,
+    Fuerza_baja,
     true, // Rango
     false // No vuela
 };
@@ -169,6 +181,7 @@ inline constexpr Pj Goblin = {
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
     Vida_baja,
+    Fuerza_baja,
     false, // No rango
     false // No vuela
 };

@@ -5,8 +5,9 @@
 
 class Personaje
 {
-    Pj Player;
-    cntrl Controles;
+    Pj Player{};
+    float max_vida{};
+    cntrl Controles{};
     Texture2D Sprite;
     Texture2D Ataque;
     Vector2 pos{};
@@ -16,6 +17,7 @@ public:
     Personaje(Pj p, cntrl c, Vector2 po) 
     {
         Player = p;
+        max_vida = p.vida;
         Controles = c;
         Sprite = LoadTexture(Player.Sprite);
         Ataque = LoadTexture(Player.Ataque);
@@ -28,8 +30,17 @@ public:
     //Dibuja el Sprite del arquero en pantalla
     void Draw();
 
+    //Funciones para obtener las características del personaje
+    float GetFuerza()const { return Player.fuerza; }
+    Vector2 GetPos()const { return pos; }
+
+
+    //Daño al personaje, restando a su vida el valor del daño recibido
+    void pain(float damage);
+
     // Crea un nuevo disparo con la posición y la textura de la flecha
     Disparo Shoot();
+
  
     //Destructor
     ~Personaje() {

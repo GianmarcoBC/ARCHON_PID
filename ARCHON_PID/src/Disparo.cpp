@@ -14,12 +14,16 @@ void Disparo::Update()
 
 void Disparo::Draw()
 {
-    if (!status_ || !Disp) return;
+    if (!status_ || !Disp) {
+        pos.x = -100; // Mueve el disparo fuera de la pantalla para evitar colisiones
+        pos.y = -100;
+        return;
+    }
 
     float angulo = 0.0f;
 
-    float w = Disp->width, w1=w;
-    float h = Disp->height;
+    float w = (float)Disp->width, w1=w;
+    float h = (float)Disp->height;
 
     // Calcula el ángulo según la dirección
     if (vel.x > 0) { angulo = 0.0f; w1 = w; } // →
