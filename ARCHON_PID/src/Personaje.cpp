@@ -13,8 +13,8 @@ void Personaje::Draw()
 {
     float angulo = 0.0f;
 
-    float w = Sprite.width, w1=w;
-    float h = Sprite.height;
+    float w = (float)Sprite.width, w1=w;
+    float h = (float)Sprite.height;
 
     // Calcula el ángulo según la dirección
     if (l_dir.x > 0)      { angulo = 0.0f; w1 = w; } // →
@@ -30,6 +30,16 @@ void Personaje::Draw()
         angulo,
         WHITE
     );
+
+    DrawLine((int)pos.x - 32, (int)pos.y - 40, (int)pos.x - 32 + 64*((int)Player.vida)/ ((int)max_vida), (int)pos.y - 40, RED);
+}
+
+void Personaje::pain(float damage)
+{
+    if (Player.vida + damage > 0)    
+        Player.vida -= damage;
+    else                       
+        Player.vida = 0;
 }
 
 Disparo Personaje::Shoot()

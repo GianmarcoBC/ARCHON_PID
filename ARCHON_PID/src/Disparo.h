@@ -1,5 +1,6 @@
 #pragma once
 #include "raylib.h"
+#include "Pj.h"
 
 class Disparo
 {
@@ -21,8 +22,12 @@ public:
     void Update();
     void Draw();
 
-    //Estado del disparo
-    bool Status()const { return status_; }
+
+    //Getters y setters
+    void setStatus(bool s) { status_ = s;}
+    bool getStatus()const { return status_; }
+    Vector2 GetPos()const { return pos; }
+
 
     ~Disparo() {
         // No es necesario descargar la textura aquí, ya que es compartida y se maneja en el arquero
