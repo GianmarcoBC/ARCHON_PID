@@ -1,4 +1,5 @@
 #include "Personaje.h"
+#include <cmath>
 
 void Personaje::Update(float dt)
 { 
@@ -57,4 +58,29 @@ Disparo Personaje::Shoot()
     float v = 10.0f; // Velocidad de la flecha
     Vector2 vel = { v * l_dir.x, v * l_dir.y }; // Velocidad de la flecha hacia arriba
     return Disparo ({ pos.x, pos.y }, vel, &Ataque);
+}
+
+void Personaje::ResolverColision(Rectangle obs) {
+    // Hitbox del personaje
+    float w = (float)Frames[frameActual].width;
+    float h = (float)Frames[frameActual].height;
+    Rectangle hitbox = { pos.x - w / 2, pos.y - h / 2, w, h };
+
+    if (!CheckCollisionRecs(hitbox, obs)) return;
+
+    // Calcula solapamiento en cada eje y empuja por el más pequeño
+    float overlapX = (hitbox.x + hitbox.width / 2) - (obs.x + obs.width / 2);
+    float overlapY = (hitbox.y + hitbox.height / 2) - (obs.y + obs.height / 2);
+
+    float halfW = (hitbox.width + obs.width) / 2;
+    float halfH = (hitbox.height + obs.height) / 2;
+
+    float pushX = halfW - fabsf(overlapX);
+    float pushY = halfH - fabsf(overlapY);
+
+    // Empuja por el eje con menor solapamiento
+    if (pushX < pushY)
+        pos.x += (overlapX > 0) ? pushX : -pushX;
+    else
+        pos.y += (overlapY > 0) ? pushY : -pushY;
 }

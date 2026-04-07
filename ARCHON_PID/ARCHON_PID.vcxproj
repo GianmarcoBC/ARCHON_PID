@@ -27,6 +27,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Menu_Combate.h" />
+    <ClInclude Include="src\Obstaculo.h" />
     <ClInclude Include="src\Personaje.h" />
     <ClInclude Include="src\Disparo.h" />
     <ClInclude Include="src\Combate.h" />

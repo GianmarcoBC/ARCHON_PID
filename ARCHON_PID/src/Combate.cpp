@@ -34,6 +34,14 @@ void Combate::Update()
         }
 
     }
+
+    //Colisiones de personajes con obstáculos sólidos
+    for (auto& obs : Obstaculos) {
+        if (obs.solido) {
+            P1.ResolverColision(obs.hitbox);
+            P2.ResolverColision(obs.hitbox);
+        }
+    }
 }
 
 void Combate::Draw()
@@ -76,6 +84,15 @@ void Combate::Draw()
             WHITE
         );     
         
+        // Primero arbustos decorativos (debajo de los personajes)
+        for (auto& obs : Obstaculos) {
+            if (!obs.solido) {
+                float t = GetTime();
+                unsigned char alpha = (sinf(t * 5.0f) > 0) ? 255 : 80;
+                DrawTexture(*obs.Sprite, obs.hitbox.x, obs.hitbox.y, { 255, 255, 255, alpha });
+            }
+        }
+
         P1.Draw();
         P2.Draw();
 
@@ -86,6 +103,12 @@ void Combate::Draw()
 
         for (auto& b : Disparos_2) {
             b.Draw();
+        }
+
+        // Luego arbustos sólidos (encima de los personajes)
+        for (auto& obs : Obstaculos) {
+            if (obs.solido)
+                DrawTexture(*obs.Sprite, obs.hitbox.x, obs.hitbox.y, WHITE);
         }
     }
     

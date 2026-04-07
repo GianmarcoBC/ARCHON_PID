@@ -49,6 +49,9 @@ public:
     // Crea un nuevo disparo con la posición y la textura de la flecha
     Disparo Shoot();
 
+    //Colisiones
+    void ResolverColision(Rectangle obs);
+
  
     //Destructor
     ~Personaje() {
