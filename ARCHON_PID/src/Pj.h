@@ -111,7 +111,7 @@ inline constexpr Pj Platero = {
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
     Vida_media,
-    Fuerza_muyalta,
+    Fuerza_media,
     true, // Rango
     true // Vuela
 };
