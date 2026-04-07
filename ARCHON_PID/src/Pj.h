@@ -14,6 +14,7 @@ struct cntrl
 //Estructura para almacenar las características de cada personaje
 struct Pj
 {
+    const char* nombre;
     const char* Sprite;
     const char* Ataque;
     float vel;
@@ -25,6 +26,7 @@ struct Pj
 
 //Claro
 inline constexpr Pj MH = {
+    "MH",
     "bin/Resources/Graficos/Sprites/SpriteMH_0001.png",
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
@@ -35,6 +37,7 @@ inline constexpr Pj MH = {
 };
 
 inline constexpr Pj Phoenix = {
+    "Phoenix",
     "bin/Resources/Graficos/Sprites/SpritePhoenix.png",
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
@@ -45,6 +48,7 @@ inline constexpr Pj Phoenix = {
 };
 
 inline constexpr Pj Golem = {
+    "Golem",
     "bin/Resources/Graficos/Sprites/SpriteGolem.png",
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_baja,
@@ -55,6 +59,7 @@ inline constexpr Pj Golem = {
 };
 
 inline constexpr Pj Djinni = {
+    "Djinni",
     "bin/Resources/Graficos/Sprites/SpiteDjinni.png",
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
@@ -65,6 +70,7 @@ inline constexpr Pj Djinni = {
 };
 
 inline constexpr Pj Unicorn = {
+    "Unicorn",
     "bin/Resources/Graficos/Sprites/SpriteUnicorn_0002.png",
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
@@ -75,6 +81,7 @@ inline constexpr Pj Unicorn = {
 };
 
 inline constexpr Pj Valkyrie = {
+    "Valkyrie",
     "bin/Resources/Graficos/Sprites/SpriteValkyrie.png",
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
@@ -85,6 +92,7 @@ inline constexpr Pj Valkyrie = {
 };
 
 inline constexpr Pj Archer = {
+    "Archer",
     "bin/Resources/Graficos/Sprites/SpriteArcherpxo.png",
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
@@ -95,6 +103,7 @@ inline constexpr Pj Archer = {
 };
 
 inline constexpr Pj Knight = {
+    "Knight",
     "bin/Resources/Graficos/Sprites/SpriteKnight.png",
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
@@ -107,6 +116,7 @@ inline constexpr Pj Knight = {
 
 //Oscuro
 inline constexpr Pj Platero = {
+    "Platero",
     "bin/Resources/Graficos/Sprites/SpritePlatero.png",
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
@@ -117,6 +127,7 @@ inline constexpr Pj Platero = {
 };
 
 inline constexpr Pj ShapeShifter = {
+    "ShapeShifter",
     "bin/Resources/Graficos/Sprites/SpriteShapeshifter.png",
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
@@ -127,6 +138,7 @@ inline constexpr Pj ShapeShifter = {
 };
 
 inline constexpr Pj Troll = {
+    "Troll",
     "bin/Resources/Graficos/Sprites/SpriteTroll.png",
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_baja,
@@ -137,6 +149,7 @@ inline constexpr Pj Troll = {
 };
 
 inline constexpr Pj Dragon = {
+    "Dragon",
     "bin/Resources/Graficos/Sprites/SpriteDragon.png",
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
@@ -147,6 +160,7 @@ inline constexpr Pj Dragon = {
 };
 
 inline constexpr Pj Basilisk = {
+    "Basilisk",
     "bin/Resources/Graficos/Sprites/SpriteBasilisk.png",
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
@@ -157,6 +171,7 @@ inline constexpr Pj Basilisk = {
 };
 
 inline constexpr Pj Banshee = {
+    "Banshee",
     "bin/Resources/Graficos/Sprites/SpriteBanshee.png",
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
@@ -167,6 +182,7 @@ inline constexpr Pj Banshee = {
 };
 
 inline constexpr Pj Manticore = {
+    "Manticore",
     "bin/Resources/Graficos/Sprites/SpriteManticore.png",
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
@@ -177,6 +193,7 @@ inline constexpr Pj Manticore = {
 };
 
 inline constexpr Pj Goblin = {
+    "Goblin",
     "bin/Resources/Graficos/Sprites/Spritegoblin.png",
     "bin/Resources/Graficos/Sprites/SpriteFlecha.png",
     Velocidad_media,
