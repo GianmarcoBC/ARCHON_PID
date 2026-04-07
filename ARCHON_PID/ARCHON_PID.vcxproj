@@ -24,15 +24,18 @@
     <ClCompile Include="src\ARCHON_PID.cpp" />
     <ClCompile Include="src\Disparo.cpp" />
     <ClCompile Include="src\Combate.cpp" />
+    <ClCompile Include="src\Rolitas.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Menu_Combate.h" />
+    <ClInclude Include="src\Music.h" />
     <ClInclude Include="src\Obstaculo.h" />
     <ClInclude Include="src\Personaje.h" />
     <ClInclude Include="src\Disparo.h" />
     <ClInclude Include="src\Combate.h" />
     <ClInclude Include="src\Pereza.h" />
     <ClInclude Include="src\Pj.h" />
+    <ClInclude Include="src\Rolitas.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

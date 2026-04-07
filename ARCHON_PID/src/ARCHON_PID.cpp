@@ -1,4 +1,5 @@
 #include "Pereza.h"
+#include "Rolitas.h"
 
 int main()
 {
@@ -9,37 +10,35 @@ int main()
 
     Menu_Combate menu;
     Combate* combate = nullptr; //Se crea solo cuando el menú termina
-
-    Music musica = LoadMusicStream("bin/Resources/Audio/Musica/MusicaBatalla1V1.mp3");  // archivo en bin/
-    PlayMusicStream(musica);
-
+    Rolitas rolitas;
 
     while (!WindowShouldClose()) {
 
-        UpdateMusicStream(musica);  // necesario llamarlo cada frame
+          // necesario llamarlo cada frame
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
+        rolitas.Update();
 
         if (combate == nullptr) {
             // Estamos en el menú
             if (menu.Update()) {
                 // Los dos jugadores eligieron, creamos el combate
                 combate = new Combate(menu.GetSelP1(), menu.GetSelP2());
+                rolitas.SetCombatMusic(menu.GetSelP1().nombre, menu.GetSelP2().nombre);
             }
             menu.Draw();
         }
         else {
-            // Estamos en el combate
+            // Estamos en el combate            
             combate->Update();
             combate->Draw();
         }
 
         EndDrawing();
     }
-
-    UnloadMusicStream(musica);
+    
     CloseAudioDevice();
     CloseWindow();
     return 0;

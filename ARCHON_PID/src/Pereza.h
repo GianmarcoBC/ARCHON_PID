@@ -6,5 +6,7 @@
 #include "Pj.h"
 #include "Menu_Combate.h"
 #include "Obstaculo.h"
+#include "Music.h"
+#include "Rolitas.h"
 
 
