@@ -38,16 +38,55 @@ void Combate::Update()
 
 void Combate::Draw()
 {
-    DrawTexture(Fondo, 0, 0, WHITE);
-    P1.Draw();
-    P2.Draw();
+    //Gana jugador 2
+    if (P1.GetVida() == 0) {
+        DrawTexturePro(
+            GameOver,
+            { 0, 0, (float)GameOver.width, (float)GameOver.height }, // fuente: sprite completo
+            { 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() }, // destino: pantalla completa
+            { 0, 0 },
+            0.0f,
+            WHITE
+        );       
+        DrawText("Player 2 Wins!", 350, 300, 40, RED);
     
-
-    for (auto& b : Disparos_1) {
-        b.Draw();
     }
 
-    for (auto& b : Disparos_2) {
-        b.Draw();
+    //Gana jugador 1
+    else if (P2.GetVida() == 0) {
+        DrawTexturePro(
+            GameOver,
+            { 0, 0, (float)GameOver.width, (float)GameOver.height }, // fuente: sprite completo
+            { 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() }, // destino: pantalla completa
+            { 0, 0 },
+            0.0f,
+            WHITE
+        );          
+        DrawText("Player 1 Wins!", 350, 300, 40, RED);
     }
+
+    //Juego en curso
+    else {
+        DrawTexturePro(
+            Fondo,
+            { 0, 0, (float)Fondo.width, (float)Fondo.height }, // fuente: sprite completo
+            { 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()}, // destino: pantalla completa
+            { 0, 0 },
+            0.0f,
+            WHITE
+        );     
+        
+        P1.Draw();
+        P2.Draw();
+
+
+        for (auto& b : Disparos_1) {
+            b.Draw();
+        }
+
+        for (auto& b : Disparos_2) {
+            b.Draw();
+        }
+    }
+    
 }

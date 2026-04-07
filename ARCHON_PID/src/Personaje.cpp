@@ -32,11 +32,12 @@ void Personaje::Draw()
     );
 
     DrawLine((int)pos.x - 32, (int)pos.y - 40, (int)pos.x - 32 + 64*((int)Player.vida)/ ((int)max_vida), (int)pos.y - 40, RED);
+    DrawText(TextFormat("%.0f", Player.vida), (int)pos.x - 16, (int)pos.y - 60, 20, RED);
 }
 
 void Personaje::pain(float damage)
 {
-    if (Player.vida + damage > 0)    
+    if (Player.vida > damage)    
         Player.vida -= damage;
     else                       
         Player.vida = 0;

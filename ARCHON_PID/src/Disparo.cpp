@@ -7,7 +7,7 @@ void Disparo::Update()
     pos.x += vel.x;
     pos.y += vel.y;
 
-    if (pos.y < 0 || pos.y > 580 || pos.x < 0 || pos.x > 970) {
+    if (pos.y < 0 || pos.y > GetScreenHeight() || pos.x < 0 || pos.x > GetScreenWidth()) {
         status_ = false; // Desactiva el disparo si sale de la pantalla
     }
 }

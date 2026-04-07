@@ -33,7 +33,8 @@ public:
     //Funciones para obtener las características del personaje
     float GetFuerza()const { return Player.fuerza; }
     Vector2 GetPos()const { return pos; }
-
+    float GetVida()const { return Player.vida; }
+   
 
     //Daño al personaje, restando a su vida el valor del daño recibido
     void pain(float damage);

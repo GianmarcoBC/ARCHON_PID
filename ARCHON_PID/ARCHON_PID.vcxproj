@@ -19,12 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Menu_Combate.cpp" />
     <ClCompile Include="src\Personaje.cpp" />
     <ClCompile Include="src\ARCHON_PID.cpp" />
     <ClCompile Include="src\Disparo.cpp" />
     <ClCompile Include="src\Combate.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Menu_Combate.h" />
     <ClInclude Include="src\Personaje.h" />
     <ClInclude Include="src\Disparo.h" />
     <ClInclude Include="src\Combate.h" />
