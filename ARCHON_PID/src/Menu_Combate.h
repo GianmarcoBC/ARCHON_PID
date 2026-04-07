@@ -7,23 +7,23 @@ class Menu_Combate
     // Miniaturas de cada personaje para mostrar en el menú
     Texture2D Fondo_Menu = LoadTexture("bin/Resources/Graficos/Sprites/the-dark-background-minimalism-tmnt-teenage-mutant-ninja-turtles-wallpaper-preview.png");
     
-    Texture2D ImgMH = LoadTexture(MH.Sprite);
-    Texture2D ImgPhoenix = LoadTexture(Phoenix.Sprite);
-    Texture2D ImgGolem = LoadTexture(Golem.Sprite);
-    Texture2D ImgDjinni = LoadTexture(Djinni.Sprite);
-    Texture2D ImgUnicorn = LoadTexture(Unicorn.Sprite);
-    Texture2D ImgValkyrie = LoadTexture(Valkyrie.Sprite);
-    Texture2D ImgArcher = LoadTexture(Archer.Sprite);
-    Texture2D ImgKnight = LoadTexture(Knight.Sprite);
+    Texture2D ImgMH = LoadTexture(MH.Sprite_1);
+    Texture2D ImgPhoenix = LoadTexture(Phoenix.Sprite_1);
+    Texture2D ImgGolem = LoadTexture(Golem.Sprite_1);
+    Texture2D ImgDjinni = LoadTexture(Djinni.Sprite_1);
+    Texture2D ImgUnicorn = LoadTexture(Unicorn.Sprite_1);
+    Texture2D ImgValkyrie = LoadTexture(Valkyrie.Sprite_1);
+    Texture2D ImgArcher = LoadTexture(Archer.Sprite_1);
+    Texture2D ImgKnight = LoadTexture(Knight.Sprite_1);
 
-    Texture2D ImgPlatero = LoadTexture(Platero.Sprite);
-    Texture2D ImgShapeShifter = LoadTexture(ShapeShifter.Sprite);
-    Texture2D ImgTroll = LoadTexture(Troll.Sprite);
-    Texture2D ImgDragon = LoadTexture(Dragon.Sprite);
-    Texture2D ImgBasilisk = LoadTexture(Basilisk.Sprite);
-    Texture2D ImgBanshee = LoadTexture(Banshee.Sprite);
-    Texture2D ImgManticore = LoadTexture(Manticore.Sprite);
-    Texture2D ImgGoblin = LoadTexture(Goblin.Sprite);
+    Texture2D ImgPlatero = LoadTexture(Platero.Sprite_1);
+    Texture2D ImgShapeShifter = LoadTexture(ShapeShifter.Sprite_1);
+    Texture2D ImgTroll = LoadTexture(Troll.Sprite_1);
+    Texture2D ImgDragon = LoadTexture(Dragon.Sprite_1);
+    Texture2D ImgBasilisk = LoadTexture(Basilisk.Sprite_1);
+    Texture2D ImgBanshee = LoadTexture(Banshee.Sprite_1);
+    Texture2D ImgManticore = LoadTexture(Manticore.Sprite_1);
+    Texture2D ImgGoblin = LoadTexture(Goblin.Sprite_1);
 
     static const int NUM_PJS = 8;
 
