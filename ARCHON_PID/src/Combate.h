@@ -42,6 +42,7 @@ public:
 
     void Update();
     void Draw();
+    bool IsGameOver() const { return P1.GetVida() == 0 || P2.GetVida() == 0; }
 
     ~Combate() {
         UnloadTexture(Fondo);

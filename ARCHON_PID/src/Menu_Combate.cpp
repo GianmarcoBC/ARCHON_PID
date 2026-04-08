@@ -63,18 +63,26 @@ void Menu_Combate::DrawSeleccion(int player, int cx, int cy, int sel, bool listo
 
 bool Menu_Combate::Update() {
     // P1 navega con A/D, confirma con ESPACIO
-    if (!P1Listo) {
-        if (IsKeyPressed(KEY_D))     selP1 = (selP1 + 1) % 8;
-        if (IsKeyPressed(KEY_A))     selP1 = (selP1 -1 + 8) % 8;
-        if (IsKeyPressed(KEY_SPACE)) P1Listo = true;
+    if (IsKeyPressed(KEY_D)) {
+        selP1 = (selP1 + 1) % 8;
+        P1Listo = false;
     }
+    if (IsKeyPressed(KEY_A)) {
+        selP1 = (selP1 - 1 + 8) % 8;
+        P1Listo = false;
+    }
+    if (IsKeyPressed(KEY_SPACE)) P1Listo = true;
 
     // P2 navega con izquierda/derecha, confirma con CTRL
-    if (!P2Listo) {
-        if (IsKeyPressed(KEY_RIGHT))         selP2 = (selP2 + 1) % 8;
-        if (IsKeyPressed(KEY_LEFT))          selP2 = (selP2 -1 + 8) % 8;
-        if (IsKeyPressed(KEY_RIGHT_CONTROL)) P2Listo = true;
+    if (IsKeyPressed(KEY_RIGHT)) {
+        selP2 = (selP2 + 1) % 8;
+        P2Listo = false;
     }
+    if (IsKeyPressed(KEY_LEFT)) {
+        selP2 = (selP2 - 1 + 8) % 8;
+        P2Listo = false;
+    }
+    if (IsKeyPressed(KEY_RIGHT_CONTROL)) P2Listo = true;
 
     return P1Listo && P2Listo; // true = ambos listos, empieza el combate
 }

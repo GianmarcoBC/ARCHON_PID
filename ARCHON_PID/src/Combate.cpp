@@ -42,6 +42,7 @@ void Combate::Update()
             P2.ResolverColision(obs.hitbox);
         }
     }
+
 }
 
 void Combate::Draw()
