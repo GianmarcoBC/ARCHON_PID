@@ -1,5 +1,4 @@
 #pragma once
-#include "raylib.h"
 
 // Rutas de los archivos de música de fondo
 inline const char* MusicaTablero_Inicio = "bin/Resources/Audio/Musica/MusciaTablero Inicio.mp3";
@@ -10,6 +9,3 @@ inline const char* MusicaMagoMago = "bin/Resources/Audio/Musica/MusicaMagoMago.m
 inline const char* MusicaPeonMago = "bin/Resources/Audio/Musica/MusicaPeonMago.mp3";
 inline const char* MusicaCreditos = "bin/Resources/Audio/Musica/credits.mp3";
 inline const char* MusicaVictoria = "bin/Resources/Audio/Musica/ifrith.mp3";
-
-// Rutas de los archivos de música de efectos
-//inline const char* MusicaPeonMago = "bin/Resources/Audio/Musica/MusicaPeonMago.mp3";

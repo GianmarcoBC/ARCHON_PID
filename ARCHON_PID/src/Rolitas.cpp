@@ -1,4 +1,5 @@
 #include "Rolitas.h"
+#include "raylib.h"
 #include <cstring>
 
 Music& Rolitas::GetActual()

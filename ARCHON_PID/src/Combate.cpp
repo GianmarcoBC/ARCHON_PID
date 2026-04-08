@@ -8,6 +8,7 @@ void Combate::Update()
     P1.Update(dt);
     if (IsKeyPressed(KEY_SPACE)) {
        Disparos_1.push_back(P1.Shoot()); // Agrega un nuevo disparo al vector
+       P1.PlayAttackSound(); // Reproduce el sonido de ataque al disparar
     }
 
     //Gestión de los disparos del Player 1
@@ -23,6 +24,7 @@ void Combate::Update()
     P2.Update(dt);
     if (IsKeyPressed(KEY_RIGHT_CONTROL)) {
         Disparos_2.push_back(P2.Shoot()); // Agrega un nuevo disparo al vector
+        P2.PlayAttackSound(); // Reproduce el sonido de ataque al disparar
     }
 
     //Gestión de los disparos del Player 2

@@ -1,5 +1,6 @@
 #pragma once
 #include "Music.h"
+#include "raylib.h"
 
 enum class EstadoMusica { Menu, Combate, MagoMago, PeonMago, Victoria };
 

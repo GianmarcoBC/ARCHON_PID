@@ -12,6 +12,7 @@ class Personaje
     Vector2 pos{};
     Vector2 l_dir{ 1.0f, 0.0f }; // Vector de dirección inicializado a derecha
     Texture2D Frames[3]; // Array de 3 texturas
+    Sound efecto_ataque;
     int   frameActual = 0;
     float frameTimer = 0.0f;
     bool  moviendose = false;
@@ -27,6 +28,7 @@ public:
         Frames[0] = LoadTexture(Player.Sprite_1);
         Frames[1] = LoadTexture(Player.Sprite_2);
         Frames[2] = LoadTexture(Player.Sprite_3);
+        efecto_ataque = LoadSound(Player.Efecto_ataque);
         Ataque = LoadTexture(Player.Ataque);
         pos = po; // Posición inicial del personaje
     }
@@ -52,9 +54,16 @@ public:
     //Colisiones
     void ResolverColision(Rectangle obs);
 
+    //Sonidos
+    void PlayAttackSound() { 
+        SetSoundVolume(efecto_ataque, 3.5f);
+        PlaySound(efecto_ataque); }
+
+
  
     //Destructor
     ~Personaje() {
+        UnloadSound(efecto_ataque);
         UnloadTexture(Frames[0]);
         UnloadTexture(Frames[1]);
         UnloadTexture(Frames[2]);
