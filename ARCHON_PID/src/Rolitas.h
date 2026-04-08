@@ -1,6 +1,8 @@
 #pragma once
 #include "Music.h"
 
+enum class EstadoMusica { Menu, Combate, MagoMago, PeonMago, Creditos };
+
 class Rolitas
 {
     Music musica_combate = LoadMusicStream(MusicaBatalla1V1);  // archivo en bin/
@@ -8,6 +10,10 @@ class Rolitas
     Music musica_mago_mago = LoadMusicStream(MusicaMagoMago);
     Music musica_peon_mago = LoadMusicStream(MusicaPeonMago);
     Music musica_creditos = LoadMusicStream(MusicaCreditos);
+
+    EstadoMusica estado = EstadoMusica::Menu; // Sabe qué está sonando
+
+    Music& GetActual(); // Devuelve la música activa
 public:
         Rolitas() {
             PlayMusicStream(musica_menu);

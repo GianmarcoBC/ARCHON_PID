@@ -26,16 +26,15 @@ int main()
             if (menu.Update()) {
                 // Los dos jugadores eligieron, creamos el combate
                 combate = new Combate(menu.GetSelP1(), menu.GetSelP2());
-               // rolitas.SetMusic(menu.GetSelP1().nombre, menu.GetSelP2().nombre, combate->IsGameOver());
             }
             menu.Draw();
         }
         else {
             // Estamos en el combate      
-            rolitas.SetMusic(menu.GetSelP1().nombre, menu.GetSelP2().nombre, combate->IsGameOver());
             combate->Update();
             combate->Draw();
             
+            rolitas.SetMusic(menu.GetSelP1().nombre, menu.GetSelP2().nombre, combate->IsGameOver());
         }
         
         EndDrawing();
