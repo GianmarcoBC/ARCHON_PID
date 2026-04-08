@@ -9,6 +9,7 @@ inline const char* MusicaBatalla1V1 = "bin/Resources/Audio/Musica/MusicaBatalla1
 inline const char* MusicaMagoMago = "bin/Resources/Audio/Musica/MusicaMagoMago.mp3";
 inline const char* MusicaPeonMago = "bin/Resources/Audio/Musica/MusicaPeonMago.mp3";
 inline const char* MusicaCreditos = "bin/Resources/Audio/Musica/credits.mp3";
+inline const char* MusicaVictoria = "bin/Resources/Audio/Musica/ifrith.mp3";
 
 // Rutas de los archivos de música de efectos
 //inline const char* MusicaPeonMago = "bin/Resources/Audio/Musica/MusicaPeonMago.mp3";

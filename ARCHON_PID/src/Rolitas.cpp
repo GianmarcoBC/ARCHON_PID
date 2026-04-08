@@ -8,7 +8,7 @@ Music& Rolitas::GetActual()
     case EstadoMusica::Combate:  return musica_combate;
     case EstadoMusica::MagoMago: return musica_mago_mago;
     case EstadoMusica::PeonMago: return musica_peon_mago;
-    case EstadoMusica::Creditos: return musica_creditos;
+    case EstadoMusica::Victoria: return musica_victoria;
     }
     return musica_menu;
 }
@@ -18,7 +18,7 @@ void Rolitas::SetMusic(const char* p1, const char* p2, bool fin) {
     EstadoMusica nuevoEstado;
 
     if (fin) {
-        nuevoEstado = EstadoMusica::Creditos;
+        nuevoEstado = EstadoMusica::Victoria;
     }else{
         StopMusicStream(musica_menu);
         

@@ -84,7 +84,7 @@ bool Menu_Combate::Update() {
     }
     if (IsKeyPressed(KEY_RIGHT_CONTROL)) P2Listo = true;
 
-    return P1Listo && P2Listo; // true = ambos listos, empieza el combate
+    return P1Listo && P2Listo && IsKeyPressed(KEY_ENTER); // true = ambos listos, empieza el combate
 }
 
 void Menu_Combate::Draw() {
@@ -102,6 +102,8 @@ void Menu_Combate::Draw() {
         { 0, 0 }, 0.0f, WHITE
     );
 
+    /*
+    
     // --- Título ---
     const char* titulo = "SKILL ISSUE BROOO";
     int tSize = 60;
@@ -110,16 +112,21 @@ void Menu_Combate::Draw() {
     DrawText(titulo, W / 2 - tWidth / 2 + 4, 44, tSize, BLACK);
     DrawText(titulo, W / 2 - tWidth / 2, 40, tSize, GREEN);
 
-    // --- Paneles de selección ---
-    DrawSeleccion(1, W / 4, H / 2, selP1, P1Listo);
-    DrawSeleccion(2, W * 3 / 4, H / 2, selP2, P2Listo);
-
-    // --- VS central ---
+     // --- VS central ---
     const char* vs = "VS";
     int vsSize = 80;
     int vsWidth = MeasureText(vs, vsSize);
     DrawText(vs, W / 2 - vsWidth / 2 + 3, H / 2 - 33, vsSize, BLACK);
     DrawText(vs, W / 2 - vsWidth / 2, H / 2 - 36, vsSize, GREEN);
+
+    */
+
+
+    // --- Paneles de selección ---
+    DrawSeleccion(1, W / 4, H / 2, selP1, P1Listo);
+    DrawSeleccion(2, W * 3 / 4, H / 2, selP2, P2Listo);
+
+
 
     // --- Controles ---
     DrawText("A / D  +  ESPACIO", W / 4 - MeasureText("A / D  +  ESPACIO", 18) / 2, H - 60, 18, GRAY);

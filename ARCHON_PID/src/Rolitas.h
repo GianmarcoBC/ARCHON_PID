@@ -1,7 +1,7 @@
 #pragma once
 #include "Music.h"
 
-enum class EstadoMusica { Menu, Combate, MagoMago, PeonMago, Creditos };
+enum class EstadoMusica { Menu, Combate, MagoMago, PeonMago, Victoria };
 
 class Rolitas
 {
@@ -9,7 +9,7 @@ class Rolitas
     Music musica_menu = LoadMusicStream(MusicaMenu); // Música del menú
     Music musica_mago_mago = LoadMusicStream(MusicaMagoMago);
     Music musica_peon_mago = LoadMusicStream(MusicaPeonMago);
-    Music musica_creditos = LoadMusicStream(MusicaCreditos);
+    Music musica_victoria = LoadMusicStream(MusicaVictoria);
 
     EstadoMusica estado = EstadoMusica::Menu; // Sabe qué está sonando
 
@@ -25,7 +25,7 @@ public:
             UnloadMusicStream(musica_combate);
             UnloadMusicStream(musica_mago_mago);
             UnloadMusicStream(musica_peon_mago);
-            UnloadMusicStream(musica_creditos);
+            UnloadMusicStream(musica_victoria);
         }
 };
 
