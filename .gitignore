@@ -1,9 +1,0 @@
-*.exe
-*.obj
-*.pdb
-*.ilk
-*.exp
-x64/
-Debug/
-Release/
-.vs/
