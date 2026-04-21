@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\CombatAI.cpp" />
     <ClCompile Include="src\Menu_Combate.cpp" />
     <ClCompile Include="src\Personaje.cpp" />
     <ClCompile Include="src\ARCHON_PID.cpp" />
@@ -27,6 +28,7 @@
     <ClCompile Include="src\Rolitas.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\CombatAI.h" />
     <ClInclude Include="src\Menu_Combate.h" />
     <ClInclude Include="src\Music.h" />
     <ClInclude Include="src\Obstaculo.h" />
@@ -36,6 +38,7 @@
     <ClInclude Include="src\Pereza.h" />
     <ClInclude Include="src\Pj.h" />
     <ClInclude Include="src\Rolitas.h" />
+    <ClInclude Include="src\Vec2.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

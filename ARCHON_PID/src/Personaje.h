@@ -2,6 +2,7 @@
 #include "raylib.h"
 #include "Disparo.h"
 #include "Pj.h"
+#include "Vec2.h"
 
 class Personaje
 {
@@ -9,18 +10,19 @@ class Personaje
     float max_vida{};
     cntrl Controles{};
     Texture2D Ataque;
-    Vector2 pos{};
-    Vector2 l_dir{ 1.0f, 0.0f }; // Vector de dirección inicializado a derecha
+    Vec2 pos{};
+    Vec2 l_dir{ 1.0f, 0.0f }; // Vector de dirección inicializado a derecha
     Texture2D Frames[3]; // Array de 3 texturas
     Sound efecto_ataque;
     int   frameActual = 0;
     float frameTimer = 0.0f;
-    bool  moviendose = false;
+    bool  moviendose{ false };
+    bool  isPlayer{ true };
 
 
 public:
     //Constructor
-    Personaje(Pj p, cntrl c, Vector2 po) 
+    Personaje(Pj p, cntrl c, Vec2 po, bool ip)
     {
         Player = p;
         max_vida = p.vida;
@@ -31,6 +33,7 @@ public:
         efecto_ataque = LoadSound(Player.Efecto_ataque);
         Ataque = LoadTexture(Player.Ataque);
         pos = po; // Posición inicial del personaje
+        isPlayer = ip; // Indica si el personaje es controlado por el jugador o la CPU
     }
 
     //Actualización del arquero
@@ -41,8 +44,15 @@ public:
 
     //Funciones para obtener las características del personaje
     float GetFuerza()const { return Player.fuerza; }
-    Vector2 GetPos()const { return pos; }
+    Vec2 GetPos()const { return pos; }
+    void SetPos(Vec2 p) { pos = p; }
     float GetVida()const { return Player.vida; }
+    void set_isPlayer(bool ip) { isPlayer = ip; }
+    bool get_isPlayer()const { return isPlayer; }
+    float get_Cooldown()const { return Player.cooldown; }
+    float GetVelocidad()const { return Player.vel; }
+    Vec2 GetDir() { return l_dir; }
+    void SetDir(Vec2 d) { l_dir = d.unitario(); } // Normaliza el vector de dirección
    
 
     //Daño al personaje, restando a su vida el valor del daño recibido
@@ -53,6 +63,7 @@ public:
 
     //Colisiones
     void ResolverColision(Rectangle obs);
+    void ClampArena();
 
     //Sonidos
     void PlayAttackSound() { 

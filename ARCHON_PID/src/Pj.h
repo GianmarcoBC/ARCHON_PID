@@ -4,6 +4,8 @@
 inline constexpr float Velocidad_media = 500.0f, Velocidad_baja = 200.0f;
 inline constexpr float Vida_muyalta = 2000.0f, Vida_alta = 1000.0f, Vida_media = 500.0f, Vida_baja = 200.0f;
 inline constexpr float Fuerza_muyalta = 80.0f, Fuerza_alta = 50.0f, Fuerza_media = 10.0f, Fuerza_baja = 5.0f;
+inline constexpr float Cooldown_alto = 5.0f, Cooldown_medio = 3.0f, Cooldown_bajo = 1.0f, Cooldown_nulo = 0.0f;
+inline constexpr float AttackSpeed_muyalto = 10.0f, AttackSpeed_alto = 8.0f, AttackSpeed_medio = 5.0f, AttackSpeed_bajo = 2.0f;
 
 //Controles de los personajes
 struct cntrl
@@ -23,6 +25,8 @@ struct Pj
     float vel;
     float vida;
     float fuerza;
+    float cooldown;
+    float attack_speed;
     int   frameCount;
     float frameSpeed;
     bool rango; // Rango (TRUE) o cuerpo a cuerpo (FALSE)
@@ -40,6 +44,8 @@ inline constexpr Pj MH = {
     Velocidad_media,
     Vida_media,
     Fuerza_alta,
+    Cooldown_medio,
+    AttackSpeed_medio,
     3,
     0.1f,
     true, // Rango
@@ -56,6 +62,8 @@ inline constexpr Pj Phoenix = {
     Velocidad_media,
     Vida_alta,
     Fuerza_alta,
+    Cooldown_alto,
+    AttackSpeed_bajo,
     3,
     0.1f,
     false, // No rango
@@ -72,6 +80,8 @@ inline constexpr Pj Golem = {
     Velocidad_baja,
     Vida_alta,
     Fuerza_alta,
+    Cooldown_alto,
+    AttackSpeed_bajo,
     3,
     0.1f,
     true, // Rango
@@ -88,6 +98,8 @@ inline constexpr Pj Djinni = {
     Velocidad_media,
     Vida_alta,
     Fuerza_media,
+    Cooldown_medio,
+    AttackSpeed_medio,
     3,
     0.1f,
     true, // Rango
@@ -104,6 +116,8 @@ inline constexpr Pj Unicorn = {
     Velocidad_media,
     Vida_media,
     Fuerza_media,
+    Cooldown_bajo,
+    AttackSpeed_alto,
     3,
     0.1f,
     true, // Rango
@@ -120,6 +134,8 @@ inline constexpr Pj Valkyrie = {
     Velocidad_media,
     Vida_media,
     Fuerza_media,
+    Cooldown_medio,
+    AttackSpeed_bajo,
     3,
     0.1f,
     true, // Rango
@@ -136,6 +152,8 @@ inline constexpr Pj Archer = {
     Velocidad_media,
     Vida_baja,
     Fuerza_baja,
+    Cooldown_medio,
+    AttackSpeed_medio,
     3,
     0.1f,
     true, // Rango
@@ -152,6 +170,8 @@ inline constexpr Pj Knight = {
     Velocidad_media,
     Vida_baja,
     Fuerza_baja,
+    Cooldown_nulo,
+    AttackSpeed_muyalto,
     3,
     0.1f,
     false, // No rango
@@ -170,6 +190,8 @@ inline constexpr Pj Platero = {
     Velocidad_media,
     Vida_media,
     Fuerza_media,
+    Cooldown_medio,
+    AttackSpeed_alto,
     3,
     0.1f,
     true, // Rango
@@ -186,6 +208,8 @@ inline constexpr Pj ShapeShifter = {
     Velocidad_media,
     Vida_alta,
     Fuerza_alta,
+    Cooldown_medio,
+    AttackSpeed_bajo,
     3,
     0.1f,
     false, // No rango
@@ -202,6 +226,8 @@ inline constexpr Pj Troll = {
     Velocidad_baja,
     Vida_alta,
     Fuerza_alta,
+    Cooldown_alto,
+    AttackSpeed_bajo,
     3,
     0.1f,
     true, // Rango
@@ -218,6 +244,8 @@ inline constexpr Pj Dragon = {
     Velocidad_media,
     Vida_muyalta,
     Fuerza_muyalta,
+    Cooldown_alto,
+    AttackSpeed_medio,
     3,
     0.1f,
     true, // Rango
@@ -234,6 +262,8 @@ inline constexpr Pj Basilisk = {
     Velocidad_media,
     Vida_baja,
     Fuerza_alta,
+    Cooldown_bajo,
+    AttackSpeed_alto,
     3,
     0.1f,
     true, // Rango
@@ -250,6 +280,8 @@ inline constexpr Pj Banshee = {
     Velocidad_media,
     Vida_media,
     Fuerza_media,
+    Cooldown_alto,
+    AttackSpeed_muyalto,
     3,
     0.1f,
     true, // Rango
@@ -266,6 +298,8 @@ inline constexpr Pj Manticore = {
     Velocidad_media,
     Vida_media,
     Fuerza_baja,
+    Cooldown_medio,
+    AttackSpeed_bajo,
     3,
     0.1f,
     true, // Rango
@@ -282,6 +316,8 @@ inline constexpr Pj Goblin = {
     Velocidad_media,
     Vida_baja,
     Fuerza_baja,
+    Cooldown_nulo,
+    AttackSpeed_muyalto,
     3,
     0.1f,
     false, // No rango

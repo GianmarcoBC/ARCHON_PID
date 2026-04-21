@@ -21,11 +21,15 @@ int main()
 
         rolitas.Update();
 
+        
+
         if (combate == nullptr) {
             // Estamos en el menú
             if (menu.Update()) {
-                // Los dos jugadores eligieron, creamos el combate
-                combate = new Combate(menu.GetSelP1(), menu.GetSelP2());
+                if (menu.EsModoIA())
+                    combate = new Combate(menu.GetSelP1(), menu.GetSelP2(), menu.GetDificultad());
+                else
+                    combate = new Combate(menu.GetSelP1(), menu.GetSelP2());
             }
             menu.Draw();
         }

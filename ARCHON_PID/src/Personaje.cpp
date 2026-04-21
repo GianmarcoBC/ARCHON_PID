@@ -3,25 +3,30 @@
 
 void Personaje::Update(float dt)
 { 
-    moviendose = false;
+    if (isPlayer) {
 
-    if (IsKeyDown(Controles.right)) { pos.x += Player.vel * dt; l_dir = { 1.0f, 0.0f }; moviendose = true;  } // Mover a la derecha y actualizar dirección
-    if (IsKeyDown(Controles.left)) { pos.x -= Player.vel * dt; l_dir = { -1.0f, 0.0f }; moviendose = true;} // Mover a la izquierda y actualizar dirección
-    if (IsKeyDown(Controles.up)) { pos.y -= Player.vel * dt; l_dir = { 0.0f, -1.0f }; moviendose = true;} // Mover hacia arriba y actualizar dirección
-    if (IsKeyDown(Controles.down)) { pos.y += Player.vel * dt; l_dir = { 0.0f, 1.0f }; moviendose = true;} // Mover hacia abajo y actualizar dirección
+        moviendose = false;
 
-    if (moviendose) {
-        frameTimer += dt;
-        if (frameTimer >= Player.frameSpeed) {
+        if (IsKeyDown(Controles.right)) { pos.x += Player.vel * dt; l_dir = { 1.0f, 0.0f }; moviendose = true; } // Mover a la derecha y actualizar dirección
+        if (IsKeyDown(Controles.left)) { pos.x -= Player.vel * dt; l_dir = { -1.0f, 0.0f }; moviendose = true; } // Mover a la izquierda y actualizar dirección
+        if (IsKeyDown(Controles.up)) { pos.y -= Player.vel * dt; l_dir = { 0.0f, -1.0f }; moviendose = true; } // Mover hacia arriba y actualizar dirección
+        if (IsKeyDown(Controles.down)) { pos.y += Player.vel * dt; l_dir = { 0.0f, 1.0f }; moviendose = true; } // Mover hacia abajo y actualizar dirección
+
+        if (moviendose) {
+            frameTimer += dt;
+            if (frameTimer >= Player.frameSpeed) {
+                frameTimer = 0.0f;
+                frameActual = (frameActual + 1) % Player.frameCount;
+            }
+        }
+        else {
+            frameActual = 0; // Vuelve al frame de reposo
             frameTimer = 0.0f;
-            frameActual = (frameActual + 1) % Player.frameCount;
         }
     }
     else {
-        frameActual = 0; // Vuelve al frame de reposo
-        frameTimer = 0.0f;
+        pos = pos + l_dir * Player.vel * dt;
     }
-
 }
 
 void Personaje::Draw()
@@ -55,9 +60,9 @@ void Personaje::pain(float damage)
 
 Disparo Personaje::Shoot()
 {
-    float v = 10.0f; // Velocidad de la flecha
-    Vector2 vel = { v * l_dir.x, v * l_dir.y }; // Velocidad de la flecha hacia arriba
-    return Disparo ({ pos.x, pos.y }, vel, &Ataque);
+    Vec2 vel = { Player.attack_speed * l_dir.x, Player.attack_speed * l_dir.y }; //Velocidad del disparo en la dirección actual
+    return Disparo(pos, vel, &Ataque, isPlayer);
+    
 }
 
 void Personaje::ResolverColision(Rectangle obs) {
@@ -83,4 +88,15 @@ void Personaje::ResolverColision(Rectangle obs) {
         pos.x += (overlapX > 0) ? pushX : -pushX;
     else
         pos.y += (overlapY > 0) ? pushY : -pushY;
+}
+
+void Personaje::ClampArena() {
+    float w = (float)Frames[frameActual].width;
+    float h = (float)Frames[frameActual].height;
+    float hw = w / 2, hh = h / 2;
+
+    if (pos.x - hw < 0)                    pos.x = hw;
+    if (pos.x + hw > GetScreenWidth())     pos.x = GetScreenWidth() - hw;
+    if (pos.y - hh < 0)                    pos.y = hh;
+    if (pos.y + hh > GetScreenHeight())    pos.y = GetScreenHeight() - hh;
 }

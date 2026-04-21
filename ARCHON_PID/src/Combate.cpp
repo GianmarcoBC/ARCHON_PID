@@ -3,12 +3,20 @@
 void Combate::Update()
 {
     float dt = GetFrameTime();
+    static float cooldown1 = 0.0f, cooldown2 = 0.0f; // Tiempo de recarga para evitar disparos continuos
 
     //Player 1
     P1.Update(dt);
-    if (IsKeyPressed(KEY_SPACE)) {
-       Disparos_1.push_back(P1.Shoot()); // Agrega un nuevo disparo al vector
-       P1.PlayAttackSound(); // Reproduce el sonido de ataque al disparar
+    P1.ClampArena();
+    if (cooldown1 <= 0.0f) {
+        if (IsKeyPressed(KEY_SPACE)) {
+            Disparos_1.push_back(P1.Shoot()); // Agrega un nuevo disparo al vector
+            P1.PlayAttackSound(); // Reproduce el sonido de ataque al disparar
+            cooldown1 = P1.get_Cooldown(); // Reinicia el tiempo de recarga
+        }
+    }
+    else {
+        cooldown1 -= dt; // Reduce el tiempo de recarga
     }
 
     //Gestión de los disparos del Player 1
@@ -21,10 +29,33 @@ void Combate::Update()
     }
 
     //Player 2
-    P2.Update(dt);
-    if (IsKeyPressed(KEY_RIGHT_CONTROL)) {
-        Disparos_2.push_back(P2.Shoot()); // Agrega un nuevo disparo al vector
-        P2.PlayAttackSound(); // Reproduce el sonido de ataque al disparar
+    if (ia != nullptr) {
+        // La IA mueve a P2 y decide si dispara
+        bool dispara = ia->Update(dt, Disparos_1);  // esquiva los disparos de P1
+        if (cooldown2 <= 0.0f) {
+            if (dispara) {
+                Disparos_2.push_back(P2.Shoot());
+                P2.PlayAttackSound();
+                cooldown2 = P2.get_Cooldown(); // Reinicia el tiempo de recarga
+            }
+        }
+        else {
+            cooldown2 -= dt; // Reduce el tiempo de recarga
+        }
+    }
+    else {
+        P2.Update(dt);
+        P2.ClampArena();
+        if (cooldown2 <= 0.0f) {
+            if (IsKeyPressed(KEY_RIGHT_CONTROL)) {
+                Disparos_2.push_back(P2.Shoot()); // Agrega un nuevo disparo al vector
+                P2.PlayAttackSound(); // Reproduce el sonido de ataque al disparar
+                cooldown2 = P2.get_Cooldown(); // Reinicia el tiempo de recarga
+            }
+        }
+        else {
+            cooldown2 -= dt; // Reduce el tiempo de recarga
+        }
     }
 
     //Gestión de los disparos del Player 2
