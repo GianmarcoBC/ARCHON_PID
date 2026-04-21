@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="ARCHON_PID.vcxproj" Id="49ffe5d6-7233-4bee-8bd2-204e3277723b" />
+  <Project Path="raylibproject.vcxproj" Id="b18d3e59-bc12-4160-aa9a-20f67d10dee6" />
 </Solution>
