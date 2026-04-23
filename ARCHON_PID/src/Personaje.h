@@ -11,14 +11,18 @@ class Personaje
     Vector2 l_dir{ 1.0f, 0.0f }; // Vector de dirección inicializado a derecha
     float speed;
     float vida;
+    int fila, columna; // Posicion del personaje en la matriz
+
 public:
     //Constructor
-    Personaje(Pj p) 
+    Personaje(Pj p, int ifila, int icolumna) 
     {
         Sprite = LoadTexture(p.Sprite);
         Ataque = LoadTexture(p.Ataque);
         speed = p.vel;
         vida = p.vida;
+        fila = ifila;
+        columna = icolumna;
     }
 
     //Actualización del arquero
@@ -26,6 +30,7 @@ public:
 
     //Dibuja el Sprite del arquero en pantalla
     void Draw();
+    void DrawT();  //Funcion de dibujar en el tablero
     
     // Crea un nuevo disparo con la posición y la textura de la flecha
     Disparo Shoot();

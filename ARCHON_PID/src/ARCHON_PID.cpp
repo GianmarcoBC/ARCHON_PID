@@ -1,5 +1,6 @@
 //#include <raylib.h>
 #include "Pereza.h"
+#include "Tablero.h"
 
 int main()
 {
@@ -9,9 +10,11 @@ int main()
     InitAudioDevice();
 
     Combate game;
+    Tablero tablero;
     Music musica = LoadMusicStream("bin/Resources/Audio/Musica/MusicaBatalla1V1.mp3");  // archivo en bin/
     PlayMusicStream(musica);
 
+    tablero.inicializarTablero();
 
     while (!WindowShouldClose()) {
         game.Update();
@@ -20,8 +23,8 @@ int main()
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
-        game.Draw();
-
+       // game.Draw();
+        tablero.Draw();
         EndDrawing();
     }
 

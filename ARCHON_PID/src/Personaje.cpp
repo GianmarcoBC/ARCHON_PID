@@ -32,6 +32,33 @@ void Personaje::Draw()
     );
 }
 
+void Personaje::DrawT()
+{
+
+    float angulo = 0.0f;
+
+    float w = Sprite.width;
+    float h = Sprite.height;
+
+    pos.x = 230+ columna * 64;
+    pos.y =  40+fila * 64;
+
+    DrawTexturePro(
+        Sprite,
+        { 0, 0, w, h },              // Región fuente (sprite completo)
+        { pos.x, pos.y, w, h },      // Región destino
+        { w / 2, h / 2 },            // Origen en el centro (pivote de rotación)
+        angulo,
+        WHITE
+    );
+}
+
+
+
+
+
+
+
 Disparo Personaje::Shoot()
 {
     float v = 10.0f; // Velocidad de la flecha
