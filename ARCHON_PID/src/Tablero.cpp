@@ -9,39 +9,15 @@ Tablero::Tablero(){
 }
 
 void Tablero::inicializarTablero() {
-    // Primero, nos aseguramos de que toda la matriz esté vacía (punteros nulos)
+    // Primero, nos aseguramos de que toda la matriz esté vacía
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
             cuadricula[i][j] = nullptr;
         }
     }
 
-    // Ahora llamamos a los constructores para colocar las piezas iniciales
-   
-
-    //ASI CON TODOS 
-
-    /*cuadricula[0][0] = new Personaje(MH,0,0);
-    cuadricula[1][0] = new Personaje(Phoenix,1,0);
-    cuadricula[2][0] = new Personaje(Golem, 2, 0);
-    cuadricula[3][0] = new Personaje(Djinni, 3, 0);
-
-    cuadricula[4][0] = new Personaje(Unicorn, 4, 0);
-    cuadricula[5][0] = new Personaje(Valkyrie, 5, 0);
-    cuadricula[6][0] = new Personaje(Archer, 6, 0);
-    cuadricula[7][0] = new Personaje(Knight, 7, 0);
-
-    cuadricula[8][0] = new Personaje(Platero, 8, 0);
-    cuadricula[0][1] = new Personaje(ShapeShifter, 0, 1);
-    cuadricula[1][1] = new Personaje(Troll, 1, 1);
-    cuadricula[2][1] = new Personaje(Dragon, 2, 1);
-
-    cuadricula[3][1] = new Personaje(Basilisk, 3, 1);
-    cuadricula[4][1] = new Personaje(Banshee, 4, 1);
-    cuadricula[5][1] = new Personaje(Manticore, 5, 1);
-    cuadricula[6][2] = new Personaje(Goblin, 6, 1);
- */
-
+    // Colocamos todas las piezas en su posición inicial llamando al constructor
+  
     //LUZ
     cuadricula[0][0] = new Personaje(Valkyrie, 0, 0);
     cuadricula[8][0] = new Personaje(Valkyrie, 8, 0);
@@ -92,15 +68,17 @@ void Tablero::inicializarTablero() {
 
 
 void Tablero::Draw() {
+
+    //Bucle para dibujar el tablero
     for (int fila = 0; fila < casillasxlado; fila++) {
         for (int columna = 0; columna < casillasxlado; columna++) {
 
-            Color colorCasilla;
+            Color colorCasilla; 
             if ((fila + columna) % 2 == 0) {
-                colorCasilla = LIGHTGRAY; // Casilla de Luz
+                colorCasilla = LIGHTGRAY; 
             }
             else {
-                colorCasilla = DARKGRAY;  // Casilla de Oscuridad
+                colorCasilla = DARKGRAY;  
             }
 
             int posX =  (970/2-4.5*tamanoCasilla)+columna * tamanoCasilla; //970 es el largo de la pantalla
@@ -113,6 +91,7 @@ void Tablero::Draw() {
         }
     }
 
+    //Bucle para dibujar los personajes
     for (int fila = 0; fila < casillasxlado; fila++) {
         for (int columna = 0; columna < casillasxlado; columna++) {
 
