@@ -10,9 +10,9 @@ class Tablero
     int casillasxlado;
     int tamanoCasilla;
     Personaje* cuadricula[9][9];
-    Personaje* personaje_seleccionado;
-    int fila_seleccionada;
-    int columna_seleccionada;
+    Personaje* personaje_seleccionado{nullptr};
+    int fila_seleccionada{-1};
+    int columna_seleccionada{-1};
     bool turno{LUZ};
 
 

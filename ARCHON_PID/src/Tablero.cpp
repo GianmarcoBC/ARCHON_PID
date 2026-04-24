@@ -189,13 +189,34 @@ void Tablero::moverPieza() {
     if ( fila_seleccionada != -1 && columna_seleccionada != -1 && auxPersonaje!=nullptr) {
 
         if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr) {
+            
+            Personaje* personajeAtacado = cuadricula[fila_seleccionada][columna_seleccionada];
+            int auxfila = auxPersonaje->get_fila(), auxcolumna = auxPersonaje->get_columna();
 
-            cuadricula[fila_seleccionada][columna_seleccionada]->~Personaje();
+            auxPersonaje->set_fila_columna(fila_seleccionada, columna_seleccionada); //  se cambia eso pero no en la matriz
+           
+            //Iniciar combate (como parámetros dar los personajes implicados)
+           
+            Personaje* personajeGanador = auxPersonaje;
+            
+            if (personajeGanador == auxPersonaje) {//Si gana el que se ha movido:
+            
+                cuadricula[fila_seleccionada][columna_seleccionada]->~Personaje();
+                cuadricula[fila_seleccionada][columna_seleccionada] = auxPersonaje;
+                cuadricula[auxfila][auxcolumna] = nullptr;
+             
+
+            }
+            
+            else if (personajeGanador == personajeAtacado) {//Si gana el que estaba en la casilla:
+                cuadricula[auxfila][auxcolumna]->~Personaje();
+                
+            }
 
         }
-
-        cambioPosicionPieza(auxPersonaje, fila_seleccionada, columna_seleccionada);
-        auxPersonaje = nullptr;
+        else cambioPosicionPieza(auxPersonaje, fila_seleccionada, columna_seleccionada);
+          auxPersonaje = nullptr;
+       
         reset_seleccion();
         turno = turno == LUZ ? OSCURIDAD : LUZ;
 
