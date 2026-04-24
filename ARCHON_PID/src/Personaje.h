@@ -12,6 +12,7 @@ class Personaje
     float speed;
     float vida;
     int fila, columna; // Posicion del personaje en la matriz
+    bool equipo;
 
 public:
     //Constructor
@@ -23,7 +24,14 @@ public:
         vida = p.vida;
         fila = ifila;
         columna = icolumna;
+        equipo = p.equipo;
     }
+
+    void set_fila_columna(int fil, int col);
+    int get_fila() { return fila; };
+    int get_columna() { return columna; };
+    bool get_equipo() { return equipo; };
+
 
     //Actualización del arquero
     void Update(float dt);

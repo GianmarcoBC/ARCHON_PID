@@ -20,6 +20,10 @@ int main()
         game.Update();
         UpdateMusicStream(musica);  // necesario llamarlo cada frame
 
+        
+
+        tablero.moverPieza();
+       
         BeginDrawing();
         ClearBackground(RAYWHITE);
 

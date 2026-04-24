@@ -41,7 +41,7 @@ void Personaje::DrawT()
     float h = Sprite.height;
 
     pos.x = 230+ columna * 64;
-    pos.y =  40+fila * 64;
+    pos.y =  36 + fila * 64;
 
     DrawTexturePro(
         Sprite,
@@ -51,6 +51,12 @@ void Personaje::DrawT()
         angulo,
         WHITE
     );
+}
+
+void Personaje::set_fila_columna(int fil, int col) {
+
+    fila = fil;
+    columna = col;
 }
 
 

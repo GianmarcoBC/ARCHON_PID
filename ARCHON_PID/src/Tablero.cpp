@@ -16,6 +16,10 @@ void Tablero::inicializarTablero() {
         }
     }
 
+    personaje_seleccionado = nullptr;
+    fila_seleccionada = -1; //Inicializamos a un valor imposible de introducir como índice de la matriz
+    columna_seleccionada = -1; // Para que no esté ninguna casilla seleccionada en el momento incial
+
     // Colocamos todas las piezas en su posición inicial llamando al constructor
   
     //LUZ
@@ -105,4 +109,97 @@ void Tablero::Draw() {
     }
 
     
+}
+
+#include <iostream>
+
+void Tablero::seleccionaCasilla() {
+
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        
+        int mouseX = GetMouseX();
+        int mouseY = GetMouseY();
+        
+        //Bucle para recorrer el tablero
+        for (int fila = 0; fila < casillasxlado; fila++) {
+            for (int columna = 0; columna < casillasxlado; columna++) {
+
+                int posX = (970 / 2 - 4.5 * tamanoCasilla) + columna * tamanoCasilla; //970 es el largo de la pantalla
+                int posY = (580 / 2 - 4.5 * tamanoCasilla) + fila * tamanoCasilla; //580 es la altura de la pantalla
+               
+                if (mouseX <= (posX + tamanoCasilla) && mouseX > posX) {
+
+                    columna_seleccionada = columna;
+
+                }
+                if (mouseY <= (posY + tamanoCasilla) && mouseY > posY) {
+
+                    fila_seleccionada = fila;
+
+                }
+
+            }
+        }
+     
+
+    }
+
+    std::cout << fila_seleccionada << " " << columna_seleccionada << std::endl;
+
+ 
+
+}
+
+
+
+void Tablero::cambioPosicionPieza(Personaje* personaje, int fil, int col) {
+
+    cuadricula[personaje->get_fila()][personaje->get_columna()] = nullptr;
+    personaje->set_fila_columna(fil, col);
+    cuadricula[fil][col] = personaje;
+
+    //Esta función asegura que la posición de los personajes siempre sea igual a la información que tiene el tablero
+    //sobre la posición de cada personaje
+
+}
+
+void Tablero::reset_seleccion() {
+    fila_seleccionada = -1;
+    columna_seleccionada = -1;
+
+}
+
+void Tablero::moverPieza() {
+        
+    seleccionaCasilla();
+
+    static Personaje* auxPersonaje=nullptr;
+   
+
+    if(cuadricula[fila_seleccionada][columna_seleccionada]!=nullptr && fila_seleccionada!=-1 && columna_seleccionada!=-1){
+    
+        if (turno == cuadricula[fila_seleccionada][columna_seleccionada]->get_equipo()) {
+
+            auxPersonaje = cuadricula[fila_seleccionada][columna_seleccionada];
+            reset_seleccion();
+
+        }
+    }
+
+    if ( fila_seleccionada != -1 && columna_seleccionada != -1 && auxPersonaje!=nullptr) {
+
+        if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr) {
+
+            cuadricula[fila_seleccionada][columna_seleccionada]->~Personaje();
+
+        }
+
+        cambioPosicionPieza(auxPersonaje, fila_seleccionada, columna_seleccionada);
+        auxPersonaje = nullptr;
+        reset_seleccion();
+        turno = turno == LUZ ? OSCURIDAD : LUZ;
+
+
+    }
+
 }
