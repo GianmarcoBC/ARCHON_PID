@@ -4,6 +4,7 @@ inline constexpr float Velocidad_media = 500.0f, Velocidad_baja=200.0f;
 inline constexpr float Vida_muyalta=2000.0f, Vida_alta = 1000.0f, Vida_media = 500.0f, Vida_baja = 200.0f;
 
 enum equipo { LUZ,OSCURIDAD };
+enum class tipo_pj { MH, Phoenix,Golem,Djinni,Unicorn,Valkyrie,Archer,Knight,Platero,ShapeShifter,Troll,Dragon,Basilisk,Banshee,Manticore,Goblin};
 
 struct Pj
 {
@@ -14,6 +15,8 @@ struct Pj
     bool rango; // Rango (TRUE) o cuerpo a cuerpo (FALSE)
     bool vuela; // Puede volar (TRUE) o no (FALSE)
     bool equipo; //Luz (FALSE) u oscuridad (TRUE)
+    tipo_pj ID; //Permite diferenciar los tipos de personajes
+    const unsigned int rangoTablero;
 };
 
 //Claro
@@ -24,7 +27,9 @@ inline constexpr Pj MH = {
     Vida_media,
     true, // Rango
     true, // Vuela
-    LUZ
+    LUZ,
+    tipo_pj::MH,
+    3
 };
 
 inline constexpr Pj Phoenix = {
@@ -34,7 +39,9 @@ inline constexpr Pj Phoenix = {
     Vida_alta,
     false, // No rango
     true, // Vuela
-    LUZ
+    LUZ,
+    tipo_pj::Phoenix,
+    5
 };
 
 inline constexpr Pj Golem = {
@@ -44,7 +51,9 @@ inline constexpr Pj Golem = {
     Vida_alta,
     true, // Rango
     false, // No vuela
-    LUZ
+    LUZ,
+    tipo_pj::Golem,
+    3
 };
 
 inline constexpr Pj Djinni = {
@@ -54,7 +63,9 @@ inline constexpr Pj Djinni = {
     Vida_alta,
     true, // Rango
     true, // Vuela
-    LUZ
+    LUZ,
+    tipo_pj::Djinni,
+    4
 };
 
 inline constexpr Pj Unicorn = {
@@ -64,7 +75,9 @@ inline constexpr Pj Unicorn = {
     Vida_media,
     true, // Rango
     false, // No vuela
-    LUZ
+    LUZ,
+   tipo_pj::Unicorn,
+   4
 };
 
 inline constexpr Pj Valkyrie = {
@@ -74,7 +87,9 @@ inline constexpr Pj Valkyrie = {
     Vida_media,
     true, // Rango
     true, // Vuela
-    LUZ
+    LUZ,
+   tipo_pj::Valkyrie,
+   3
 };
 
 inline constexpr Pj Archer = {
@@ -84,7 +99,9 @@ inline constexpr Pj Archer = {
     Vida_baja,
     true, // Rango
     false, // No vuela
-    LUZ
+    LUZ,
+    tipo_pj::Archer,
+    3
 };
 
 inline constexpr Pj Knight = {
@@ -94,7 +111,9 @@ inline constexpr Pj Knight = {
     Vida_baja,
     false, // No rango
     false, // No vuela
-    LUZ
+    LUZ,
+    tipo_pj::Knight,
+    3
 };
 
 
@@ -106,7 +125,9 @@ inline constexpr Pj Platero = {
     Vida_media,
     true, // Rango
     true, // Vuela
-    OSCURIDAD
+    OSCURIDAD,
+    tipo_pj::Platero,
+    3
 };
 
 inline constexpr Pj ShapeShifter = {
@@ -116,7 +137,9 @@ inline constexpr Pj ShapeShifter = {
     Vida_alta,
     false, // No rango
     true, // Vuela
-    OSCURIDAD
+    OSCURIDAD,
+    tipo_pj::ShapeShifter,
+    5
 };
 
 inline constexpr Pj Troll = {
@@ -126,7 +149,9 @@ inline constexpr Pj Troll = {
     Vida_alta,
     true, // Rango
     false, // No vuela
-    OSCURIDAD
+    OSCURIDAD,
+    tipo_pj::Troll,
+    3
 };
 
 inline constexpr Pj Dragon = {
@@ -136,7 +161,9 @@ inline constexpr Pj Dragon = {
     Vida_muyalta,
     true, // Rango
     true, // Vuela
-    OSCURIDAD
+    OSCURIDAD,
+    tipo_pj::Dragon,
+    4
 };
 
 inline constexpr Pj Basilisk = {
@@ -146,7 +173,9 @@ inline constexpr Pj Basilisk = {
     Vida_baja,
     true, // Rango
     false, // No vuela
-    OSCURIDAD
+    OSCURIDAD,
+    tipo_pj::Basilisk,
+    3
 };
 
 inline constexpr Pj Banshee = {
@@ -156,7 +185,9 @@ inline constexpr Pj Banshee = {
     Vida_media,
     true, // Rango
     true, // Vuela
-    OSCURIDAD
+    OSCURIDAD,
+    tipo_pj::Banshee,
+    3
 };
 
 inline constexpr Pj Manticore = {
@@ -166,7 +197,9 @@ inline constexpr Pj Manticore = {
     Vida_media,
     true, // Rango
     false, // No vuela
-    OSCURIDAD
+    OSCURIDAD,
+    tipo_pj::Manticore,
+    3
 };
 
 inline constexpr Pj Goblin = {
@@ -176,5 +209,7 @@ inline constexpr Pj Goblin = {
     Vida_baja,
     false, // No rango
     false, // No vuela
-    OSCURIDAD
+    OSCURIDAD,
+    tipo_pj::Goblin,
+    3
 };

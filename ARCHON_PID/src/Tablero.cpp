@@ -13,6 +13,7 @@ void Tablero::inicializarTablero() {
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
             cuadricula[i][j] = nullptr;
+            movimientosPosibles[i][j] = false;
         }
     }
 
@@ -95,6 +96,9 @@ void Tablero::Draw() {
         }
     }
 
+
+    casillasPosibles(personaje_seleccionado);
+
     //Bucle para dibujar los personajes
     for (int fila = 0; fila < casillasxlado; fila++) {
         for (int columna = 0; columna < casillasxlado; columna++) {
@@ -144,9 +148,8 @@ void Tablero::seleccionaCasilla() {
 
     }
 
-    std::cout << fila_seleccionada << " " << columna_seleccionada << std::endl;
-
- 
+    //std::cout << fila_seleccionada << " " << columna_seleccionada << std::endl;
+   
 
 }
 
@@ -173,36 +176,36 @@ void Tablero::moverPieza() {
         
     seleccionaCasilla();
 
-    static Personaje* auxPersonaje=nullptr;
+    //static Personaje* auxPersonaje=nullptr;
    
 
     if(cuadricula[fila_seleccionada][columna_seleccionada]!=nullptr && fila_seleccionada!=-1 && columna_seleccionada!=-1){
     
         if (turno == cuadricula[fila_seleccionada][columna_seleccionada]->get_equipo()) {
 
-            auxPersonaje = cuadricula[fila_seleccionada][columna_seleccionada];
+            personaje_seleccionado = cuadricula[fila_seleccionada][columna_seleccionada];
             reset_seleccion();
 
         }
     }
 
-    if ( fila_seleccionada != -1 && columna_seleccionada != -1 && auxPersonaje!=nullptr) {
+    if ( fila_seleccionada != -1 && columna_seleccionada != -1 && personaje_seleccionado!=nullptr /* && get_MovimientosPosibles(fila_seleccionada, columna_seleccionada) == true*/) {
 
         if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr) {
             
             Personaje* personajeAtacado = cuadricula[fila_seleccionada][columna_seleccionada];
-            int auxfila = auxPersonaje->get_fila(), auxcolumna = auxPersonaje->get_columna();
+            int auxfila = personaje_seleccionado->get_fila(), auxcolumna = personaje_seleccionado->get_columna();
 
-            auxPersonaje->set_fila_columna(fila_seleccionada, columna_seleccionada); //  se cambia eso pero no en la matriz
+            personaje_seleccionado->set_fila_columna(fila_seleccionada, columna_seleccionada); //  se cambia eso pero no en la matriz
            
             //Iniciar combate (como parámetros dar los personajes implicados)
            
-            Personaje* personajeGanador = auxPersonaje;
+            Personaje* personajeGanador = personajeAtacado; //Aqui es el que gane, que se decide en la batalla
             
-            if (personajeGanador == auxPersonaje) {//Si gana el que se ha movido:
+            if (personajeGanador == personaje_seleccionado) {//Si gana el que se ha movido:
             
                 cuadricula[fila_seleccionada][columna_seleccionada]->~Personaje();
-                cuadricula[fila_seleccionada][columna_seleccionada] = auxPersonaje;
+                cuadricula[fila_seleccionada][columna_seleccionada] = personaje_seleccionado;
                 cuadricula[auxfila][auxcolumna] = nullptr;
              
 
@@ -210,17 +213,148 @@ void Tablero::moverPieza() {
             
             else if (personajeGanador == personajeAtacado) {//Si gana el que estaba en la casilla:
                 cuadricula[auxfila][auxcolumna]->~Personaje();
+                cuadricula[auxfila][auxcolumna]=nullptr;
                 
             }
 
         }
-        else cambioPosicionPieza(auxPersonaje, fila_seleccionada, columna_seleccionada);
-          auxPersonaje = nullptr;
+        else cambioPosicionPieza(personaje_seleccionado, fila_seleccionada, columna_seleccionada);
+          personaje_seleccionado = nullptr;
        
         reset_seleccion();
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                movimientosPosibles[i][j] = false;
+            }
+        }
         turno = turno == LUZ ? OSCURIDAD : LUZ;
 
 
     }
+
+}
+
+
+
+void Tablero::casillasPosibles(Personaje* p) {
+
+    if(p != nullptr){
+         
+        if(personaje_seleccionado->get_vuela() == true) { //Si el personaje es Volador o Tp
+            for (int fila = (p->get_fila() - static_cast<int>(p->get_rangoTablero())); fila <= (p->get_fila() + static_cast<int>(p->get_rangoTablero())); fila++) {
+                for (int columna = (p->get_columna() - static_cast<int>(p->get_rangoTablero())); columna <= (p->get_columna() + static_cast<int>(p->get_rangoTablero())); columna++){
+                   
+                    if(cuadricula[fila][columna]==nullptr && fila>=0 && columna>=0 && fila <= 8 && columna <= 8)  DrawCasillas(fila, columna);
+
+                    else if (cuadricula[fila][columna] != nullptr && fila >= 0 && columna >= 0 && fila<=8 && columna<=8) {
+                       
+                        if (cuadricula[fila][columna]->get_equipo() != p->get_equipo()) DrawCasillas(fila, columna);
+    
+                    }
+
+                }
+            }
+        }
+    
+        if (personaje_seleccionado->get_vuela() == false) { //Si el personaje es Terrestre
+            
+            //Usamos 2 bucles por cada eje para ir del centro hacia fuera
+            for (int fila = p->get_fila() ; fila <= (p->get_fila() + static_cast<int>(p->get_rangoTablero())); fila++) {
+
+                if ( cuadricula[fila - 1][personaje_seleccionado->get_columna()] != nullptr && fila != p->get_fila()) {
+
+                    if (cuadricula[fila - 1][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo()) break;
+                }
+
+                if (cuadricula[fila][personaje_seleccionado->get_columna()] == nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0)  DrawCasillas(fila, personaje_seleccionado->get_columna());
+
+                else if (cuadricula[fila][personaje_seleccionado->get_columna()] != nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0) {
+                    
+                    if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() == p->get_equipo() && fila!= personaje_seleccionado->get_fila()) break;
+                    if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo()) DrawCasillas(fila, personaje_seleccionado->get_columna());
+
+                }
+               
+                if (fila == 8)break;
+
+            }
+           
+            for (int fila = p->get_fila() ; fila >= (p->get_fila() - static_cast<int>(p->get_rangoTablero())); fila--) {
+                
+                if ( cuadricula[fila + 1][personaje_seleccionado->get_columna()] != nullptr && fila!= p->get_fila()) {
+
+                    if (cuadricula[fila + 1][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo()) break;
+                }
+
+                if (cuadricula[fila][personaje_seleccionado->get_columna()] == nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0)  DrawCasillas(fila, personaje_seleccionado->get_columna());
+
+                else if (cuadricula[fila][personaje_seleccionado->get_columna()] != nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0) {
+
+                    if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() == p->get_equipo() && fila != personaje_seleccionado->get_fila()) break;
+                    if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo()) DrawCasillas(fila, personaje_seleccionado->get_columna());
+
+                }
+                if (fila == 0)break;
+
+            }
+
+            for (int columna = p->get_columna() ; columna <= (p->get_columna() + static_cast<int>(p->get_rangoTablero())); columna++) {
+
+                if ( cuadricula[personaje_seleccionado->get_fila()][columna - 1] != nullptr && columna != p->get_columna()) {
+
+                    if (cuadricula[personaje_seleccionado->get_fila()][columna-1]->get_equipo() != p->get_equipo()) break;
+                }
+
+                if (cuadricula[personaje_seleccionado->get_fila()][columna] == nullptr && personaje_seleccionado->get_fila() >= 0 && columna >= 0)  DrawCasillas(personaje_seleccionado->get_fila(), columna);
+
+                else if (cuadricula[personaje_seleccionado->get_fila()][columna] != nullptr && personaje_seleccionado->get_fila() >= 0 && columna >= 0) {
+
+                    if (cuadricula[personaje_seleccionado->get_fila()][columna]->get_equipo() == p->get_equipo() && columna != personaje_seleccionado->get_columna()) break;
+                    if (cuadricula[personaje_seleccionado->get_fila()][columna]->get_equipo() != p->get_equipo()) DrawCasillas(personaje_seleccionado->get_fila(), columna);
+
+                }
+                if (columna == 8)break;
+            }
+
+            for (int columna = p->get_columna(); columna >= (p->get_columna() - static_cast<int>(p->get_rangoTablero())); columna--) {
+
+                if (cuadricula[personaje_seleccionado->get_fila()][columna + 1] != nullptr && columna != p->get_columna()) {
+
+                    if (cuadricula[personaje_seleccionado->get_fila()][columna + 1]->get_equipo() != p->get_equipo()) break;
+                }
+
+                if (cuadricula[personaje_seleccionado->get_fila()][columna] == nullptr && personaje_seleccionado->get_fila() >= 0 && columna >= 0 && personaje_seleccionado->get_fila() <= 8 && columna <= 8)  DrawCasillas(personaje_seleccionado->get_fila(), columna);
+
+                else if (cuadricula[personaje_seleccionado->get_fila()][columna] != nullptr && personaje_seleccionado->get_fila() >= 0 && columna >= 0 && personaje_seleccionado->get_fila() <= 8 && columna <= 8) {
+
+                    if (cuadricula[personaje_seleccionado->get_fila()][columna]->get_equipo() == p->get_equipo() && columna != personaje_seleccionado->get_columna()) break;
+                    if (cuadricula[personaje_seleccionado->get_fila()][columna]->get_equipo() != p->get_equipo()) DrawCasillas(personaje_seleccionado->get_fila(), columna);
+
+                }
+
+                if (columna == 0)break;
+            }
+
+        }
+    }
+}
+
+
+void Tablero::DrawCasillas(int fila, int columna) {
+
+    Color colorCasilla;
+    if ((fila + columna) % 2 == 0) {
+        colorCasilla = DARKBLUE;
+    }
+    else {
+        colorCasilla = DARKPURPLE;
+    }
+
+    set_MovimientosPosibles(true, fila, columna);
+
+    int posX = (970 / 2 - 4.5 * tamanoCasilla) + columna * tamanoCasilla; //970 es el largo de la pantalla
+    int posY = (580 / 2 - 4.5 * tamanoCasilla) + fila * tamanoCasilla; //580 es la altura de la pantalla
+
+    DrawRectangle(posX, posY, tamanoCasilla, tamanoCasilla, colorCasilla);
 
 }

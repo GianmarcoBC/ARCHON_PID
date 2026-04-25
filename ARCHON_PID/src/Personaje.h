@@ -13,6 +13,9 @@ class Personaje
     float vida;
     int fila, columna; // Posicion del personaje en la matriz
     bool equipo;
+    tipo_pj ID;
+    unsigned int rangoTablero;
+    bool vuela;
 
 public:
     //Constructor
@@ -25,12 +28,19 @@ public:
         fila = ifila;
         columna = icolumna;
         equipo = p.equipo;
+        ID = p.ID;
+        rangoTablero = p.rangoTablero;
+        vuela = p.vuela;
     }
 
     void set_fila_columna(int fil, int col);
     int get_fila() { return fila; };
     int get_columna() { return columna; };
     bool get_equipo() { return equipo; };
+    tipo_pj get_ID() { return ID; };
+    unsigned int get_rangoTablero() { return rangoTablero; };
+    bool get_vuela() { return vuela; };
+    
 
 
     //Actualización del arquero
