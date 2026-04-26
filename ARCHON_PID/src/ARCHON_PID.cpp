@@ -24,6 +24,7 @@ int main()
 
         tablero.moverPieza();
         tablero.detectaGanador();
+        tablero.hechizos();
        
         BeginDrawing();
         ClearBackground(RAYWHITE);

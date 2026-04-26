@@ -1,6 +1,6 @@
 #include "Tablero.h"
 
-
+#include <iostream>
 
 Tablero::Tablero(){
     casillasxlado = 9;
@@ -67,7 +67,129 @@ void Tablero::inicializarTablero() {
 
 
     
-    
+    for (int fila = 0; fila < 9; fila++) {
+        for (int columna = 0; columna < 9; columna++) {
+            
+         //primero hacemos las fijas de cada fila
+         //luego las cambiantes
+            
+            //primera fila y novena fila
+
+            if(fila==0||fila==8){
+                if (columna != 3 && columna != 4 && columna != 5) {
+
+                    if (columna < 4) {
+                        if ((fila + columna) % 2 == 0) {
+                            set_colorCasilla(ColorCasilla::NEGRO, fila, columna);
+                        }
+                        else {
+                            set_colorCasilla(ColorCasilla::BLANCO, fila, columna);
+                        }
+                    }
+                    else {
+                        if ((fila + columna) % 2 == 0) {
+                            set_colorCasilla(ColorCasilla::BLANCO, fila, columna);
+                        }
+                        else {
+                            set_colorCasilla(ColorCasilla::NEGRO, fila, columna);
+                        }
+                    }
+
+                }
+                else set_colorCasilla(ColorCasilla::CAMBIANTE, fila, columna);
+            }
+
+            //Segunda fila y octava
+
+            if (fila == 1 || fila == 7) {
+                if (columna != 2 && columna != 4 && columna != 6) {
+                   
+                    if (columna < 3||columna==5) {
+                        if ((fila + columna) % 2 == 0) {
+                            set_colorCasilla(ColorCasilla::NEGRO, fila, columna);
+                        }
+                        else {
+                            set_colorCasilla(ColorCasilla::BLANCO, fila, columna);
+                        }
+                    }
+                    else {
+                        if ((fila + columna) % 2 == 0) {
+                            set_colorCasilla(ColorCasilla::BLANCO, fila, columna);
+                        }
+                        else {
+                            set_colorCasilla(ColorCasilla::NEGRO, fila, columna);
+                        }
+                    }
+                }
+                else set_colorCasilla(ColorCasilla::CAMBIANTE, fila, columna);
+            }
+
+            //Tercera fila y septima fila
+            if (fila == 2 || fila == 6) {
+                    if (columna != 1 && columna != 4 && columna != 7) {
+
+                        if (columna ==0|| columna==5||columna==6) {
+                            if ((fila + columna) % 2 == 0) {
+                                set_colorCasilla(ColorCasilla::NEGRO, fila, columna);
+                            }
+                            else {
+                                set_colorCasilla(ColorCasilla::BLANCO, fila, columna);
+                            }
+                        }
+                        else {
+                            if ((fila + columna) % 2 == 0) {
+                                set_colorCasilla(ColorCasilla::BLANCO, fila, columna);
+                            }
+                            else {
+                                set_colorCasilla(ColorCasilla::NEGRO, fila, columna);
+                            }
+                        }
+                    }
+                    else set_colorCasilla(ColorCasilla::CAMBIANTE, fila, columna);
+            }
+
+            //Cuarta fila y sexta fila
+
+            if (fila == 3 || fila == 5) {
+                if (columna != 0 && columna != 4 && columna != 8) {
+
+                    if (columna > 4) {
+                        if ((fila + columna) % 2 == 0) {
+                            set_colorCasilla(ColorCasilla::NEGRO, fila, columna);
+                        }
+                        else {
+                            set_colorCasilla(ColorCasilla::BLANCO, fila, columna);
+                        }
+                    }
+                    else {
+                        if ((fila + columna) % 2 == 0) {
+                            set_colorCasilla(ColorCasilla::BLANCO, fila, columna);
+                        }
+                        else {
+                            set_colorCasilla(ColorCasilla::NEGRO, fila, columna);
+                        }
+                    }
+                }
+                else set_colorCasilla(ColorCasilla::CAMBIANTE, fila, columna);
+            }
+            
+            //Quinta fila
+            if (fila == 4) {
+                if (columna != 0 && columna != 8 ) set_colorCasilla(ColorCasilla::CAMBIANTE, fila, columna);
+                else {
+
+                    if ((fila + columna) % 2 == 0) {
+                        set_colorCasilla(ColorCasilla::BLANCO, fila, columna);
+                    }
+                    else {
+                        set_colorCasilla(ColorCasilla::NEGRO, fila, columna);
+                    }
+                }
+            }
+               
+        }
+    }
+        
 }
 
 
@@ -79,12 +201,19 @@ void Tablero::Draw() {
         for (int columna = 0; columna < casillasxlado; columna++) {
 
             Color colorCasilla; 
-            if ((fila + columna) % 2 == 0) {
-                colorCasilla = LIGHTGRAY; 
+            if (get_colorCasilla(fila,columna) == ColorCasilla::BLANCO) colorCasilla = WHITE;
+            if (get_colorCasilla(fila, columna) == ColorCasilla::NEGRO) colorCasilla = BLACK;
+            
+            if (get_colorCasilla(fila, columna) == ColorCasilla::CAMBIANTE) {
+
+
+                if(Ciclo  == 0) colorCasilla = Color{ 230, 200, 245, 255 };
+                else if (Ciclo == 1) colorCasilla = Color{ 180, 130, 210, 255 };
+                else if (Ciclo == 2) colorCasilla = Color{ 130, 70, 175, 255 };
+                else if (Ciclo == 3) colorCasilla = Color{ 80, 30, 120, 255 };
+                else if (Ciclo == 4) colorCasilla = Color{ 40, 10, 70, 255 };
             }
-            else {
-                colorCasilla = DARKGRAY;  
-            }
+
 
             int posX =  (970/2-4.5*tamanoCasilla)+columna * tamanoCasilla; //970 es el largo de la pantalla
             int posY = (580 / 2 - 4.5 * tamanoCasilla)+fila * tamanoCasilla; //580 es la altura de la pantalla
@@ -115,7 +244,7 @@ void Tablero::Draw() {
     
 }
 
-#include <iostream>
+
 
 void Tablero::seleccionaCasilla() {
 
@@ -228,6 +357,7 @@ void Tablero::moverPieza() {
             }
         }
         turno = turno == LUZ ? OSCURIDAD : LUZ;
+        avanceCiclo();
 
 
     }
@@ -393,7 +523,6 @@ void Tablero::detectaGanador() {
         }
     }
 
-    std::cout << contadorLuz << std::endl;
 
     if (ganaLuz == true||contadorLuz==5) { //Se acaba el juego, gana luz
         std::cout << "Gana Luz" << std::endl;
@@ -404,20 +533,97 @@ void Tablero::detectaGanador() {
 
     }
 
-
-
-
-
-
+    //Tercera forma: a un equipo solo le queda un personaje, y este personaje está atrapado:
 
 
 
 
 
  }
+
+
+
+void Tablero::Shift_Time(Personaje* personaje) {
+    
+    if(Ciclo!=0 && Ciclo!=4){
+    avance = !avance;
+    }
+
+    if (personaje->get_ID() == tipo_pj::MH) hechizosLuz[3] = true;
+    if (personaje->get_ID() == tipo_pj::Platero) hechizosOscuridad[3] = true;
+
+}
+
+
+void Tablero::Teleport(Personaje* personaje) {
+
+
+
+
+}
+
+
+
+
+
+
  
 
+void Tablero::hechizos() {
 
+    //1. Teleport: mueve una pieza aliada a otra casilla válida
+    //2. Heal: cura completamente a una pieza aliada
+    //3. Shift Time: altera el ciclo de oscilación de las casillas  HECHO
+    //4. Exchange: intercambia dos piezas seleccionadas
+    //5. Summon Elemental: invoca un elemental temporal para luchar contra una pieza enemiga
+    //6. Revive: resucita una pieza aliada eliminada, colocándola junto al hecicero
+    //7. Imprison: encierra una pieza enemiga en su casilla, impidiéndole moverse. Se libera en vae a los ciclos de color. 
+
+    if(personaje_seleccionado!=nullptr){
+        if(personaje_seleccionado->get_ID () == tipo_pj::MH || personaje_seleccionado->get_ID () == tipo_pj::MH) {
+    
+            if (IsKeyPressed(KEY_C) && hechizosLuz[2]==false) {
+
+                Shift_Time(personaje_seleccionado);
+             
+
+                
+
+            }
+        
+        
+    
+    
+        }
+
+
+
+    }
+
+
+
+
+
+
+}
+
+
+void Tablero::avanceCiclo() {
+
+    bool antirrebote = false;
+   
+    if (avance == false) {
+        Ciclo++;
+            if (Ciclo == 4) avance = !avance;
+            antirrebote = true;
+    }
+    if (avance == true && antirrebote==false ) {
+        Ciclo--;
+        if (Ciclo == 0) avance = !avance;
+    }
+
+    //std::cout << Ciclo << std::endl;
+}
 
 
 
