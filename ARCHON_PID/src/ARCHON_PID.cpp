@@ -23,6 +23,7 @@ int main()
         
 
         tablero.moverPieza();
+        tablero.detectaGanador();
        
         BeginDrawing();
         ClearBackground(RAYWHITE);

@@ -32,6 +32,7 @@ public:
     void DrawCasillas( int fila, int columna);
     void set_MovimientosPosibles(bool set, int fila, int columna){ movimientosPosibles[fila][columna] = set; };
     bool get_MovimientosPosibles(int fila, int columna) { return movimientosPosibles[fila][columna]; };
+    void detectaGanador();
 
 };
 

@@ -266,9 +266,9 @@ void Tablero::casillasPosibles(Personaje* p) {
                     if (cuadricula[fila - 1][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo()) break;
                 }
 
-                if (cuadricula[fila][personaje_seleccionado->get_columna()] == nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0)  DrawCasillas(fila, personaje_seleccionado->get_columna());
+                if (cuadricula[fila][personaje_seleccionado->get_columna()] == nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0 && fila <= 8 && personaje_seleccionado->get_columna() <= 8)  DrawCasillas(fila, personaje_seleccionado->get_columna());
 
-                else if (cuadricula[fila][personaje_seleccionado->get_columna()] != nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0) {
+                else if (cuadricula[fila][personaje_seleccionado->get_columna()] != nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0 && fila <= 8 && personaje_seleccionado->get_columna() <= 8) {
                     
                     if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() == p->get_equipo() && fila!= personaje_seleccionado->get_fila()) break;
                     if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo()) DrawCasillas(fila, personaje_seleccionado->get_columna());
@@ -286,9 +286,9 @@ void Tablero::casillasPosibles(Personaje* p) {
                     if (cuadricula[fila + 1][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo()) break;
                 }
 
-                if (cuadricula[fila][personaje_seleccionado->get_columna()] == nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0)  DrawCasillas(fila, personaje_seleccionado->get_columna());
+                if (cuadricula[fila][personaje_seleccionado->get_columna()] == nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0 && fila <= 8 && personaje_seleccionado->get_columna() <= 8)  DrawCasillas(fila, personaje_seleccionado->get_columna());
 
-                else if (cuadricula[fila][personaje_seleccionado->get_columna()] != nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0) {
+                else if (cuadricula[fila][personaje_seleccionado->get_columna()] != nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0 && fila <= 8 && personaje_seleccionado->get_columna() <= 8) {
 
                     if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() == p->get_equipo() && fila != personaje_seleccionado->get_fila()) break;
                     if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo()) DrawCasillas(fila, personaje_seleccionado->get_columna());
@@ -307,7 +307,7 @@ void Tablero::casillasPosibles(Personaje* p) {
 
                 if (cuadricula[personaje_seleccionado->get_fila()][columna] == nullptr && personaje_seleccionado->get_fila() >= 0 && columna >= 0)  DrawCasillas(personaje_seleccionado->get_fila(), columna);
 
-                else if (cuadricula[personaje_seleccionado->get_fila()][columna] != nullptr && personaje_seleccionado->get_fila() >= 0 && columna >= 0) {
+                else if (cuadricula[personaje_seleccionado->get_fila()][columna] != nullptr && personaje_seleccionado->get_fila() >= 0 && columna >= 0 && personaje_seleccionado->get_fila() <= 8 && columna <=80) {
 
                     if (cuadricula[personaje_seleccionado->get_fila()][columna]->get_equipo() == p->get_equipo() && columna != personaje_seleccionado->get_columna()) break;
                     if (cuadricula[personaje_seleccionado->get_fila()][columna]->get_equipo() != p->get_equipo()) DrawCasillas(personaje_seleccionado->get_fila(), columna);
@@ -358,3 +358,71 @@ void Tablero::DrawCasillas(int fila, int columna) {
     DrawRectangle(posX, posY, tamanoCasilla, tamanoCasilla, colorCasilla);
 
 }
+
+
+
+
+
+void Tablero::detectaGanador() {
+
+
+    //Primera forma: no hay ninguna pieza de un equipo
+    //Segunda forma: dominio de un equipo de todos los puntos de poder
+
+    bool ganaLuz = true, ganaOscuridad = true;
+    int contadorLuz = 0, contadorOscuridad = 0;
+  
+
+    for (int i = 0; i < 9; i++) {
+        for (int j = 0; j < 9; j++) {
+
+            //Las posiciones de puntos de poder son: [0][4], [4][1], [4][4], [4][8], [8][4]
+            bool puntoPoder = (i == 0 && j == 4) || (i == 4 && j == 0) || (i == 4 && j == 4) || (i == 4 && j == 8) || (i == 8 && j == 4);
+            
+            if (cuadricula[i][j] != nullptr) { //Primero nos aseguramos que es un personaje
+
+                if (cuadricula[i][j]->get_equipo() == LUZ) ganaOscuridad = false;
+                if (cuadricula[i][j]->get_equipo() == OSCURIDAD)  ganaLuz = false;
+
+                if (puntoPoder == true) {
+                    
+                    if (cuadricula[i][j]->get_equipo() == LUZ) contadorLuz++;
+                    if (cuadricula[i][j]->get_equipo() == OSCURIDAD)  contadorOscuridad++;
+                }
+            }
+        }
+    }
+
+    std::cout << contadorLuz << std::endl;
+
+    if (ganaLuz == true||contadorLuz==5) { //Se acaba el juego, gana luz
+        std::cout << "Gana Luz" << std::endl;
+    }
+    if (ganaOscuridad == true||contadorOscuridad==5) { //Se acaba el juego, gana oscuridad
+
+        std::cout << "Gana Oscuridad" << std::endl;
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+ }
+ 
+
+
+
+
+
+
+
+
+
+
