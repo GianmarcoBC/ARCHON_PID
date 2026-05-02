@@ -17,6 +17,7 @@ class Personaje
     tipo_pj ID;
     unsigned int rangoTablero;
     bool vuela;
+    bool imprison{ false };
    
 
 public:
@@ -45,6 +46,8 @@ public:
     unsigned int get_rangoTablero() { return rangoTablero; };
     bool get_vuela() { return vuela; };
     void heal() { vida = vidaMax; }
+    void set_imprison(bool aux) { imprison = aux; };
+    bool get_imprison() { return imprison; };
     
 
 

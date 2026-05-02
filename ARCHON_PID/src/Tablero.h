@@ -4,7 +4,7 @@
 #include "Pj.h"
 
 enum class ColorCasilla{BLANCO,NEGRO,CAMBIANTE};
-enum class ModoJuego { NORMAL, COMBATE, HECHIZOS, SHIFT, HEAL, TELEPORT, EXCHANGE};
+enum class ModoJuego { NORMAL, COMBATE, HECHIZOS, SHIFT, HEAL, TELEPORT, EXCHANGE, IMPRISON};
 
 
 class Tablero
@@ -60,6 +60,7 @@ public:
     void Teleport(Personaje* personaje);
     void Heal(Personaje* personaje);
     void Exchange();
+    void Imprison(Personaje* personaje);
 
 };
 
