@@ -29,6 +29,10 @@ void Tablero::LogicaTablero() {
         Teleport(personaje_usando_magia);
     }
 
+    if (get_modoJuegoActual() == ModoJuego::EXCHANGE) {
+        Exchange();
+    }
+
 
 }
 
@@ -208,12 +212,9 @@ void Tablero::inicializarTablero() {
                 if (columna != 0 && columna != 8 ) set_colorCasilla(ColorCasilla::CAMBIANTE, fila, columna);
                 else {
 
-                    if ((fila + columna) % 2 == 0) {
-                        set_colorCasilla(ColorCasilla::BLANCO, fila, columna);
-                    }
-                    else {
-                        set_colorCasilla(ColorCasilla::NEGRO, fila, columna);
-                    }
+                    if (columna == 0) set_colorCasilla(ColorCasilla::BLANCO, fila, columna);
+                    if (columna == 8) set_colorCasilla(ColorCasilla::NEGRO, fila, columna);
+                    
                 }
             }
                
@@ -349,7 +350,7 @@ void Tablero::moverPieza() {
     }
     iniciaEstadoHechizos();
 
-    if ( fila_seleccionada != -1 && columna_seleccionada != -1 && personaje_seleccionado!=nullptr /* && get_MovimientosPosibles(fila_seleccionada, columna_seleccionada) == true*/) {
+    if ( fila_seleccionada != -1 && columna_seleccionada != -1 && personaje_seleccionado!=nullptr /*&& get_MovimientosPosibles(fila_seleccionada, columna_seleccionada) == true*/) {
 
         if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr) {
             
@@ -746,6 +747,61 @@ void Tablero::Heal(Personaje* personaje) {
 
 }
 
+
+void Tablero::Exchange() {
+
+    if ((personaje_usando_magia->get_ID() == tipo_pj::MH && hechizosLuz[3] == true) || (personaje_usando_magia->get_ID() == tipo_pj::Platero && hechizosOscuridad[3] == true)) {
+
+        std::cout << "El hechizo Shift ya se ha utilizado" << std::endl;
+        modoJuegoactual = ModoJuego::HECHIZOS;
+
+    }
+    
+    seleccionaCasilla();
+
+    if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr && fila_seleccionada != -1 && columna_seleccionada != -1 && personaje_auxiliar == nullptr) {
+        personaje_auxiliar = cuadricula[fila_seleccionada][columna_seleccionada];
+        std::cout << "El hechizo Shift ya se ha utilizado" << std::endl;
+        reset_seleccion();  
+    }
+    if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr && fila_seleccionada != -1 && columna_seleccionada != -1 && personaje_auxiliar!=nullptr) {
+        personaje_seleccionado = cuadricula[fila_seleccionada][columna_seleccionada];
+        std::cout << "El hechizo Shift ya se ha utilizado" << std::endl;
+        reset_seleccion();
+    }
+    if (personaje_auxiliar != nullptr && personaje_seleccionado != nullptr) {
+
+        Personaje* auxiliar = personaje_auxiliar;
+        int auxfila, auxcolumna;
+
+        auxfila = personaje_auxiliar->get_fila();
+        auxcolumna = personaje_auxiliar->get_columna();
+       
+        int selfila, selcolumna;
+
+        selfila = personaje_seleccionado->get_fila();
+        selcolumna = personaje_seleccionado->get_columna();
+
+        cuadricula[auxfila][auxcolumna] = personaje_seleccionado;
+        cuadricula[selfila][selcolumna] = auxiliar;
+        cuadricula[auxfila][auxcolumna]->set_fila_columna(auxfila, auxcolumna);
+        cuadricula[selfila][selcolumna]->set_fila_columna(selfila, selcolumna);
+        
+        turno = turno == LUZ ? OSCURIDAD : LUZ;
+        if (personaje_usando_magia->get_ID() == tipo_pj::MH) hechizosLuz[3] = true;
+        if (personaje_usando_magia->get_ID() == tipo_pj::Platero) hechizosOscuridad[3] = true;
+        personaje_seleccionado = nullptr;
+        personaje_auxiliar = nullptr;
+        personaje_usando_magia = nullptr;
+        modoJuegoactual = ModoJuego::NORMAL;
+
+    }
+
+}
+
+
+
+
 void Tablero::iniciaEstadoHechizos() {
 
     if (personaje_seleccionado != nullptr) {
@@ -768,7 +824,7 @@ void Tablero::hechizos() {
     //1. Teleport: mueve una pieza aliada a otra casilla válida HECHO
     //2. Heal: cura completamente a una pieza aliada HECHO
     //3. Shift Time: altera el ciclo de oscilación de las casillas  HECHO
-    //4. Exchange: intercambia dos piezas seleccionadas
+    //4. Exchange: intercambia dos piezas seleccionadas HECHO
     //5. Summon Elemental: invoca un elemental temporal para luchar contra una pieza enemiga
     //6. Revive: resucita una pieza aliada eliminada, colocándola junto al hecicero
     //7. Imprison: encierra una pieza enemiga en su casilla, impidiéndole moverse. Se libera en vae a los ciclos de color. 
@@ -794,7 +850,10 @@ void Tablero::hechizos() {
         modoJuegoactual = ModoJuego::TELEPORT;
     }
         
-           
+    if (IsKeyPressed(KEY_E)) {
+        personaje_seleccionado = nullptr;
+        modoJuegoactual = ModoJuego::EXCHANGE;
+    }
             
     
       

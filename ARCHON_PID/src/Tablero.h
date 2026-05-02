@@ -4,7 +4,7 @@
 #include "Pj.h"
 
 enum class ColorCasilla{BLANCO,NEGRO,CAMBIANTE};
-enum class ModoJuego { NORMAL, COMBATE, HECHIZOS, SHIFT, HEAL, TELEPORT };
+enum class ModoJuego { NORMAL, COMBATE, HECHIZOS, SHIFT, HEAL, TELEPORT, EXCHANGE};
 
 
 class Tablero
@@ -15,6 +15,7 @@ class Tablero
     Personaje* cuadricula[9][9];
     Personaje* personaje_seleccionado{nullptr};
     Personaje* personaje_usando_magia{ nullptr };
+    Personaje* personaje_auxiliar{ nullptr };
     int fila_seleccionada{-1};
     int columna_seleccionada{-1};
     bool turno{LUZ};
@@ -58,6 +59,7 @@ public:
     void Shift_Time(Personaje* personaje);
     void Teleport(Personaje* personaje);
     void Heal(Personaje* personaje);
+    void Exchange();
 
 };
 
