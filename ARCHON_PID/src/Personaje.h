@@ -11,11 +11,13 @@ class Personaje
     Vector2 l_dir{ 1.0f, 0.0f }; // Vector de dirección inicializado a derecha
     float speed;
     float vida;
+    float vidaMax;//Vida del personaje por defecto
     int fila, columna; // Posicion del personaje en la matriz
     bool equipo;
     tipo_pj ID;
     unsigned int rangoTablero;
     bool vuela;
+   
 
 public:
     //Constructor
@@ -25,12 +27,14 @@ public:
         Ataque = LoadTexture(p.Ataque);
         speed = p.vel;
         vida = p.vida;
+        vidaMax = p.vida;
         fila = ifila;
         columna = icolumna;
         equipo = p.equipo;
         ID = p.ID;
         rangoTablero = p.rangoTablero;
         vuela = p.vuela;
+        
     }
 
     void set_fila_columna(int fil, int col);
@@ -40,6 +44,7 @@ public:
     tipo_pj get_ID() { return ID; };
     unsigned int get_rangoTablero() { return rangoTablero; };
     bool get_vuela() { return vuela; };
+    void heal() { vida = vidaMax; }
     
 
 

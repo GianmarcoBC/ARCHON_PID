@@ -15,17 +15,15 @@ int main()
     PlayMusicStream(musica);
 
     tablero.inicializarTablero();
+    
 
     while (!WindowShouldClose()) {
         game.Update();
         UpdateMusicStream(musica);  // necesario llamarlo cada frame
 
-        
+        tablero.LogicaTablero();
 
-        tablero.moverPieza();
-        tablero.detectaGanador();
-        tablero.hechizos();
-       
+
         BeginDrawing();
         ClearBackground(RAYWHITE);
 

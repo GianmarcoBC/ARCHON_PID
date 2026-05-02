@@ -8,6 +8,36 @@ Tablero::Tablero(){
 
 }
 
+
+void Tablero::LogicaTablero() {
+
+
+    if (get_modoJuegoActual() == ModoJuego::NORMAL) {
+        moverPieza();
+        detectaGanador();
+
+    }
+
+    if (get_modoJuegoActual() == ModoJuego::HECHIZOS) {
+        hechizos();
+    }
+    if (get_modoJuegoActual() == ModoJuego::HEAL) {
+        Heal(personaje_usando_magia);
+    }
+
+    if (get_modoJuegoActual() == ModoJuego::TELEPORT) {
+        Teleport(personaje_usando_magia);
+    }
+
+
+}
+
+
+
+
+
+
+
 void Tablero::inicializarTablero() {
     // Primero, nos aseguramos de que toda la matriz esté vacía
     for (int i = 0; i < 9; i++) {
@@ -225,8 +255,8 @@ void Tablero::Draw() {
         }
     }
 
-
-    casillasPosibles(personaje_seleccionado);
+    if(modoJuegoactual==ModoJuego::NORMAL) casillasPosibles(personaje_seleccionado);
+    if (modoJuegoactual == ModoJuego::TELEPORT) DrawCasillas();
 
     //Bucle para dibujar los personajes
     for (int fila = 0; fila < casillasxlado; fila++) {
@@ -317,6 +347,7 @@ void Tablero::moverPieza() {
 
         }
     }
+    iniciaEstadoHechizos();
 
     if ( fila_seleccionada != -1 && columna_seleccionada != -1 && personaje_seleccionado!=nullptr /* && get_MovimientosPosibles(fila_seleccionada, columna_seleccionada) == true*/) {
 
@@ -489,6 +520,29 @@ void Tablero::DrawCasillas(int fila, int columna) {
 
 }
 
+void Tablero::DrawCasillas() {
+
+    for (int i = 0; i < 9; i++) {
+        for (int j = 0; j < 9; j++) {
+
+            if (movimientosPosibles[i][j] == true) {
+                Color colorCasilla;
+                if ((i + j) % 2 == 0) {
+                    colorCasilla = DARKBLUE;
+                }
+                else {
+                    colorCasilla = DARKPURPLE;
+                }
+                int posX = (970 / 2 - 4.5 * tamanoCasilla) + j * tamanoCasilla; //970 es el largo de la pantalla
+                int posY = (580 / 2 - 4.5 * tamanoCasilla) + i * tamanoCasilla; //580 es la altura de la pantalla
+
+                DrawRectangle(posX, posY, tamanoCasilla, tamanoCasilla, colorCasilla);
+
+            }
+        }
+    }
+}
+
 
 
 
@@ -545,60 +599,205 @@ void Tablero::detectaGanador() {
 
 void Tablero::Shift_Time(Personaje* personaje) {
     
-    if(Ciclo!=0 && Ciclo!=4){
-    avance = !avance;
+    if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[2] == true) || (personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[2] == true)) {
+
+        std::cout << "El hechizo Shift ya se ha utilizado" << std::endl;
+        modoJuegoactual = ModoJuego::HECHIZOS;
+
     }
+   
+    if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[2] == false) || (personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[2] == false)) {
+        if (Ciclo != 0 && Ciclo != 4) {
+            avance = !avance;
+        }
+        turno = turno == LUZ ? OSCURIDAD : LUZ;
+        personaje_seleccionado = nullptr;
+        personaje_usando_magia = nullptr;
+        if (personaje->get_ID() == tipo_pj::MH) hechizosLuz[2] = true;
+        if (personaje->get_ID() == tipo_pj::Platero) hechizosOscuridad[2] = true;
+        modoJuegoactual = ModoJuego::NORMAL;
 
-    if (personaje->get_ID() == tipo_pj::MH) hechizosLuz[3] = true;
-    if (personaje->get_ID() == tipo_pj::Platero) hechizosOscuridad[3] = true;
-
+    }
 }
 
 
 void Tablero::Teleport(Personaje* personaje) {
 
+    if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[0] == true) || (personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[0] == true)) {
+
+        std::cout << "El hechizo Teleport ya se ha utilizado" << std::endl;
+        modoJuegoactual = ModoJuego::HECHIZOS;
+
+    }
+
+    moverPieza();
+
+    if (personaje_seleccionado == nullptr) {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+
+                if (cuadricula[i][j] == nullptr) movimientosPosibles[i][j] = false;
+            }
+        }
+    }
+
+    if (personaje->get_ID() == tipo_pj::MH && turno ==OSCURIDAD ) {
+
+        personaje_seleccionado = nullptr;
+        personaje_usando_magia = nullptr;
+        hechizosLuz[0] = true;
+        modoJuegoactual = ModoJuego::NORMAL;
+
+    }
+
+    if (personaje->get_ID() == tipo_pj::Platero && turno == LUZ) {
+
+        personaje_seleccionado = nullptr;
+        personaje_usando_magia = nullptr;
+        hechizosOscuridad[0] = true;
+        modoJuegoactual = ModoJuego::NORMAL;
+
+    }
+
+    if (personaje->get_ID() == tipo_pj::MH && hechizosLuz[0] == false) {
+
+        if(personaje_seleccionado!=nullptr){
+            if (personaje_seleccionado->get_equipo() == LUZ) {
+
+                for (int i = 0; i < 9; i++) {
+                    for (int j = 0; j < 9; j++) {
+
+                        if (cuadricula[i][j] == nullptr) movimientosPosibles[i][j]=true;
+                    }
+                }
+            }
+        }
+    }
+    
+    if (personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[0] == false) {
+        if (personaje_seleccionado != nullptr) {
+            if (personaje_seleccionado->get_equipo() == OSCURIDAD) {
+                for (int i = 0; i < 9; i++) {
+                    for (int j = 0; j < 9; j++) {
+
+                        if (cuadricula[i][j] == nullptr) movimientosPosibles[i][j] = true;
+                    }
+                }
+            }
+        }
+    }
 
 
+}
 
+void Tablero::Heal(Personaje* personaje) {
+ 
+    if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[1] == true) || (personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[1] == true)) {
+
+        std::cout << "El hechizo Heal ya se ha utilizado" << std::endl;
+        modoJuegoactual = ModoJuego::HECHIZOS;
+
+    }
+    
+    seleccionaCasilla();
+
+    if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr && fila_seleccionada != -1 && columna_seleccionada != -1) {
+        personaje_seleccionado = cuadricula[fila_seleccionada][columna_seleccionada];
+        reset_seleccion();
+    }
+
+    if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[1] == false)) {
+
+        if (personaje_seleccionado != nullptr){
+            
+            if (personaje_seleccionado->get_equipo() == LUZ) {
+               
+                personaje_seleccionado->heal();
+                turno = turno == LUZ ? OSCURIDAD : LUZ;
+                personaje_seleccionado = nullptr;
+                personaje_usando_magia = nullptr;
+                hechizosLuz[1] = true;
+                modoJuegoactual = ModoJuego::NORMAL;
+                std::cout << "Personaje curado" << std::endl;
+
+            }
+        }
+
+    }
+
+
+    if ((personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[1] == false)) {
+
+        if (personaje_seleccionado != nullptr) {
+
+            if (personaje_seleccionado->get_equipo() == OSCURIDAD) {
+
+                personaje_seleccionado->heal();
+                turno = turno == LUZ ? OSCURIDAD : LUZ;
+                personaje_seleccionado = nullptr;
+                personaje_usando_magia = nullptr;
+                hechizosOscuridad[1] = true;
+                modoJuegoactual = ModoJuego::NORMAL;
+
+            }
+        }
+    }
+
+
+}
+
+void Tablero::iniciaEstadoHechizos() {
+
+    if (personaje_seleccionado != nullptr) {
+        if (personaje_seleccionado->get_ID() == tipo_pj::MH || personaje_seleccionado->get_ID() == tipo_pj::Platero) {
+
+            if (IsKeyPressed(KEY_M)) {
+
+                modoJuegoactual = ModoJuego::HECHIZOS; 
+                personaje_usando_magia = personaje_seleccionado; 
+            }
+        }
+    }
 }
 
 
 
 
-
-
- 
-
 void Tablero::hechizos() {
 
-    //1. Teleport: mueve una pieza aliada a otra casilla válida
-    //2. Heal: cura completamente a una pieza aliada
+    //1. Teleport: mueve una pieza aliada a otra casilla válida HECHO
+    //2. Heal: cura completamente a una pieza aliada HECHO
     //3. Shift Time: altera el ciclo de oscilación de las casillas  HECHO
     //4. Exchange: intercambia dos piezas seleccionadas
     //5. Summon Elemental: invoca un elemental temporal para luchar contra una pieza enemiga
     //6. Revive: resucita una pieza aliada eliminada, colocándola junto al hecicero
     //7. Imprison: encierra una pieza enemiga en su casilla, impidiéndole moverse. Se libera en vae a los ciclos de color. 
 
-    if(personaje_seleccionado!=nullptr){
-        if(personaje_seleccionado->get_ID () == tipo_pj::MH || personaje_seleccionado->get_ID () == tipo_pj::MH) {
-    
-            if (IsKeyPressed(KEY_C) && hechizosLuz[2]==false) {
-
-                Shift_Time(personaje_seleccionado);
-             
-
-                
-
-            }
-        
-        
-    
-    
-        }
-
-
-
+    if (IsKeyPressed(KEY_A)) {
+        personaje_usando_magia = nullptr;
+        modoJuegoactual = ModoJuego::NORMAL;
     }
+
+ 
+     //Hechizo 3 Shift
+    if (IsKeyPressed(KEY_S)) {
+
+        Shift_Time(personaje_usando_magia);
+    }
+     //Hechizo 2 Heal
+    if (IsKeyPressed(KEY_H)) {
+        personaje_seleccionado = nullptr;
+        modoJuegoactual = ModoJuego::HEAL;
+    }
+    if (IsKeyPressed(KEY_T)) {
+        personaje_seleccionado = nullptr;
+        modoJuegoactual = ModoJuego::TELEPORT;
+    }
+        
+           
+            
+    
+      
 
 
 
