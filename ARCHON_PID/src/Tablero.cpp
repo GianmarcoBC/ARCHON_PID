@@ -35,6 +35,9 @@ void Tablero::LogicaTablero() {
     if (get_modoJuegoActual() == ModoJuego::IMPRISON) {
         Imprison(personaje_usando_magia);
     }
+    if (get_modoJuegoActual() == ModoJuego::REVIVE) {
+        Revive(personaje_usando_magia);
+    }
 
 
 }
@@ -262,13 +265,43 @@ void Tablero::Draw() {
     if(modoJuegoactual==ModoJuego::NORMAL) casillasPosibles(personaje_seleccionado);
     if (modoJuegoactual == ModoJuego::TELEPORT) DrawCasillas();
 
+    if (modoJuegoactual == ModoJuego::REVIVE) {
+
+        if (personaje_usando_magia->get_equipo() == LUZ) {
+            for (int i = 0; i < cementerio_Luz.size(); i++) {
+
+                if (i < 9) {
+                    cementerio_Luz[i]->set_fila_columna(i, 0);
+                }
+                else {
+                    cementerio_Luz[i]->set_fila_columna(i-9, 1);
+                }
+                cementerio_Luz[i]->DrawT(50, 36);
+            }
+        }
+    
+        if (personaje_usando_magia->get_equipo() == OSCURIDAD) {
+            for (int i = 0; i < cementerio_Oscuridad.size(); i++) {
+
+                if (i < 9) {
+                    cementerio_Oscuridad[i]->set_fila_columna(i, 0);
+                }
+                else {
+                    cementerio_Oscuridad[i]->set_fila_columna(i-9, 1);
+                }
+                cementerio_Oscuridad[i]->DrawT(850, 36);
+            }
+        }
+    }
+
+
     //Bucle para dibujar los personajes
     for (int fila = 0; fila < casillasxlado; fila++) {
         for (int columna = 0; columna < casillasxlado; columna++) {
 
             if (cuadricula[fila][columna] != nullptr) {
 
-                cuadricula[fila][columna]->DrawT();
+                cuadricula[fila][columna]->DrawT(230,36);
             }
 
 
@@ -364,11 +397,20 @@ void Tablero::moverPieza() {
            
             //Iniciar combate (como parámetros dar los personajes implicados)
            
-            Personaje* personajeGanador = personajeAtacado; //Aqui es el que gane, que se decide en la batalla
+            Personaje* personajeGanador = personaje_seleccionado; //Aqui es el que gane, que se decide en la batalla
             
             if (personajeGanador == personaje_seleccionado) {//Si gana el que se ha movido:
             
-                cuadricula[fila_seleccionada][columna_seleccionada]->~Personaje();
+                if (cuadricula[fila_seleccionada][columna_seleccionada]->get_equipo() == LUZ) {
+                    cuadricula[fila_seleccionada][columna_seleccionada]->heal();
+                    cementerio_Luz.push_back(cuadricula[fila_seleccionada][columna_seleccionada]);
+                }
+
+                if (cuadricula[fila_seleccionada][columna_seleccionada]->get_equipo() == OSCURIDAD) {
+                    cuadricula[fila_seleccionada][columna_seleccionada]->heal();
+                    cementerio_Oscuridad.push_back(cuadricula[fila_seleccionada][columna_seleccionada]);
+                }
+               // cuadricula[fila_seleccionada][columna_seleccionada]->~Personaje();
                 cuadricula[fila_seleccionada][columna_seleccionada] = personaje_seleccionado;
                 cuadricula[auxfila][auxcolumna] = nullptr;
              
@@ -376,7 +418,18 @@ void Tablero::moverPieza() {
             }
             
             else if (personajeGanador == personajeAtacado) {//Si gana el que estaba en la casilla:
-                cuadricula[auxfila][auxcolumna]->~Personaje();
+               
+                if (cuadricula[auxfila][auxcolumna]->get_equipo() == LUZ) {
+                    cuadricula[auxfila][auxcolumna]->heal();
+                    cementerio_Luz.push_back(cuadricula[auxfila][auxcolumna]);
+                }
+
+                if (cuadricula[auxfila][auxcolumna]->get_equipo() == OSCURIDAD) {
+                    cuadricula[auxfila][auxcolumna]->heal();
+                    cementerio_Oscuridad.push_back(cuadricula[auxfila][auxcolumna]);
+                }
+
+                //cuadricula[auxfila][auxcolumna]->~Personaje();
                 cuadricula[auxfila][auxcolumna]=nullptr;
                 
             }
@@ -559,10 +612,10 @@ void Tablero::detectaGanador() {
 
     //Primera forma: no hay ninguna pieza de un equipo
     //Segunda forma: dominio de un equipo de todos los puntos de poder
-
-    bool ganaLuz = true, ganaOscuridad = true;
+    //Tercera forma: a un equipo solo le queda un personaje, y este personaje está atrapado:
+    bool ganaLuz = false, ganaOscuridad = false;
     int contadorLuz = 0, contadorOscuridad = 0;
-  
+    int contadorPersonajesLuz = 0, contadorPersonajesOscuridad = 0;
 
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
@@ -572,8 +625,8 @@ void Tablero::detectaGanador() {
             
             if (cuadricula[i][j] != nullptr) { //Primero nos aseguramos que es un personaje
 
-                if (cuadricula[i][j]->get_equipo() == LUZ) ganaOscuridad = false;
-                if (cuadricula[i][j]->get_equipo() == OSCURIDAD)  ganaLuz = false;
+                if (cuadricula[i][j]->get_equipo() == LUZ) contadorPersonajesLuz++;
+                if (cuadricula[i][j]->get_equipo() == OSCURIDAD)  contadorPersonajesOscuridad++;
 
                 if (puntoPoder == true) {
                     
@@ -584,17 +637,52 @@ void Tablero::detectaGanador() {
         }
     }
 
+    if (contadorPersonajesLuz == 1) {
 
-    if (ganaLuz == true||contadorLuz==5) { //Se acaba el juego, gana luz
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+
+                if (cuadricula[i][j] != nullptr) {
+
+                    if (cuadricula[i][j]->get_equipo() == LUZ) {
+                       if(cuadricula[i][j]->get_imprison() == true) ganaOscuridad = true;
+
+                    }
+                }
+            }
+        }
+    }
+
+    if (contadorPersonajesOscuridad == 1) {
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+
+                if (cuadricula[i][j] != nullptr) {
+                    
+                    if (cuadricula[i][j]->get_equipo() == OSCURIDAD) {
+                        if (cuadricula[i][j]->get_imprison() == true) ganaLuz = true;
+                    }
+
+                    
+
+                }
+            }
+        }
+    }
+
+
+
+    if (ganaLuz == true||contadorLuz==5||contadorPersonajesOscuridad==0) { //Se acaba el juego, gana luz
         std::cout << "Gana Luz" << std::endl;
     }
-    if (ganaOscuridad == true||contadorOscuridad==5) { //Se acaba el juego, gana oscuridad
+    if (ganaOscuridad == true||contadorOscuridad==5||contadorPersonajesLuz==0) { //Se acaba el juego, gana oscuridad
 
         std::cout << "Gana Oscuridad" << std::endl;
 
     }
 
-    //Tercera forma: a un equipo solo le queda un personaje, y este personaje está atrapado:
+    
 
 
 
@@ -859,6 +947,120 @@ void Tablero::Imprison(Personaje* personaje) {
 
 
 
+void Tablero::Revive(Personaje* personaje) {
+    
+    if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[5] == true) || (personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[5] == true)) {
+
+        std::cout << "El hechizo Revive ya se ha utilizado" << std::endl;
+        modoJuegoactual = ModoJuego::HECHIZOS;
+
+    }
+
+    if ((personaje->get_ID() == tipo_pj::MH && cementerio_Luz.size() == 0) || (personaje->get_ID() == tipo_pj::Platero && cementerio_Oscuridad.size() == 0)) {
+
+        std::cout << "No tienes personajes muertos que revivir" << std::endl;
+        modoJuegoactual = ModoJuego::HECHIZOS;
+
+    }
+
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+
+        int mouseX = GetMouseX();
+        int mouseY = GetMouseY();
+        
+        if (personaje_usando_magia->get_equipo() == LUZ) {
+            if (mouseX > 18 && mouseX < 82) {
+
+                for (int i = 0; i < 9; i++) {
+
+                    int posY = 4 + i * tamanoCasilla;
+                    if (mouseY <= (posY + tamanoCasilla) && mouseY > posY) {
+                        if (i < cementerio_Luz.size()) {
+                            personaje_muerto_seleccionado = cementerio_Luz[i];
+                        }
+                    }
+
+                }
+            }
+
+            if (mouseX > 82 && mouseX < 146) {
+
+                for (int i = 10; i < 18; i++) {
+
+                    int posY = 4 + (i - 9) * tamanoCasilla;
+                    if (mouseY <= (posY + tamanoCasilla) && mouseY > posY) {
+                        if (i < cementerio_Luz.size()) {
+                            personaje_muerto_seleccionado = cementerio_Luz[i];
+                        }
+                    }
+
+                }
+            }
+        }
+
+        if (personaje_usando_magia->get_equipo() == OSCURIDAD) {
+            if (mouseX > 818 && mouseX < 882) {
+
+                for (int i = 0; i < 9; i++) {
+
+                    int posY = 4 + i * tamanoCasilla;
+                    if (mouseY <= (posY + tamanoCasilla) && mouseY > posY) {
+                        if (i < cementerio_Oscuridad.size()) {
+                            personaje_muerto_seleccionado = cementerio_Oscuridad[i];
+                        }
+                    }
+
+                }
+            }
+
+            if (mouseX > 882 && mouseX < 946) {
+
+                for (int i = 10; i < 18; i++) {
+
+                    int posY = 4 + (i - 9) * tamanoCasilla;
+                    if (mouseY <= (posY + tamanoCasilla) && mouseY > posY) {
+                        if (i < cementerio_Oscuridad.size()) {
+                            personaje_muerto_seleccionado = cementerio_Oscuridad[i];
+                        }
+                    }
+
+                }
+            }
+        }
+
+
+        if (personaje_muerto_seleccionado != nullptr) {
+
+            seleccionaCasilla();
+            std::cout << fila_seleccionada << " " << columna_seleccionada << std::endl;
+            if (cuadricula[fila_seleccionada][columna_seleccionada] == nullptr && fila_seleccionada != -1 && columna_seleccionada != -1) {
+                
+                cuadricula[fila_seleccionada][columna_seleccionada] = personaje_muerto_seleccionado;
+                cuadricula[fila_seleccionada][columna_seleccionada]->set_fila_columna(fila_seleccionada, columna_seleccionada);
+  
+
+                turno = turno == LUZ ? OSCURIDAD : LUZ;
+                if (personaje_usando_magia->get_ID() == tipo_pj::MH) hechizosLuz[5] = true;
+                if (personaje_usando_magia->get_ID() == tipo_pj::Platero) hechizosOscuridad[5] = true;
+                personaje_seleccionado = nullptr;
+                personaje_muerto_seleccionado = nullptr;
+                personaje_usando_magia = nullptr;
+                modoJuegoactual = ModoJuego::NORMAL;
+            }
+
+            
+        }
+
+    }
+
+}
+
+
+
+
+
+
+
 void Tablero::iniciaEstadoHechizos() {
 
     if (personaje_seleccionado != nullptr) {
@@ -883,8 +1085,8 @@ void Tablero::hechizos() {
     //3. Shift Time: altera el ciclo de oscilación de las casillas  HECHO
     //4. Exchange: intercambia dos piezas seleccionadas HECHO
     //5. Summon Elemental: invoca un elemental temporal para luchar contra una pieza enemiga
-    //6. Revive: resucita una pieza aliada eliminada, colocándola junto al hecicero
-    //7. Imprison: encierra una pieza enemiga en su casilla, impidiéndole moverse. Se libera en vae a los ciclos de color.  //HECHO
+    //6. Revive: resucita una pieza aliada eliminada, y se coloca en una casilla vacia que se seleccione
+    //7. Imprison: encierra una pieza enemiga en su casilla, impidiéndole moverse. Se libera en vae a los ciclos de color.  HECHO
 
     if (IsKeyPressed(KEY_A)) {
         personaje_usando_magia = nullptr;
@@ -917,7 +1119,10 @@ void Tablero::hechizos() {
         modoJuegoactual = ModoJuego::IMPRISON;
     }
     
-      
+    if (IsKeyPressed(KEY_R)) {
+        personaje_seleccionado = nullptr;
+        modoJuegoactual = ModoJuego::REVIVE;
+    }
 
 
 

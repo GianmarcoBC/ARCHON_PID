@@ -2,9 +2,10 @@
 #include "raylib.h"
 #include "Personaje.h"
 #include "Pj.h"
+#include <vector>
 
 enum class ColorCasilla{BLANCO,NEGRO,CAMBIANTE};
-enum class ModoJuego { NORMAL, COMBATE, HECHIZOS, SHIFT, HEAL, TELEPORT, EXCHANGE, IMPRISON};
+enum class ModoJuego { NORMAL, COMBATE, HECHIZOS, SHIFT, HEAL, TELEPORT, EXCHANGE, IMPRISON, REVIVE};
 
 
 class Tablero
@@ -16,6 +17,9 @@ class Tablero
     Personaje* personaje_seleccionado{nullptr};
     Personaje* personaje_usando_magia{ nullptr };
     Personaje* personaje_auxiliar{ nullptr };
+    std::vector<Personaje*> cementerio_Luz;
+    std::vector<Personaje*> cementerio_Oscuridad;
+    Personaje* personaje_muerto_seleccionado{ nullptr };
     int fila_seleccionada{-1};
     int columna_seleccionada{-1};
     bool turno{LUZ};
@@ -61,6 +65,7 @@ public:
     void Heal(Personaje* personaje);
     void Exchange();
     void Imprison(Personaje* personaje);
+    void Revive(Personaje* personaje);
 
 };
 

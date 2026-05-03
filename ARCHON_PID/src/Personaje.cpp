@@ -32,7 +32,7 @@ void Personaje::Draw()
     );
 }
 
-void Personaje::DrawT()
+void Personaje::DrawT(const int paramx, const int paramy)
 {
 
     float angulo = 0.0f;
@@ -40,8 +40,8 @@ void Personaje::DrawT()
     float w = Sprite.width;
     float h = Sprite.height;
 
-    pos.x = 230+ columna * 64;
-    pos.y =  36 + fila * 64;
+    pos.x = paramx+ columna * 64;
+    pos.y =  paramy + fila * 64;
 
     DrawTexturePro(
         Sprite,

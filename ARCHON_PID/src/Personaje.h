@@ -56,7 +56,7 @@ public:
 
     //Dibuja el Sprite del arquero en pantalla
     void Draw();
-    void DrawT();  //Funcion de dibujar en el tablero
+    void DrawT(const int paramx, const int paramy);  //Funcion de dibujar en el tablero
     
     // Crea un nuevo disparo con la posición y la textura de la flecha
     Disparo Shoot();
