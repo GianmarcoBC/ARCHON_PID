@@ -42,7 +42,7 @@ public:
     //Dibuja el Sprite del arquero en pantalla
     void Draw();
 
-    //Funciones para obtener las características del personaje
+    //Funciones para obtener las características del personaje (getters y setters)
     float GetFuerza()const { return Player.fuerza; }
     Vec2 GetPos()const { return pos; }
     void SetPos(Vec2 p) { pos = p; }
@@ -54,6 +54,9 @@ public:
     Vec2 GetDir() { return l_dir; }
     void SetDir(Vec2 d) { l_dir = d.unitario(); } // Normaliza el vector de dirección
    
+    //Hitbox del personaje para colisiones
+    float GetAncho() const { return (float)Frames[frameActual].width; }
+    float GetAlto()  const { return (float)Frames[frameActual].height; }
 
     //Daño al personaje, restando a su vida el valor del daño recibido
     void pain(float damage);
@@ -61,15 +64,11 @@ public:
     // Crea un nuevo disparo con la posición y la textura de la flecha
     Disparo Shoot();
 
-    //Colisiones
-    void ResolverColision(Rectangle obs);
-    void ClampArena();
 
     //Sonidos
     void PlayAttackSound() { 
         SetSoundVolume(efecto_ataque, 3.5f);
         PlaySound(efecto_ataque); }
-
 
  
     //Destructor

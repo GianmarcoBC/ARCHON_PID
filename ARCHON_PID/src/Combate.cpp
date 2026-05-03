@@ -7,7 +7,7 @@ void Combate::Update()
 
     //Player 1
     P1.Update(dt);
-    P1.ClampArena();
+
     if (cooldown1 <= 0.0f) {
         if (IsKeyPressed(KEY_SPACE)) {
             Disparos_1.push_back(P1.Shoot()); // Agrega un nuevo disparo al vector
@@ -20,13 +20,8 @@ void Combate::Update()
     }
 
     //Gestión de los disparos del Player 1
-    for (auto& b : Disparos_1) {
-        b.Update();
-        if (abs(b.GetPos().x - P2.GetPos().x) <= 32 && abs(b.GetPos().y - P2.GetPos().y) <= 32) {
-            P2.pain(P1.GetFuerza()); // Aplica daño al Player 2
-            b.setStatus(false); // Desactiva el disparo al colisionar
-        }
-    }
+    interaccion.DisparosContraPersonaje(Disparos_1, P1, P2); // Procesa los disparos de P1 contra P2
+
 
     //Player 2
     if (ia != nullptr) {
@@ -43,9 +38,11 @@ void Combate::Update()
             cooldown2 -= dt; // Reduce el tiempo de recarga
         }
     }
+
     else {
+        // El jugador controla a P2
         P2.Update(dt);
-        P2.ClampArena();
+        
         if (cooldown2 <= 0.0f) {
             if (IsKeyPressed(KEY_RIGHT_CONTROL)) {
                 Disparos_2.push_back(P2.Shoot()); // Agrega un nuevo disparo al vector
@@ -59,23 +56,14 @@ void Combate::Update()
     }
 
     //Gestión de los disparos del Player 2
-    for (auto& b : Disparos_2) {
-        b.Update();
-        if (abs(b.GetPos().x - P1.GetPos().x) <= 32 && abs(b.GetPos().y - P1.GetPos().y) <= 32) {
-            P1.pain(P2.GetFuerza()); // Aplica daño al Player 1
-            b.setStatus(false); // Desactiva el disparo al colisionar
-        }
+    interaccion.DisparosContraPersonaje(Disparos_2, P2, P1); // Procesa los disparos de P2 contra P1
 
-    }
+    //Colisiones de personajes con obstáculos sólidos y entre ellos
+    interaccion.PersonajesContraObstaculos(P1, P2, Obstaculos);
+    interaccion.PersonajeContraPersonaje(P1, P2);
 
-    //Colisiones de personajes con obstáculos sólidos
-    for (auto& obs : Obstaculos) {
-        if (obs.solido) {
-            P1.ResolverColision(obs.hitbox);
-            P2.ResolverColision(obs.hitbox);
-        }
-    }
-
+    interaccion.ClampArena(P1); // Mantiene a P1 dentro de la arena
+    interaccion.ClampArena(P2); // Mantiene a P2 dentro de la arena
 }
 
 void Combate::Draw()

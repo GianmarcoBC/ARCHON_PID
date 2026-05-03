@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CombatAI.cpp" />
+    <ClCompile Include="src\Interacciones.cpp" />
     <ClCompile Include="src\Menu_Combate.cpp" />
     <ClCompile Include="src\Personaje.cpp" />
     <ClCompile Include="src\ARCHON_PID.cpp" />
@@ -29,6 +30,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\CombatAI.h" />
+    <ClInclude Include="src\Interacciones.h" />
     <ClInclude Include="src\Menu_Combate.h" />
     <ClInclude Include="src\Music.h" />
     <ClInclude Include="src\Obstaculo.h" />

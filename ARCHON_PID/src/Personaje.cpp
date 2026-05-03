@@ -64,39 +64,3 @@ Disparo Personaje::Shoot()
     return Disparo(pos, vel, &Ataque, isPlayer);
     
 }
-
-void Personaje::ResolverColision(Rectangle obs) {
-    // Hitbox del personaje
-    float w = (float)Frames[frameActual].width;
-    float h = (float)Frames[frameActual].height;
-    Rectangle hitbox = { pos.x - w / 2, pos.y - h / 2, w, h };
-
-    if (!CheckCollisionRecs(hitbox, obs)) return;
-
-    // Calcula solapamiento en cada eje y empuja por el más pequeño
-    float overlapX = (hitbox.x + hitbox.width / 2) - (obs.x + obs.width / 2);
-    float overlapY = (hitbox.y + hitbox.height / 2) - (obs.y + obs.height / 2);
-
-    float halfW = (hitbox.width + obs.width) / 2;
-    float halfH = (hitbox.height + obs.height) / 2;
-
-    float pushX = halfW - fabsf(overlapX);
-    float pushY = halfH - fabsf(overlapY);
-
-    // Empuja por el eje con menor solapamiento
-    if (pushX < pushY)
-        pos.x += (overlapX > 0) ? pushX : -pushX;
-    else
-        pos.y += (overlapY > 0) ? pushY : -pushY;
-}
-
-void Personaje::ClampArena() {
-    float w = (float)Frames[frameActual].width;
-    float h = (float)Frames[frameActual].height;
-    float hw = w / 2, hh = h / 2;
-
-    if (pos.x - hw < 0)                    pos.x = hw;
-    if (pos.x + hw > GetScreenWidth())     pos.x = GetScreenWidth() - hw;
-    if (pos.y - hh < 0)                    pos.y = hh;
-    if (pos.y + hh > GetScreenHeight())    pos.y = GetScreenHeight() - hh;
-}

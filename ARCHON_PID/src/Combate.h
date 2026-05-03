@@ -4,6 +4,7 @@
 #include "Disparo.h"
 #include "Pj.h"
 #include "Obstaculo.h"
+#include "Interacciones.h"
 #include <vector>
 
 class Combate
@@ -22,6 +23,8 @@ class Combate
     std::vector<Disparo>   Disparos_1{};
     std::vector<Disparo>   Disparos_2{};
     std::vector<Obstaculo> Obstaculos{};
+
+    Interacciones interaccion{ { 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() } };
 
     void GenerarObstaculos() {
         for (int i = 0; i < 10; i++) {
