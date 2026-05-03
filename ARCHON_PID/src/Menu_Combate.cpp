@@ -1,5 +1,4 @@
 #include "Menu_Combate.h"
-#include <ctime>
 #include <cstdlib>
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -198,8 +197,6 @@ bool Menu_Combate::UpdateDosJugadores()
 
 bool Menu_Combate::UpdateVsIA()
 {
-    srand(time(NULL));
-
     if (!P1Listo) {
         // Navegar personaje con A/D
         if (IsKeyPressed(KEY_A)) selP1 = (selP1 - 1 + NUM_PJS) % NUM_PJS;

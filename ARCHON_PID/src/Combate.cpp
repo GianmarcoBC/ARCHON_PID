@@ -3,7 +3,6 @@
 void Combate::Update()
 {
     float dt = GetFrameTime();
-    static float cooldown1 = 0.0f, cooldown2 = 0.0f; // Tiempo de recarga para evitar disparos continuos
 
     //Player 1
     P1.Update(dt);
@@ -134,4 +133,17 @@ void Combate::Draw()
         }
     }
     
+}
+
+void Combate::GenerarObstaculos()
+{
+    for (int i = 0; i < 10; i++) {
+        bool esSolido = (GetRandomValue(0, 1) == 1);
+        Texture2D* tx = esSolido ? &ObsSolido : &ObsDecor;
+
+        // Genera una posición aleatoria dentro de los límites de la pantalla.
+        // Modificar si no se quiere randomizar la posición de los obstáculos.
+        float x = (float)GetRandomValue(100, GetScreenWidth() - 100);
+        float y = (float)GetRandomValue(100, GetScreenHeight() - 100);
+        Obstaculos.push_back({ tx, { x, y, (float)tx->width, (float)tx->height }, esSolido });
 }

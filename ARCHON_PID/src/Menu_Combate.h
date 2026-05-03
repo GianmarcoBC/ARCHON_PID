@@ -2,6 +2,7 @@
 #include "raylib.h"
 #include "Pj.h"
 #include <cstdlib>
+#include <ctime>
 
 class Menu_Combate
 {
@@ -70,7 +71,7 @@ class Menu_Combate
     bool UpdateVsIA();
 
 public:
-    Menu_Combate() = default;
+    Menu_Combate() { srand(static_cast<unsigned int>(time(NULL))); }
 
     bool Update();   // devuelve true = empieza el combate
     void Draw();

@@ -20,21 +20,20 @@ class Combate
     Texture2D ObsSolido = LoadTexture("bin/Resources/Graficos/Sprites/Arbusto.png");
     Texture2D ObsDecor = LoadTexture("bin/Resources/Graficos/Sprites/Arbusto.png");
 
+    Texture2D Fondo{};
+    Texture2D GameOver{};
+    Texture2D ObsSolido{};
+    Texture2D ObsDecor{};
+
     std::vector<Disparo>   Disparos_1{};
     std::vector<Disparo>   Disparos_2{};
     std::vector<Obstaculo> Obstaculos{};
 
+    float cooldown1 = 0.0f, cooldown2 = 0.0f; // Tiempo de recarga para evitar disparos continuos
+
     Interacciones interaccion{ { 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() } };
 
-    void GenerarObstaculos() {
-        for (int i = 0; i < 10; i++) {
-            bool esSolido = (GetRandomValue(0, 1) == 1);
-            Texture2D* tx = esSolido ? &ObsSolido : &ObsDecor;
-            float x = (float)GetRandomValue(100, GetScreenWidth() - 100);
-            float y = (float)GetRandomValue(100, GetScreenHeight() - 100);
-            Obstaculos.push_back({ tx, { x, y, (float)tx->width, (float)tx->height }, esSolido });
-        }
-    }
+    void GenerarObstaculos();
 
 public:
 
@@ -43,6 +42,10 @@ public:
         : P1{ pj1, {KEY_W, KEY_S, KEY_A, KEY_D},         {100.0f, 100.0f}, true }
         , P2{ pj2, {KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT},{800.0f, 100.0f}, true }
     {
+        Fondo = LoadTexture("bin/Resources/Graficos/Sprites/Fondo.png");
+        GameOver = LoadTexture("bin/Resources/Graficos/Sprites/26-267686_tortugas-ninja-png-imagenes-de-tortugas-ninja-png.png");
+        ObsSolido = LoadTexture("bin/Resources/Graficos/Sprites/Arbusto.png");
+        ObsDecor = LoadTexture("bin/Resources/Graficos/Sprites/Arbusto.png");
         GenerarObstaculos();
     }
 
@@ -51,6 +54,10 @@ public:
         : P1{ pj1, {KEY_W, KEY_S, KEY_A, KEY_D}, {100.0f, 100.0f}, true }
         , P2{ pj2, {}, {800.0f, 100.0f}, false }   // isPlayer = false
     {
+        Fondo = LoadTexture("bin/Resources/Graficos/Sprites/Fondo.png");
+        GameOver = LoadTexture("bin/Resources/Graficos/Sprites/26-267686_tortugas-ninja-png-imagenes-de-tortugas-ninja-png.png");
+        ObsSolido = LoadTexture("bin/Resources/Graficos/Sprites/Arbusto.png");
+        ObsDecor = LoadTexture("bin/Resources/Graficos/Sprites/Arbusto.png");
         GenerarObstaculos();
 
         Rectangle arena = { 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() };
