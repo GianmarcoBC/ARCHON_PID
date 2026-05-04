@@ -48,7 +48,7 @@ class CombatAI {
     
 
     //Lógica de decisión
-    Accion decide(const std::vector<Disparo>& disparos);
+    Accion decide(const std::vector<Disparo>& disparos, float dt);
 
 public:
     //Constructor

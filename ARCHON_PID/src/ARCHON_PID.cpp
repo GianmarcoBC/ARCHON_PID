@@ -44,6 +44,7 @@ int main()
         EndDrawing();
     }
     
+    delete combate;
     CloseAudioDevice();
     CloseWindow();
     return 0;

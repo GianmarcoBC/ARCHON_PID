@@ -12,7 +12,7 @@ class Disparo
 public:
 
     //Constructor
-    Disparo(Vec2 p, Vec2 v, Texture2D* tx, bool fp) {
+    Disparo(Vec2 p, Vec2 v, Texture2D* tx, bool fp = true) {
         pos = p; 
         vel = v;
         Disp = tx; 
@@ -21,7 +21,7 @@ public:
     }
 
     //Actualizaciones del disparo
-    void Update();
+    void Update(float dt);
     void Draw();
 
 

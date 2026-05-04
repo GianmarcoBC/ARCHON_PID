@@ -17,7 +17,7 @@ void CombatAI::evitar_pared(Vec2 &v, Vec2 pos, Vec2 lim_x, Vec2 lim_y, float mar
 bool CombatAI::debe_esquivar(const std::vector<Disparo>& disparos, Vec2 &outDir){
 
     for (const Disparo& d : disparos) {
-        if (d.isFromPlayer()) continue;   // Solo esquivar disparos del jugador.
+        if (!d.isFromPlayer()) continue;   // Solo esquivar disparos del jugador.
 
         Vec2  Vector_IA_Disparo = IA.GetPos() - d.GetPos(); // Vector desde el disparo hacia la IA.
         Vec2  pn = d.GetVel().unitario(); // Vector unitario en la dirección del disparo.
@@ -39,7 +39,7 @@ bool CombatAI::debe_esquivar(const std::vector<Disparo>& disparos, Vec2 &outDir)
     return false;
 }
 
-CombatAI::Accion CombatAI::decide(const std::vector<Disparo>& disparos) {
+CombatAI::Accion CombatAI::decide(const std::vector<Disparo>& disparos, float dt) {
 
     Vec2  Vector_IA_Jugador = Jugador.GetPos() - IA.GetPos(); // Vector desde la IA hacia el jugador.
     float dist = Vector_IA_Jugador.modulo(); // Distancia entre la IA y el jugador.
@@ -76,13 +76,11 @@ CombatAI::Accion CombatAI::decide(const std::vector<Disparo>& disparos) {
 
         err = fmaxf(-1.0f, fminf(1.0f, err)); // Limitar el error para evitar movimientos erráticos cuando estamos muy lejos o muy cerca.
 
-        Vec2 dir = (n * sentido_giro).perp() * 0.85f + n * err * 0.45f; // Combina el movimiento de rodeo con un componente hacia/alejándose del jugador según si estamos fuera/dentro del rango óptimo.
+        dir_mov = (n * sentido_giro).perp() * 0.85f + n * err * 0.45f; // Combina el movimiento de rodeo con un componente hacia/alejándose del jugador según si estamos fuera/dentro del rango óptimo.
         //0.85f y 0.45f son pesos para ajustar la influencia del rodeo vs acercarse/alejarse.
 
-        dir_mov = dir;
-
         // Cambiar sentido de giro periódicamente para ser impredecible.
-        cont_giro++;
+        cont_giro+=dt;
         if (cont_giro >= cambio_giro) {
             sentido_giro = -sentido_giro;
             cont_giro = 0;
@@ -109,7 +107,7 @@ bool CombatAI::Update(float dt, const std::vector<Disparo>& disparos) {
     // Recalcular la acción de la IA solo si el cooldown ha terminado. Esto simula un delay de reacción y evita que la IA cambie de dirección o decida disparar cada frame, lo que sería poco realista y demasiado difícil de enfrentar.
     if (cooldown_IA > 0) { cooldown_IA -= dt; }
     else {
-        ultima_accion = decide(disparos);
+        ultima_accion = decide(disparos, dt);
         cooldown_IA = delay_IA;
     }
 

@@ -146,4 +146,5 @@ void Combate::GenerarObstaculos()
         float x = (float)GetRandomValue(100, GetScreenWidth() - 100);
         float y = (float)GetRandomValue(100, GetScreenHeight() - 100);
         Obstaculos.push_back({ tx, { x, y, (float)tx->width, (float)tx->height }, esSolido });
+    }
 }

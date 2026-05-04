@@ -60,7 +60,13 @@ void Personaje::pain(float damage)
 
 Disparo Personaje::Shoot()
 {
-    Vec2 vel = { Player.attack_speed * l_dir.x, Player.attack_speed * l_dir.y }; //Velocidad del disparo en la dirección actual
-    return Disparo(pos, vel, &Ataque, isPlayer);
+
+    float hw = (float)Frames[frameActual].width / 2.0f;
+    float hh = (float)Frames[frameActual].height / 2.0f;
+    float offset = (fabsf(l_dir.x) > 0) ? hw : hh; // borde horizontal o vertical
+    Vec2  origen = pos + l_dir * offset;
+
+    Vec2 vel = l_dir * Player.attack_speed; //Velocidad del disparo en la dirección actual
+    return Disparo(origen, vel, &Ataque, isPlayer);
     
 }

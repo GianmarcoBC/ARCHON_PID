@@ -15,11 +15,6 @@ class Combate
     // Solo existe en modo IA
     CombatAI* ia = nullptr;
 
-    Texture2D Fondo = LoadTexture("bin/Resources/Graficos/Sprites/Fondo.png");
-    Texture2D GameOver = LoadTexture("bin/Resources/Graficos/Sprites/26-267686_tortugas-ninja-png-imagenes-de-tortugas-ninja-png.png");
-    Texture2D ObsSolido = LoadTexture("bin/Resources/Graficos/Sprites/Arbusto.png");
-    Texture2D ObsDecor = LoadTexture("bin/Resources/Graficos/Sprites/Arbusto.png");
-
     Texture2D Fondo{};
     Texture2D GameOver{};
     Texture2D ObsSolido{};

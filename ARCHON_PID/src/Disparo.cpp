@@ -1,11 +1,11 @@
 #include "Disparo.h"
 
-void Disparo::Update()
+void Disparo::Update(float dt)
 {
     if (!status_) return; // Solo actualiza si el disparo está activo
 
-    pos.x += vel.x;
-    pos.y += vel.y;
+    pos.x += vel.x * dt;
+    pos.y += vel.y * dt;
 
     if (pos.y < 0 || pos.y > GetScreenHeight() || pos.x < 0 || pos.x > GetScreenWidth()) {
         status_ = false; // Desactiva el disparo si sale de la pantalla
@@ -14,11 +14,7 @@ void Disparo::Update()
 
 void Disparo::Draw()
 {
-    if (!status_ || !Disp) {
-        pos.x = -100; // Mueve el disparo fuera de la pantalla para evitar colisiones
-        pos.y = -100;
-        return;
-    }
+    if (!status_ || !Disp) return;
 
     float angulo = 0.0f;
 
