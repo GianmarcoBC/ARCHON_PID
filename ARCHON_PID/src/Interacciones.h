@@ -32,7 +32,7 @@ public:
     // Procesa todos los disparos de 'atacante' contra 'objetivo':
     //   · Si un disparo toca al objetivo → aplica daño y lo desactiva.
     //   · Elimina del vector los disparos inactivos (fuera de pantalla o impactados).
-    void DisparosContraPersonaje(std::vector<Disparo>& disparos, Personaje& atacante, Personaje& objetivo);
+    void DisparosContraPersonaje(std::vector<Disparo>& disparos, Personaje& atacante, Personaje& objetivo, float dt);
 
     // Resuelve la colisión de un personaje con un obstáculo sólido (empuje AABB).
     void PersonajeContraObstaculo(Personaje& p, const Obstaculo& obs);

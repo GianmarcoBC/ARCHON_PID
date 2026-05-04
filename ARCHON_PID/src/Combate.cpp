@@ -19,7 +19,7 @@ void Combate::Update()
     }
 
     //Gestión de los disparos del Player 1
-    interaccion.DisparosContraPersonaje(Disparos_1, P1, P2); // Procesa los disparos de P1 contra P2
+    interaccion.DisparosContraPersonaje(Disparos_1, P1, P2, dt); // Procesa los disparos de P1 contra P2
 
 
     //Player 2
@@ -55,7 +55,7 @@ void Combate::Update()
     }
 
     //Gestión de los disparos del Player 2
-    interaccion.DisparosContraPersonaje(Disparos_2, P2, P1); // Procesa los disparos de P2 contra P1
+    interaccion.DisparosContraPersonaje(Disparos_2, P2, P1, dt); // Procesa los disparos de P2 contra P1
 
     //Colisiones de personajes con obstáculos sólidos y entre ellos
     interaccion.PersonajesContraObstaculos(P1, P2, Obstaculos);
@@ -63,6 +63,7 @@ void Combate::Update()
 
     interaccion.ClampArena(P1); // Mantiene a P1 dentro de la arena
     interaccion.ClampArena(P2); // Mantiene a P2 dentro de la arena
+
 }
 
 void Combate::Draw()

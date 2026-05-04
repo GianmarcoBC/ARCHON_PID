@@ -35,13 +35,15 @@ bool Interacciones::EmpujeAABB(Rectangle a, Rectangle b, Vec2& push)
 
 //  DisparosContraPersonaje
 
-void Interacciones::DisparosContraPersonaje(std::vector<Disparo>& disparos, Personaje& atacante, Personaje& objetivo)
+void Interacciones::DisparosContraPersonaje(std::vector<Disparo>& disparos, Personaje& atacante, Personaje& objetivo, float dt)
 {
     Rectangle hitboxObj = Hitbox(objetivo);
     const float radio = hitboxObj.width / 2.0f; // Radio de impacto basado en la hitbox
 
     for (Disparo& d : disparos) {
         if (!d.getStatus()) continue;
+
+        d.Update(dt);
 
         Vec2  dPos = d.GetPos();
         Vec2  oPos = objetivo.GetPos();

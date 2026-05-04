@@ -21,8 +21,6 @@ int main()
 
         rolitas.Update();
 
-        
-
         if (combate == nullptr) {
             // Estamos en el menú
             if (menu.Update()) {

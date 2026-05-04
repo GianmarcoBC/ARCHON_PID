@@ -5,7 +5,7 @@ inline constexpr float Velocidad_media = 500.0f, Velocidad_baja = 200.0f;
 inline constexpr float Vida_muyalta = 2000.0f, Vida_alta = 1000.0f, Vida_media = 500.0f, Vida_baja = 200.0f;
 inline constexpr float Fuerza_muyalta = 80.0f, Fuerza_alta = 50.0f, Fuerza_media = 10.0f, Fuerza_baja = 5.0f;
 inline constexpr float Cooldown_alto = 5.0f, Cooldown_medio = 3.0f, Cooldown_bajo = 1.0f, Cooldown_nulo = 0.0f;
-inline constexpr float AttackSpeed_muyalto = 10.0f, AttackSpeed_alto = 8.0f, AttackSpeed_medio = 5.0f, AttackSpeed_bajo = 2.0f;
+inline constexpr float AttackSpeed_muyalto = 1000.0f, AttackSpeed_alto = 800.0f, AttackSpeed_medio = 500.0f, AttackSpeed_bajo = 200.0f;
 
 //Controles de los personajes
 struct cntrl
