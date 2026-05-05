@@ -134,11 +134,17 @@
   <ItemGroup>
     <ClCompile Include="Cuchau.cpp" />
     <ClCompile Include="src\arena.cpp" />
-    <ClCompile Include="src\Pj.cpp" />
+    <ClCompile Include="src\Disparo.cpp" />
+    <ClCompile Include="src\P.cpp" />
+    <ClCompile Include="src\Personaje.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\arena.h" />
+    <ClInclude Include="src\Disparo.h" />
     <ClInclude Include="src\P.h" />
+    <ClInclude Include="src\Personaje.h" />
+    <ClInclude Include="src\Pj.h" />
+    <ClInclude Include="src\Vec2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
