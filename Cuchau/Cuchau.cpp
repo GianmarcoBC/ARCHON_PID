@@ -24,6 +24,7 @@ int main() {
         if (IsKeyDown(KEY_RIGHT)) miarena.charPos2.x += pj.speed * dt;
 
         //Hitbox: limites de la arena
+        // Clamp con margen para que no se salga la mitad del personaje
         float margin = pj.charSize / 2.0f;
         float limX = miarena.sueloWidth / 2 - margin, limZ = miarena.sueloLength / 2 - margin;
         if (miarena.charPos1.x < -limX) miarena.charPos1.x = -limX;
@@ -47,13 +48,14 @@ int main() {
         //píxeles oscuros lo oscurecen (efecto sombra sin necesitar alpha)
         //white == sin tinte, ademas en BlendMode white significa fondo sin cambios
         BeginBlendMode(BLEND_MULTIPLIED);
-        DrawModel(pj.shadowModel, shadowPosDcho, 1.0f, WHITE);
-        DrawModel(pj.shadowModel, shadowPosIzdo, 1.0f, WHITE);
+        DrawModel(pj.shadow, shadowPosDcho, 1.0f, WHITE);
+        DrawModel(pj.shadow, shadowPosIzdo, 1.0f, WHITE);
         EndBlendMode();
 
         //Personaje como billboard: dibujar de más lejos a más cerca para evitar que el depth buffer tape al más lejano
         
             Vector3 cam = miarena.camera.position;
+			// Evita solapamiento de personajes: dibujar primero el más lejano
             auto dist2 = [&](Vector3 p) {
                 float dx = p.x - cam.x, dy = p.y - cam.y, dz = p.z - cam.z;
                 return dx*dx + dy*dy + dz*dz;
@@ -72,7 +74,7 @@ int main() {
     }
 
     //UnloadModel libera también la textura asignada al material
-    UnloadModel(pj.shadowModel);
+    UnloadModel(pj.shadow);
     UnloadModel(miarena.wallModel);
     UnloadModel(miarena.sueloModel);
 

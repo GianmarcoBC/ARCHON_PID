@@ -5,6 +5,7 @@
 class arena
 {
 public:
+	// Cámara fija, con vista isométrica
     Camera3D camera{ { 0.0f, 25.0f, 35.0f },
        { 0.0f, 0.0f,  0.0f },
        { 0.0f, 1.0f,  0.0f },
@@ -15,7 +16,6 @@ public:
 
     //Comunicacion con el personaje
     Pj character;
-    Pj::charSize;
     Vector3 charPos1 = { -sueloWidth * 0.45f, character.charSize / 2, -sueloLength * 0.42f };
     Vector3 charPos2 = { sueloWidth * 0.45f, character.charSize / 2, sueloLength * 0.42f };
 
