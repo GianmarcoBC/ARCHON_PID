@@ -1,6 +1,6 @@
 #pragma once
 #include "raylib.h"
-#include "Pj.h"
+#include "P.h"
 
 class arena
 {
@@ -15,7 +15,7 @@ public:
     const float wallHeight = 2.0, wallWidth = 4.0;  //queda bien
 
     //Comunicacion con el personaje
-    Pj character;
+    P character;
     Vector3 charPos1 = { -sueloWidth * 0.45f, character.charSize / 2, -sueloLength * 0.42f };
     Vector3 charPos2 = { sueloWidth * 0.45f, character.charSize / 2, sueloLength * 0.42f };
 

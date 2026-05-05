@@ -1,6 +1,6 @@
 #pragma once
 #include "raylib.h"
-class Pj
+class P
 {
 public:
 	friend class arena;
@@ -12,7 +12,7 @@ public:
 	Mesh shadowMesh;
 	Model shadow;
 
-	Pj(const char* principal, const char* sombra)
+	P(const char* principal, const char* sombra)
 	{
 		spriteChar = LoadTexture(principal);
 		spriteShadow = LoadTexture(sombra);
@@ -22,6 +22,6 @@ public:
 		shadow.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = spriteShadow;
 	}
 
-	Pj() = default;
+	P() = default;
 };
 

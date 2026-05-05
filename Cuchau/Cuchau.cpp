@@ -6,7 +6,7 @@ int main() {
     SetTargetFPS(60);
 
     arena miarena("paredcalida.png", "ciudadnormal2.png", "suelo.png");
-    Pj pj("SpriteMH_0001.png", "SpriteMH_shadow.png");
+    P pj("SpriteMH_0001.png", "SpriteMH_shadow.png");
       
     //Codigo de dibujo
     while (!WindowShouldClose()) {
