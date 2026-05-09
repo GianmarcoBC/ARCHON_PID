@@ -5,6 +5,7 @@
 #include "Pj.h"
 #include "Obstaculo.h"
 #include "Interacciones.h"
+#include "SaveManager.h"
 #include <vector>
 
 class Combate
@@ -68,6 +69,10 @@ public:
     void Update();
     void Draw();
     bool IsGameOver() const { return P1.GetVida() == 0 || P2.GetVida() == 0; }
+
+    // Guardado / Carga 
+    bool GuardarEstado(bool modoIA, int dificultad) const;
+    void CargarEstado(const SaveData& d);
 
     ~Combate() {
         delete ia;

@@ -149,3 +149,30 @@ void Combate::GenerarObstaculos()
         Obstaculos.push_back({ tx, { x, y, (float)tx->width, (float)tx->height }, esSolido });
     }
 }
+
+// Rellena un SaveData con el estado actual del combate y lo escribe al disco.
+// Devuelve true si la escritura tuvo éxito.
+bool Combate::GuardarEstado(bool modoIA, int dificultad) const
+{
+    SaveData d;
+    d.nombreP1 = P1.GetNombre();
+    d.vidaP1 = P1.GetVida();
+    d.posP1x = P1.GetPos().x;
+    d.posP1y = P1.GetPos().y;
+    d.nombreP2 = P2.GetNombre();
+    d.vidaP2 = P2.GetVida();
+    d.posP2x = P2.GetPos().x;
+    d.posP2y = P2.GetPos().y;
+    d.modoIA = modoIA;
+    d.dificultad = dificultad;
+    return SaveManager::Guardar(d);
+}
+
+// Restaura vida y posición de ambos personajes desde un SaveData cargado.
+void Combate::CargarEstado(const SaveData& d)
+{
+    P1.SetVida(d.vidaP1);
+    P1.SetPos({ d.posP1x, d.posP1y });
+    P2.SetVida(d.vidaP2);
+    P2.SetPos({ d.posP2x, d.posP2y });
+}

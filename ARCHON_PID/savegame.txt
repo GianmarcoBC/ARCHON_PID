@@ -1,0 +1,18 @@
+# ARCHON PID - Fichero de partida guardada
+# No editar manualmente salvo que sepas lo que haces.
+
+[partida]
+modoIA=0
+dificultad=1
+
+[jugador1]
+nombre=MH
+vida=500
+posX=100
+posY=100
+
+[jugador2]
+nombre=Platero
+vida=500
+posX=733.524
+posY=699.862

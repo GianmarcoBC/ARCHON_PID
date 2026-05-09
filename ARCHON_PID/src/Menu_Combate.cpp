@@ -183,7 +183,7 @@ bool Menu_Combate::UpdateDosJugadores()
     }
 
     // ESC vuelve a elegir modo
-    if (IsKeyPressed(KEY_ESCAPE)) {
+    if (IsKeyPressed(KEY_F6)) {
         modo = ELIGIENDO_MODO; P1Listo = P2Listo = false;
         selP1 = selP2 = 0;
     }
@@ -215,7 +215,7 @@ bool Menu_Combate::UpdateVsIA()
     }
 
     // ESC vuelve a elegir modo
-    if (IsKeyPressed(KEY_ESCAPE)) {
+    if (IsKeyPressed(KEY_F6)) {
         modo = ELIGIENDO_MODO; P1Listo = P2Listo = false;
         selP1 = selP2 = 0; dificultad = 1;
     }

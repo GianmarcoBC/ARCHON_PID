@@ -27,6 +27,7 @@
     <ClCompile Include="src\Disparo.cpp" />
     <ClCompile Include="src\Combate.cpp" />
     <ClCompile Include="src\Rolitas.cpp" />
+    <ClCompile Include="src\SaveManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\CombatAI.h" />
@@ -40,6 +41,7 @@
     <ClInclude Include="src\Pereza.h" />
     <ClInclude Include="src\Pj.h" />
     <ClInclude Include="src\Rolitas.h" />
+    <ClInclude Include="src\SaveManager.h" />
     <ClInclude Include="src\Vec2.h" />
   </ItemGroup>
   <ItemGroup>

@@ -36,7 +36,7 @@ public:
         isPlayer = ip; // Indica si el personaje es controlado por el jugador o la CPU
     }
 
-    //Actualización del arquero
+    //Actualización
     void Update(float dt);
 
     //Dibuja el Sprite del arquero en pantalla
@@ -47,6 +47,9 @@ public:
     Vec2 GetPos()const { return pos; }
     void SetPos(Vec2 p) { pos = p; }
     float GetVida()const { return Player.vida; }
+    // Restaura la vida al cargar partida (respeta el máximo original)
+    void SetVida(float v) { Player.vida = (v < max_vida) ? v : max_vida; }
+    const char* GetNombre()const { return Player.nombre; }
     void set_isPlayer(bool ip) { isPlayer = ip; }
     bool get_isPlayer()const { return isPlayer; }
     float get_Cooldown()const { return Player.cooldown; }
