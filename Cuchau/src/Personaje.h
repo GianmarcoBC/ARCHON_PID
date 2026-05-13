@@ -1,104 +1,96 @@
 #pragma once
 #include "raylib.h"
 #include "Disparo.h"
-#include "Pj.h"
+#include "Pj_info.h"
 #include "Vec2.h"
+
+// ============================================================================
+//  Personaje.h — Clase unificada de personaje 3D
+//
+//  Combina la logica de juego de ARCHON (vida, disparo, controles, animacion)
+//  con el renderizado 3D de Cuchau (billboard + sombra en el suelo).
+//
+//  Posicion interna: Vector3 pos3d (3D para rendering).
+//  Logica de juego:  Vec2 en plano XZ (GetPos/SetPos).
+//  Conversion:       Vec2.x = pos3d.x, Vec2.y = pos3d.z
+// ============================================================================
 
 class Personaje
 {
-	// Parámetros del personaje
-    Pj Player{};
+    friend class arena;  // arena accede directamente a miembros para el rendering
 
-	// Vida máxima del personaje, se inicializa con el valor de vida del Pj
-    float max_vida{};
-    cntrl Controles{};
+    Pj_info Player{};             // Datos del personaje (stats, rutas de sprites, etc.)
+    float max_vida{};             // Vida maxima (para calcular porcentaje en barras de vida)
+    cntrl Controles{};            // Teclas de movimiento asignadas
+    bool  isPlayer{ true };       // true = controlado por teclado, false = controlado por IA
 
-	// Posición y dirección del personaje
-    Vec2 pos{};
-    Vec2 l_dir{ 1.0f, 0.0f }; // Vector de dirección inicializado a derecha
+    // --- Posicion y direccion ---
+    Vector3 pos3d{};              // Posicion 3D (x = lateral, y = altura billboard, z = profundidad)
+    Vec2    l_dir{ 1.0f, 0.0f }; // Ultima direccion de movimiento en plano XZ (para apuntar disparos)
 
-	// Texturas para animación y ataque
-    Texture2D Ataque;
-    Texture2D Frames[3]; // Array de 3 texturas
-	Texture2D Frames_shadow[3]; // Array de 3 texturas para sombras
+    // --- Constantes de renderizado y escala ---
+    static constexpr float charSize    = 4.0f;   // Tamano del billboard en unidades 3D
+    static constexpr float SPEED_SCALE = 0.02f;  // Factor de conversion: pixeles/s -> unidades/s
+                                                  // (arena 40u / pantalla ~2000px ≈ 0.02)
 
-    // Variables para la sombra del personaje
-    Mesh shadowMesh;
-    Model shadow;
+    // --- Texturas y modelos ---
+    Texture2D Frames[3]{};          // 3 frames de animacion del personaje
+    Texture2D Frames_shadow[3]{};   // 3 frames de sombra correspondientes
+    Texture2D Ataque{};             // Textura del proyectil que dispara este personaje
+    Mesh  shadowMesh[3]{};          // Mallas planas para las sombras (una por frame)
+    Model shadow[3]{};              // Modelos de sombra (malla + textura)
+    Sound efecto_ataque{};          // Sonido que se reproduce al disparar
 
-	// Sonido de ataque
-    Sound efecto_ataque;
-
-	// Variables para animación
-    int   frameActual = 0;
-    float frameTimer = 0.0f;
-    bool  moviendose{ false };
-    bool  isPlayer{ true };
-
-	// Tamaño del personaje para colisiones y dibujo 3D
-    const float charSize = 4.0;
+    // --- Animacion ---
+    int   frameActual = 0;          // Indice del frame actual (0, 1 o 2)
+    float frameTimer  = 0.0f;       // Acumulador de tiempo para cambiar de frame
+    bool  moviendose{ false };      // true si el personaje se esta moviendo (para animar)
 
 public:
-    //Constructor
-    Personaje(Pj p, cntrl c, Vec2 po, bool ip)
-    {
-        Player = p;
-        max_vida = p.vida;
-        Controles = c;
-        Frames[0] = LoadTexture(Player.Sprite_1);
-        Frames[1] = LoadTexture(Player.Sprite_2);
-        Frames[2] = LoadTexture(Player.Sprite_3);
-        Frames_shadow[0] = LoadTexture(Player.Sprite_1_shadow);
-        Frames_shadow[1] = LoadTexture(Player.Sprite_2_shadow);
-        Frames_shadow[2] = LoadTexture(Player.Sprite_3_shadow);
-        efecto_ataque = LoadSound(Player.Efecto_ataque);
-        Ataque = LoadTexture(Player.Ataque);
-        pos = po; // Posición inicial del personaje
-        isPlayer = ip; // Indica si el personaje es controlado por el jugador o la CPU
-    }
+    Personaje() = default;
 
-    //Actualización del arquero
+    // Constructor: recibe datos del personaje, controles, posicion inicial, y si es jugador
+    Personaje(Pj_info p, cntrl c, Vector3 po, bool ip);
+
+    // Actualiza movimiento (si es jugador) y animacion
     void Update(float dt);
 
-    //Dibuja el Sprite del arquero en pantalla
-    void Draw();
+    // Dibuja la sombra del frame actual en la posicion dada
+    void drawshadow(Vector3 shadowpos);
 
-    //Funciones para obtener las características del personaje (getters y setters)
-    float GetFuerza()const { return Player.fuerza; }
-    Vec2 GetPos()const { return pos; }
-    void SetPos(Vec2 p) { pos = p; }
-    float GetVida()const { return Player.vida; }
-    void set_isPlayer(bool ip) { isPlayer = ip; }
-    bool get_isPlayer()const { return isPlayer; }
-    float get_Cooldown()const { return Player.cooldown; }
-    float GetVelocidad()const { return Player.vel; }
-    Vec2 GetDir() { return l_dir; }
-    void SetDir(Vec2 d) { l_dir = d.unitario(); } // Normaliza el vector de dirección
-   
-    //Hitbox del personaje para colisiones
-    float GetAncho() const { return (float)Frames[frameActual].width; }
-    float GetAlto()  const { return (float)Frames[frameActual].height; }
+    // Devuelve la textura del frame actual de animacion
+    Texture2D getCurrentFrame() const { return Frames[frameActual]; }
 
-    //Daño al personaje, restando a su vida el valor del daño recibido
-    void pain(float damage);
+    // --- Getters y setters ---
 
-    // Crea un nuevo disparo con la posición y la textura de la flecha
+    float       GetFuerza()      const { return Player.fuerza; }         // Dano por impacto
+    Vec2        GetPos()         const { return { pos3d.x, pos3d.z }; }  // Posicion en plano XZ
+    void        SetPos(Vec2 p)         { pos3d.x = p.x; pos3d.z = p.y; }// Asigna posicion XZ
+    Vector3     GetPos3D()       const { return pos3d; }                 // Posicion 3D completa
+    void        SetPos3D(Vector3 p)    { pos3d = p; }                    // Asigna posicion 3D
+    float       GetVida()        const { return Player.vida; }           // Vida actual
+    void        SetVida(float v)       { Player.vida = v; }              // Asigna vida (para cargar partida)
+    float       GetMaxVida()     const { return max_vida; }              // Vida maxima
+    Vec2        GetDir()         const { return l_dir; }                 // Direccion de apuntado
+    void        SetDir(Vec2 d)         { l_dir = d.unitario(); }         // Cambia direccion (normalizada)
+    float       GetVelocidad()   const { return Player.vel * SPEED_SCALE; }  // Velocidad en u/s
+    float       get_Cooldown()   const { return Player.cooldown; }       // Tiempo entre disparos
+    bool        get_isPlayer()   const { return isPlayer; }              // Es controlado por teclado?
+    void        set_isPlayer(bool ip)  { isPlayer = ip; }
+    const char* GetNombre()      const { return Player.nombre; }         // Nombre del personaje
+    float       GetCharSize()    const { return charSize; }              // Tamano del billboard
+    Texture2D*  GetAtaqueTexture()     { return &Ataque; }               // Textura del proyectil
+    float       GetAttackSpeed() const { return Player.attack_speed * SPEED_SCALE; } // Vel. proyectil en u/s
+
+    // Recibe dano y reduce vida (minimo 0)
+    void    pain(float damage);
+
+    // Crea y devuelve un Disparo en la posicion del personaje, en su direccion de apuntado
     Disparo Shoot();
 
+    // Reproduce el sonido de ataque del personaje
+    void    PlayAttackSound();
 
-    //Sonidos
-    void PlayAttackSound() { 
-        SetSoundVolume(efecto_ataque, 3.5f);
-        PlaySound(efecto_ataque); }
-
- 
-    //Destructor
-    ~Personaje() {
-        UnloadSound(efecto_ataque);
-        UnloadTexture(Frames[0]);
-        UnloadTexture(Frames[1]);
-        UnloadTexture(Frames[2]);
-        UnloadTexture(Ataque);
-    }
+    // Libera todas las texturas, modelos y sonidos de GPU/memoria
+    void    UnloadPersonaje();
 };
-

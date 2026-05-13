@@ -3,14 +3,17 @@
 void Pj::drawshadow(Vector3 shadowpos)
 {
     BeginBlendMode(BLEND_MULTIPLIED);
-    DrawModel(shadow, shadowpos, 1.0f, WHITE);
+    for (int i = 0; i < 3; i++)
+        DrawModel(shadow[i], shadowpos, 1.0f, WHITE);
     EndBlendMode();
 }
 
 void Pj::UnloadPj()
 {
-    UnloadModel(shadow);
-
-    UnloadTexture(spriteShadow);
-    UnloadTexture(spriteChar);
+    for (int i = 0; i < 3; i++)
+    {
+        UnloadModel(shadow[i]);
+        UnloadTexture(Frames_shadow[i]);
+        UnloadTexture(Frames[i]);
+    }
 }

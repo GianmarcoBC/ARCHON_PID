@@ -1,42 +1,25 @@
 #include "Disparo.h"
 
-void Disparo::Update(float dt)
+// ============================================================================
+//  Disparo::Update — Mueve el proyectil y verifica limites
+//
+//  El disparo se mueve en el plano XZ usando su velocidad Vec2.
+//  Si la posicion sale de los limites de la arena (±arenaHalfW en X,
+//  ±arenaHalfL en Z), se desactiva para que sea eliminado.
+// ============================================================================
+
+void Disparo::Update(float dt, float arenaHalfW, float arenaHalfL)
 {
-    if (!status_) return; // Solo actualiza si el disparo está activo
+    if (!status_) return;
 
-    pos.x += vel.x * dt;
-    pos.y += vel.y * dt;
+    // Mover en el plano XZ (vel.y corresponde al eje Z del mundo 3D)
+    pos3d.x += vel.x * dt;
+    pos3d.z += vel.y * dt;   // Vec2.y  -->  mundo Z
 
-    if (pos.y < 0 || pos.y > GetScreenHeight() || pos.x < 0 || pos.x > GetScreenWidth()) {
-        status_ = false; // Desactiva el disparo si sale de la pantalla
+    // Desactivar si sale de los limites de la arena
+    if (pos3d.x < -arenaHalfW || pos3d.x > arenaHalfW ||
+        pos3d.z < -arenaHalfL || pos3d.z > arenaHalfL)
+    {
+        status_ = false;
     }
 }
-
-void Disparo::Draw()
-{
-    if (!status_ || !Disp) return;
-
-    float angulo = 0.0f;
-
-    float w = (float)Disp->width, w1=w;
-    float h = (float)Disp->height;
-
-    // Calcula el ángulo según la dirección
-    if (vel.x > 0) { angulo = 0.0f; w1 = w; } // →
-    else if (vel.x < 0) { angulo = 0.0f; w1 = -w; } // ←
-    else if (vel.y < 0) { angulo = 270.0f; w1 = w; } // ↑
-    else if (vel.y > 0) { angulo = 270.0f; w1 = -w; } // ↓
-
-    
-
-    DrawTexturePro(
-        *Disp,
-        { 0, 0, w1, h },              // Región fuente (sprite completo)
-        { pos.x, pos.y, w, h },      // Región destino
-        {w/2, h/2 },            // Origen en el centro (pivote de rotación)
-        angulo,
-        WHITE
-    );
-}
-
-

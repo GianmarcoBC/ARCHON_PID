@@ -24,7 +24,7 @@
     <ProjectGuid>{ae1c368a-42d0-480d-a4c7-114e55eb091d}</ProjectGuid>
     <RootNamespace>prueba3d</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>Cuchau</ProjectName>
+    <ProjectName>domagic</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -103,11 +103,11 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)\lib;src;</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -135,12 +135,26 @@
     <ClCompile Include="Cuchau.cpp" />
     <ClCompile Include="src\arena.cpp" />
     <ClCompile Include="src\obstaculo.cpp" />
-    <ClCompile Include="src\Pj.cpp" />
+    <ClCompile Include="src\Personaje.cpp" />
+    <ClCompile Include="src\Disparo.cpp" />
+    <ClCompile Include="src\CombatAI.cpp" />
+    <ClCompile Include="src\Interacciones.cpp" />
+    <ClCompile Include="src\Menu_Combate.cpp" />
+    <ClCompile Include="src\Rolitas.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\arena.h" />
     <ClInclude Include="src\obstaculo.h" />
-    <ClInclude Include="src\Pj.h" />
+    <ClInclude Include="src\Personaje.h" />
+    <ClInclude Include="src\Pj_info.h" />
+    <ClInclude Include="src\Disparo.h" />
+    <ClInclude Include="src\CombatAI.h" />
+    <ClInclude Include="src\Interacciones.h" />
+    <ClInclude Include="src\Menu_Combate.h" />
+    <ClInclude Include="src\Rolitas.h" />
+    <ClInclude Include="src\Music.h" />
+    <ClInclude Include="src\Vec2.h" />
+    <ClInclude Include="src\SaveManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
