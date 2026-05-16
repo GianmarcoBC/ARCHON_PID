@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-Tablero::Tablero(){
+Tablero::Tablero():magiaTablero(){
     casillasxlado = 9;
     tamanoCasilla = 64;
 
@@ -13,6 +13,7 @@ void Tablero::LogicaTablero() {
 
 
     if (get_modoJuegoActual() == ModoJuego::NORMAL) {
+        personaje_usando_magia = nullptr;
         moverPieza();
         detectaGanador();
 
@@ -22,21 +23,21 @@ void Tablero::LogicaTablero() {
         hechizos();
     }
     if (get_modoJuegoActual() == ModoJuego::HEAL) {
-        Heal(personaje_usando_magia);
+        magiaTablero.Heal(personaje_usando_magia,*this);
     }
 
     if (get_modoJuegoActual() == ModoJuego::TELEPORT) {
-        Teleport(personaje_usando_magia);
+        magiaTablero.Teleport(personaje_usando_magia,*this);
     }
 
     if (get_modoJuegoActual() == ModoJuego::EXCHANGE) {
-        Exchange();
+        magiaTablero.Exchange(personaje_usando_magia, *this);
     }
     if (get_modoJuegoActual() == ModoJuego::IMPRISON) {
-        Imprison(personaje_usando_magia);
+        magiaTablero.Imprison(personaje_usando_magia, *this);
     }
     if (get_modoJuegoActual() == ModoJuego::REVIVE) {
-        Revive(personaje_usando_magia);
+        magiaTablero.Revive(personaje_usando_magia,*this);
     }
 
 
@@ -56,6 +57,7 @@ void Tablero::inicializarTablero() {
             movimientosPosibles[i][j] = false;
         }
     }
+
 
     personaje_seleccionado = nullptr;
     fila_seleccionada = -1; //Inicializamos a un valor imposible de introducir como índice de la matriz
@@ -313,7 +315,7 @@ void Tablero::Draw() {
 
 
 
-void Tablero::seleccionaCasilla() {
+void Tablero::seleccionaCasilla() { 
 
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         
@@ -342,10 +344,7 @@ void Tablero::seleccionaCasilla() {
         }
      
 
-    }
-
-    //std::cout << fila_seleccionada << " " << columna_seleccionada << std::endl;
-   
+    } 
 
 }
 
@@ -692,29 +691,7 @@ void Tablero::detectaGanador() {
 
 
 
-void Tablero::Shift_Time(Personaje* personaje) {
-    
-    if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[2] == true) || (personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[2] == true)) {
-
-        std::cout << "El hechizo Shift ya se ha utilizado" << std::endl;
-        modoJuegoactual = ModoJuego::HECHIZOS;
-
-    }
-   
-    if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[2] == false) || (personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[2] == false)) {
-        if (Ciclo != 0 && Ciclo != 4) {
-            avance = !avance;
-        }
-        turno = turno == LUZ ? OSCURIDAD : LUZ;
-        personaje_seleccionado = nullptr;
-        personaje_usando_magia = nullptr;
-        if (personaje->get_ID() == tipo_pj::MH) hechizosLuz[2] = true;
-        if (personaje->get_ID() == tipo_pj::Platero) hechizosOscuridad[2] = true;
-        modoJuegoactual = ModoJuego::NORMAL;
-
-    }
-}
-
+/*
 
 void Tablero::Teleport(Personaje* personaje) {
 
@@ -727,14 +704,8 @@ void Tablero::Teleport(Personaje* personaje) {
 
     moverPieza();
 
-    if (personaje_seleccionado == nullptr) {
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-
-                if (cuadricula[i][j] == nullptr) movimientosPosibles[i][j] = false;
-            }
-        }
-    }
+    if (personaje_seleccionado == nullptr)  reset_MovimientosPosibles();
+    
 
     if (personaje->get_ID() == tipo_pj::MH && turno ==OSCURIDAD ) {
 
@@ -1057,7 +1028,7 @@ void Tablero::Revive(Personaje* personaje) {
 
 
 
-
+*/
 
 
 
@@ -1097,7 +1068,7 @@ void Tablero::hechizos() {
      //Hechizo 3 Shift
     if (IsKeyPressed(KEY_S)) {
 
-        Shift_Time(personaje_usando_magia);
+        magiaTablero.Shift_Time(personaje_usando_magia,*this);
     }
      //Hechizo 2 Heal
     if (IsKeyPressed(KEY_H)) {
@@ -1182,6 +1153,17 @@ void Tablero::avanceCiclo() {
 }
 
 
+
+
+void Tablero::reset_MovimientosPosibles() {
+
+    for (int i = 0; i < 9; i++) {
+        for (int j = 0; j < 9; j++) {
+
+            if (cuadricula[i][j] == nullptr) movimientosPosibles[i][j] = false;
+        }
+    }
+}
 
 
 

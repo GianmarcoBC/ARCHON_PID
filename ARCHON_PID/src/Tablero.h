@@ -1,12 +1,14 @@
 #pragma once
 #include "raylib.h"
 #include "Personaje.h"
+#include "Magia.h"
 #include "Pj.h"
 #include <vector>
 
 enum class ColorCasilla{BLANCO,NEGRO,CAMBIANTE};
 enum class ModoJuego { NORMAL, COMBATE, HECHIZOS, SHIFT, HEAL, TELEPORT, EXCHANGE, IMPRISON, REVIVE};
 
+class Magia;
 
 class Tablero
 {
@@ -30,6 +32,9 @@ class Tablero
     bool hechizosOscuridad[7]{false};
     bool hechizosLuz[7]{ false };
     ModoJuego modoJuegoactual{ ModoJuego::NORMAL };
+    Magia magiaTablero;
+
+    friend class Magia;
 
 public:
 
@@ -48,6 +53,7 @@ public:
     void DrawCasillas();
     void set_MovimientosPosibles(bool set, int fila, int columna){ movimientosPosibles[fila][columna] = set; };
     bool get_MovimientosPosibles(int fila, int columna) { return movimientosPosibles[fila][columna]; };
+    void reset_MovimientosPosibles();
     void set_colorCasilla(ColorCasilla color,int fil, int col) { colorCasilla[fil][col] = color; };
     void set_avance(bool aux) { avance = aux; };
     ColorCasilla get_colorCasilla(int fil, int col) { return colorCasilla[fil][col]; }
@@ -60,12 +66,12 @@ public:
     
 
     //Hechizos
-    void Shift_Time(Personaje* personaje);
-    void Teleport(Personaje* personaje);
-    void Heal(Personaje* personaje);
-    void Exchange();
-    void Imprison(Personaje* personaje);
-    void Revive(Personaje* personaje);
+   
+    //void Teleport(Personaje* personaje);
+   // void Heal(Personaje* personaje);
+   // void Exchange();
+   // void Imprison(Personaje* personaje);
+    //void Revive(Personaje* personaje);
 
 };
 

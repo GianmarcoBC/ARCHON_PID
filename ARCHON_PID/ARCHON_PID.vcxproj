@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Magia.cpp" />
     <ClCompile Include="src\Personaje.cpp" />
     <ClCompile Include="src\ARCHON_PID.cpp" />
     <ClCompile Include="src\Disparo.cpp" />
@@ -26,6 +27,7 @@
     <ClCompile Include="src\Tablero.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Magia.h" />
     <ClInclude Include="src\Personaje.h" />
     <ClInclude Include="src\Disparo.h" />
     <ClInclude Include="src\Combate.h" />
