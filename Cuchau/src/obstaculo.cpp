@@ -1,30 +1,21 @@
 #include "obstaculo.h"
 #include "raylib.h"
 
-// ============================================================================
 //  obstaculo::drawshadow — Dibuja la sombra del obstaculo en el suelo
 //
 //  Usa BLEND_MULTIPLIED para que la sombra oscurezca el suelo sin tapar
 //  completamente lo que hay debajo (efecto de transparencia multiplicativa).
-// ============================================================================
 
-void obstaculo::drawshadow()
+void obstaculo::drawshadow() const
 {
     BeginBlendMode(BLEND_MULTIPLIED);
     DrawModel(shadow, shadowpos, 1.0f, WHITE);
     EndBlendMode();
 }
 
-// ============================================================================
-//  obstaculo::UnloadObstaculo — Libera recursos de GPU
-//
-//  Descarga el modelo de sombra y las texturas del sprite y la sombra.
-//  Se llama en el destructor de arena al terminar un combate.
-// ============================================================================
-
-void obstaculo::UnloadObstaculo()
+void obstaculo::Draw(Camera camera) const
 {
-    UnloadModel(shadow);
-    UnloadTexture(sprite);
-    UnloadTexture(spriteShadow);
+	drawshadow();  // Primero dibujar la sombra (BLEND_MULTIPLIED)
+	// Luego dibujar el billboard del obstaculo (sin blending, cubre completamente)
+	DrawBillboard(camera, sprite, pos, size, WHITE);
 }

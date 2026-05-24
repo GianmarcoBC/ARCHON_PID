@@ -1,12 +1,10 @@
 #include "Disparo.h"
 
-// ============================================================================
 //  Disparo::Update — Mueve el proyectil y verifica limites
 //
 //  El disparo se mueve en el plano XZ usando su velocidad Vec2.
 //  Si la posicion sale de los limites de la arena (±arenaHalfW en X,
 //  ±arenaHalfL en Z), se desactiva para que sea eliminado.
-// ============================================================================
 
 void Disparo::Update(float dt, float arenaHalfW, float arenaHalfL)
 {
@@ -22,4 +20,32 @@ void Disparo::Update(float dt, float arenaHalfW, float arenaHalfL)
     {
         status_ = false;
     }
+}
+
+void Disparo::Draw(Camera camera) const
+{
+    if (!status_ || !Disp) return;
+
+    float angulo = 0.0f;
+
+    float w = (float)Disp->width, w1 = w;
+    float h = (float)Disp->height;
+
+    // Calcula el ángulo según la dirección
+    if (vel.x > 0) { angulo = 0.0f; w1 = w; } // →
+    else if (vel.x < 0) { angulo = 0.0f; w1 = -w; } // ←
+    else if (vel.y < 0) { angulo = 270.0f; w1 = w; } // ↑
+    else if (vel.y > 0) { angulo = 270.0f; w1 = -w; } // ↓
+
+	DrawBillboardPro(
+		camera,
+		*Disp,
+		{ 0, 0, w1, h },              // Región fuente (sprite completo)
+		{ pos3d.x, pos3d.y, pos3d.z }, // Región destino (posicion 3D)
+		{ 0,1,0 },  // Up vector (para que el billboard se mantenga vertical)
+		{ size3D, size3D }, // Tamaño del billboard en unidades 3D
+		{ w / 2, h / 2 },            // Origen en el centro (pivote de rotación)
+		angulo,
+		WHITE
+	);
 }

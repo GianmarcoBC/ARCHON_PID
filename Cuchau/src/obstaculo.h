@@ -1,24 +1,24 @@
 #pragma once
 #include "raylib.h"
 
-// ============================================================================
 //  obstaculo.h — Obstaculo 3D con billboard, sombra y caja de colision
 //
 //  Cada obstaculo se renderiza como un billboard (sprite que mira a la camara)
 //  con una sombra proyectada en el suelo. Tiene una caja de colision en el
 //  plano XZ para empujar a los personajes que choquen contra el.
-// ============================================================================
 
 class obstaculo
 {
-public:
     // Rendering
     Texture2D sprite{};          // Textura principal del obstaculo (billboard)
     Texture2D spriteShadow{};    // Textura de la sombra
+
     Mesh shadowMesh{};           // Malla plana para proyectar la sombra en el suelo
     Model shadow{};              // Modelo de la sombra (malla + textura)
+
     Vector3 pos{};               // Posicion 3D del billboard
     Vector3 shadowpos{};         // Posicion de la sombra (ligeramente sobre el suelo, desplazada en Z)
+
     float size{};                // Tamano del billboard en unidades 3D
 
     // Colision en el plano XZ
@@ -27,10 +27,12 @@ public:
     bool  solido{ true };       // Si es true, empuja a los personajes al colisionar
 
     // Dibuja la sombra en el suelo con modo BLEND_MULTIPLIED
-    void drawshadow();
+    void drawshadow() const;
 
-    // Libera texturas y modelo de sombra de la memoria
-    void UnloadObstaculo();
+public:
+
+    // Constructor por defecto (necesario para arrays)
+    obstaculo() = default;
 
     // Constructor: carga texturas, genera malla de sombra, configura colision
     //   textura: ruta de la imagen del billboard
@@ -40,15 +42,11 @@ public:
     //   colW/colL: ancho y largo de la caja de colision (0 = auto 40% del tamaño)
     //   sol:     si es solido (bloquea movimiento)
     obstaculo(const char* textura, const char* sombra, Vector3 posicion,
-              float tam, float colW = 0, float colL = 0, bool sol = true)
-    {
-        pos = posicion;
-        size = tam;
-        solido = sol;
-
+        float tam, float colW = 0, float colL = 0, bool sol = true) :
+        pos(posicion), size(tam), solido(sol),
         // La sombra se coloca justo sobre el suelo (y=0.01), desplazada en Z
-        shadowpos = { posicion.x, 0.01f, posicion.z - tam / 1.5f };
-
+        shadowpos(posicion.x, 0.01f, posicion.z - tam / 1.5f)
+    {
         // Cargar texturas del sprite y su sombra
         sprite = LoadTexture(textura);
         spriteShadow = LoadTexture(sombra);
@@ -66,6 +64,21 @@ public:
         colHL = (colL > 0) ? colL / 2.0f : tam * 0.4f;  // Mitad del largo
     }
 
-    // Constructor por defecto (necesario para arrays)
-    obstaculo() = default;
+    // Libera texturas y modelo de sombra de la memoria
+    ~obstaculo() {
+        UnloadModel(shadow);
+        UnloadTexture(sprite);
+        UnloadTexture(spriteShadow);
+    }
+
+	// Dibuja el obstaculo: primero la sombra (BLEND_MULTIPLIED) y luego el billboard
+    void Draw(Camera camera) const;
+    
+    // Getters para la colision
+    float getColCX() const { return colCX; }
+    float getColCZ() const { return colCZ; }
+    float getColHW() const { return colHW; }
+    float getColHL() const { return colHL; }
+    bool  isSolido() const { return solido; }
+
 };

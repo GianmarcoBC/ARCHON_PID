@@ -21,11 +21,11 @@ enum class EstadoMusica { Menu, Combate, MagoMago, PeonMago, Victoria };
 class Rolitas
 {
     // Streams de musica cargados al inicializar
-    Music musica_combate   = LoadMusicStream(MusicaBatalla1V1);
-    Music musica_menu      = LoadMusicStream(MusicaMenu);
-    Music musica_mago_mago = LoadMusicStream(MusicaMagoMago);
-    Music musica_peon_mago = LoadMusicStream(MusicaPeonMago);
-    Music musica_victoria  = LoadMusicStream(MusicaVictoria);
+    Music musica_combate   = LoadMusicStream(MusicaBatalla1V1.data());
+    Music musica_menu      = LoadMusicStream(MusicaMenu.data());
+    Music musica_mago_mago = LoadMusicStream(MusicaMagoMago.data());
+    Music musica_peon_mago = LoadMusicStream(MusicaPeonMago.data());
+    Music musica_victoria  = LoadMusicStream(MusicaVictoria.data());
 
     EstadoMusica estado = EstadoMusica::Menu;  // Estado actual de la musica
 
@@ -37,17 +37,13 @@ public:
     Rolitas() { PlayMusicStream(musica_menu); }
 
     // Cambia la musica segun los personajes en combate y si el juego termino
-    void SetMusic(const char* p1, const char* p2, bool fin);
+    void SetMusic(std::string_view p1, std::string_view p2, bool fin);
 
     // Actualiza el buffer del stream de musica actual (debe llamarse cada frame)
     void Update();
 
     // Vuelve a la musica del menu (se llama al salir del combate)
-    void ResetToMenu() {
-        StopMusicStream(GetActual());
-        estado = EstadoMusica::Menu;
-        PlayMusicStream(musica_menu);
-    }
+    void ResetToMenu();
 
     // Destructor: libera todos los streams de musica
     ~Rolitas() {

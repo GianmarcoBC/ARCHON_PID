@@ -1,6 +1,7 @@
 #pragma once
+#include <string_view>
+#include <vector>
 
-// ============================================================================
 //  Pj_info.h — Definiciones de los 16 personajes jugables
 //
 //  Contiene las constantes de balance del juego (velocidad, vida, fuerza, etc.)
@@ -10,7 +11,6 @@
 //  Equipos:
 //    Claro (8): MH, Phoenix, Golem, Djinni, Unicorn, Valkyrie, Archer, Knight
 //    Oscuro (8): Platero, ShapeShifter, Troll, Dragon, Basilisk, Banshee, Manticore, Goblin
-// ============================================================================
 
 // --- Constantes de balance del juego ---
 
@@ -38,15 +38,11 @@ struct cntrl
 // --- Estructura con todas las propiedades de un personaje ---
 struct Pj_info
 {
-    const char* nombre;             // Nombre mostrado en el HUD y menu
-    const char* Sprite_1;           // Sprite frame 1 (pose neutra)
-    const char* Sprite_2;           // Sprite frame 2 (animacion)
-    const char* Sprite_3;           // Sprite frame 3 (animacion)
-    const char* Sprite_1_shadow;    // Sombra del frame 1
-    const char* Sprite_2_shadow;    // Sombra del frame 2
-    const char* Sprite_3_shadow;    // Sombra del frame 3
-    const char* Ataque;             // Sprite del proyectil que lanza
-    const char* Efecto_ataque;      // Archivo de sonido al disparar
+    std::string_view nombre;             // Nombre mostrado en el HUD y menu
+    std::vector<std::string_view> Sprites;           // Sprite frame para la animación
+    std::vector<std::string_view> Sprites_shadow;           // Sprite frame para la animación de la sombra
+    std::string_view Ataque;             // Sprite del proyectil que lanza
+    std::string_view Efecto_ataque;      // Archivo de sonido al disparar
     float vel;                      // Velocidad de movimiento
     float vida;                     // Puntos de vida iniciales
     float fuerza;                   // Dano por impacto
@@ -63,17 +59,18 @@ struct Pj_info
 // ============================================================================
 
 // MH — Mago principal. Velocidad media, vida media, fuerza alta. Vuela y ataca a rango.
-inline constexpr Pj_info MH = {
+inline const Pj_info MH = {
     "MH",
-    "bin/Resources/MH/SpriteMH_0001.png",
+
+    {"bin/Resources/MH/SpriteMH_0001.png",
     "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png",
+    "bin/Resources/MH/SpriteMH_0001.png"},
 
+    {"bin/Resources/MH/SpriteMH_shadow.png",
     "bin/Resources/MH/SpriteMH_shadow.png",
-    "bin/Resources/MH/SpriteMH_shadow.png",
-    "bin/Resources/MH/SpriteMH_shadow.png",
+    "bin/Resources/MH/SpriteMH_shadow.png"},
 
-    "bin/Resources/MH/SpriteFlecha.png",
+    "bin/Resources/Archer/SpriteFlecha.png",
     "bin/Resources/MH/RaspberryPIMH.wav",
     Velocidad_media,
     Vida_media,
@@ -87,15 +84,18 @@ inline constexpr Pj_info MH = {
 };
 
 // Phoenix — Ave fenix. Vida alta, fuerza alta, pero cooldown y velocidad de ataque bajos.
-inline constexpr Pj_info Phoenix = {
+inline const Pj_info Phoenix = {
     "Phoenix",
-    "bin/Resources/Phoenix/SpritePhoenix.png",
+
+    {"bin/Resources/Phoenix/SpritePhoenix.png",
     "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png",
-     "bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteFlecha.png",
+    "bin/Resources/MH/SpriteMH_0003.png"},
+
+    {"bin/Resources/MH/SpriteMH_shadow.png",
+    "bin/Resources/MH/SpriteMH_shadow.png",
+    "bin/Resources/MH/SpriteMH_shadow.png"},
+
+    "bin/Resources/Archer/SpriteFlecha.png",
     "bin/Resources/Phoenix/fenixfx.wav",
     Velocidad_media,
     Vida_alta,
@@ -109,15 +109,18 @@ inline constexpr Pj_info Phoenix = {
 };
 
 // Golem — Tanque lento. Velocidad baja, vida alta, fuerza alta, cooldown alto.
-inline constexpr Pj_info Golem = {
+inline const Pj_info Golem = {
     "Golem",
-    "bin/Resources/Golem/SpriteGolem.png",
+
+    {"bin/Resources/Golem/SpriteGolem.png",
     "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png",
-     "bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteFlecha.png",
+    "bin/Resources/MH/SpriteMH_0003.png"},
+
+    {"bin/Resources/MH/SpriteMH_shadow.png",
+    "bin/Resources/MH/SpriteMH_shadow.png",
+    "bin/Resources/MH/SpriteMH_shadow.png"},
+
+    "bin/Resources/Archer/SpriteFlecha.png",
     "bin/Resources/Golem/golem.wav",
     Velocidad_baja,
     Vida_alta,
@@ -131,15 +134,18 @@ inline constexpr Pj_info Golem = {
 };
 
 // Djinni — Genio volador. Estadisticas equilibradas, fuerza media.
-inline constexpr Pj_info Djinni = {
+inline const Pj_info Djinni = {
     "Djinni",
-    "bin/Resources/Djinni/SpiteDjinni.png",
+
+    {"bin/Resources/Djinni/SpiteDjinni.png",
     "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png",
-     "bin/Resources/MH/SpriteMH_0001.png",
+    "bin/Resources/MH/SpriteMH_0003.png"},
+
+    {"bin/Resources/MH/SpriteMH_0001.png",
     "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteFlecha.png",
+    "bin/Resources/MH/SpriteMH_0001.png"},
+
+    "bin/Resources/Archer/SpriteFlecha.png",
     "bin/Resources/Dragon/fierybreathfx.wav",
     Velocidad_media,
     Vida_alta,
@@ -153,15 +159,18 @@ inline constexpr Pj_info Djinni = {
 };
 
 // Unicorn — Unicornio. Vida media, cooldown bajo (dispara rapido), velocidad de ataque alta.
-inline constexpr Pj_info Unicorn = {
+inline const Pj_info Unicorn = {
     "Unicorn",
-    "bin/Resources/Unicorn/SpriteUnicorn_0002.png",
+
+    {"bin/Resources/Unicorn/SpriteUnicorn_0002.png",
     "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png",
-     "bin/Resources/MH/SpriteMH_0001.png",
+    "bin/Resources/MH/SpriteMH_0003.png"},
+
+    {"bin/Resources/MH/SpriteMH_0001.png",
     "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteFlecha.png",
+    "bin/Resources/MH/SpriteMH_0001.png"},
+
+    "bin/Resources/Archer/SpriteFlecha.png",
     "bin/Resources/Valkyrie/magicspearfx.wav",
     Velocidad_media,
     Vida_media,
@@ -175,15 +184,18 @@ inline constexpr Pj_info Unicorn = {
 };
 
 // Valkyrie — Valkiria voladora. Estadisticas medias, ataque a rango.
-inline constexpr Pj_info Valkyrie = {
+inline const Pj_info Valkyrie = {
     "Valkyrie",
-    "bin/Resources/Valkyrie/SpriteValkyrie.png",
+
+    {"bin/Resources/Valkyrie/SpriteValkyrie.png",
     "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png",
-     "bin/Resources/MH/SpriteMH_0001.png",
+    "bin/Resources/MH/SpriteMH_0003.png"},
+
+    {"bin/Resources/MH/SpriteMH_0001.png",
     "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteFlecha.png",
+    "bin/Resources/MH/SpriteMH_0001.png"},
+
+    "bin/Resources/Archer/SpriteFlecha.png",
     "bin/Resources/Knight/espadafx.wav",
     Velocidad_media,
     Vida_media,
@@ -197,15 +209,18 @@ inline constexpr Pj_info Valkyrie = {
 };
 
 // Archer — Arquero. Vida y fuerza bajas, pero disparo a velocidad media.
-inline constexpr Pj_info Archer = {
+inline const Pj_info Archer = {
     "Archer",
-    "bin/Resources/Archer/SpriteArcherpxo.png",
+
+    {"bin/Resources/Archer/SpriteArcherpxo.png",
     "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png",
-     "bin/Resources/MH/SpriteMH_0001.png",
+    "bin/Resources/MH/SpriteMH_0003.png"},
+
+    {"bin/Resources/MH/SpriteMH_0001.png",
     "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteFlecha.png",
+    "bin/Resources/MH/SpriteMH_0001.png"},
+
+    "bin/Resources/Archer/SpriteFlecha.png",
     "bin/Resources/Knight/flechafx.wav",
     Velocidad_media,
     Vida_baja,
@@ -219,15 +234,18 @@ inline constexpr Pj_info Archer = {
 };
 
 // Knight — Caballero cuerpo a cuerpo. Vida baja, fuerza baja, pero sin cooldown y proyectil muy rapido.
-inline constexpr Pj_info Knight = {
+inline const Pj_info Knight = {
     "Knight",
-    "bin/Resources/Knight/SpriteKnight.png",
+
+    {"bin/Resources/Knight/SpriteKnight.png",
     "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png",
-     "bin/Resources/MH/SpriteMH_0001.png",
+    "bin/Resources/MH/SpriteMH_0003.png"},
+
+    {"bin/Resources/MH/SpriteMH_0001.png",
     "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteFlecha.png",
+    "bin/Resources/MH/SpriteMH_0001.png"},
+
+    "bin/Resources/Archer/SpriteFlecha.png",
     "bin/Resources/Knight/espadafx.wav",
     Velocidad_media,
     Vida_baja,
@@ -246,15 +264,18 @@ inline constexpr Pj_info Knight = {
 // ============================================================================
 
 // Platero — Mago oscuro. Velocidad media, ataque a rango con proyectil rapido.
-inline constexpr Pj_info Platero = {
+inline const Pj_info Platero = {
     "Platero",
-    "bin/Resources/Platero/SpritePlatero.png",
+
+    {"bin/Resources/Platero/SpritePlatero.png",
     "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png",
-     "bin/Resources/MH/SpriteMH_0001.png",
+    "bin/Resources/MH/SpriteMH_0003.png"},
+
+    {"bin/Resources/MH/SpriteMH_0001.png",
     "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteFlecha.png",
+    "bin/Resources/MH/SpriteMH_0001.png"},
+
+    "bin/Resources/Archer/SpriteFlecha.png",
     "bin/Resources/Platero/CorrectoPlatero.wav",
     Velocidad_media,
     Vida_media,
@@ -268,15 +289,18 @@ inline constexpr Pj_info Platero = {
 };
 
 // ShapeShifter — Cambiaformas. Vida alta, fuerza alta, cuerpo a cuerpo.
-inline constexpr Pj_info ShapeShifter = {
+inline const Pj_info ShapeShifter = {
     "ShapeShifter",
-    "bin/Resources/Shapeshifter/SpriteShapeshifter.png",
+
+    {"bin/Resources/Shapeshifter/SpriteShapeshifter.png",
     "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png",
-     "bin/Resources/MH/SpriteMH_0001.png",
+    "bin/Resources/MH/SpriteMH_0003.png"},
+
+    {"bin/Resources/MH/SpriteMH_0001.png",
     "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteFlecha.png",
+    "bin/Resources/MH/SpriteMH_0001.png"},
+
+    "bin/Resources/Archer/SpriteFlecha.png",
     "bin/Resources/Banshee/scream.wav",
     Velocidad_media,
     Vida_alta,
@@ -290,15 +314,18 @@ inline constexpr Pj_info ShapeShifter = {
 };
 
 // Troll — Tanque lento del equipo oscuro. Similar al Golem.
-inline constexpr Pj_info Troll = {
+inline const Pj_info Troll = {
     "Troll",
-    "bin/Resources/Troll/SpriteTroll.png",
+
+    {"bin/Resources/Troll/SpriteTroll.png",
     "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png",
-     "bin/Resources/MH/SpriteMH_0001.png",
+    "bin/Resources/MH/SpriteMH_0003.png"},
+
+    {"bin/Resources/MH/SpriteMH_0001.png",
     "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteFlecha.png",
+    "bin/Resources/MH/SpriteMH_0001.png"},
+
+    "bin/Resources/Archer/SpriteFlecha.png",
     "bin/Resources/Troll/trollfx.wav",
     Velocidad_baja,
     Vida_alta,
@@ -312,15 +339,18 @@ inline constexpr Pj_info Troll = {
 };
 
 // Dragon — El mas poderoso. Vida muy alta, fuerza muy alta, pero cooldown alto.
-inline constexpr Pj_info Dragon = {
+inline const Pj_info Dragon = {
     "Dragon",
-    "bin/Resources/Dragon/SpriteDragon.png",
+
+    {"bin/Resources/Dragon/SpriteDragon.png",
     "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png",
-     "bin/Resources/MH/SpriteMH_0001.png",
+    "bin/Resources/MH/SpriteMH_0003.png"},
+
+    {"bin/Resources/MH/SpriteMH_0001.png",
     "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteFlecha.png",
+    "bin/Resources/MH/SpriteMH_0001.png"},
+
+    "bin/Resources/Archer/SpriteFlecha.png",
     "bin/Resources/Dragon/dragonfx.wav",
     Velocidad_media,
     Vida_muyalta,
@@ -334,15 +364,18 @@ inline constexpr Pj_info Dragon = {
 };
 
 // Basilisk — Basilisco. Vida baja pero fuerza alta, cooldown bajo y proyectil rapido.
-inline constexpr Pj_info Basilisk = {
+inline const Pj_info Basilisk = {
     "Basilisk",
-    "bin/Resources/Basilisk/SpriteBasilisk.png",
+
+    {"bin/Resources/Basilisk/SpriteBasilisk.png",
     "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png",
-     "bin/Resources/MH/SpriteMH_0001.png",
+    "bin/Resources/MH/SpriteMH_0003.png"},
+
+    {"bin/Resources/MH/SpriteMH_0001.png",
     "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteFlecha.png",
+    "bin/Resources/MH/SpriteMH_0001.png"},
+
+    "bin/Resources/Archer/SpriteFlecha.png",
     "bin/Resources/Basilisk/basiliskfx.wav",
     Velocidad_media,
     Vida_baja,
@@ -356,15 +389,18 @@ inline constexpr Pj_info Basilisk = {
 };
 
 // Banshee — Fantasma aullador. Vida media, cooldown alto pero proyectil muy rapido.
-inline constexpr Pj_info Banshee = {
+inline const Pj_info Banshee = {
     "Banshee",
-    "bin/Resources/Banshee/SpriteBanshee.png",
+
+    {"bin/Resources/Banshee/SpriteBanshee.png",
     "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png",
-     "bin/Resources/MH/SpriteMH_0001.png",
+    "bin/Resources/MH/SpriteMH_0003.png"},
+
+    {"bin/Resources/MH/SpriteMH_0001.png",
     "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteFlecha.png",
+    "bin/Resources/MH/SpriteMH_0001.png"},
+
+    "bin/Resources/Archer/SpriteFlecha.png",
     "bin/Resources/Banshee/scream.wav",
     Velocidad_media,
     Vida_media,
@@ -378,15 +414,18 @@ inline constexpr Pj_info Banshee = {
 };
 
 // Manticore — Manticora. Vida media, fuerza baja, proyectil lento.
-inline constexpr Pj_info Manticore = {
+inline const Pj_info Manticore = {
     "Manticore",
-    "bin/Resources/Manticore/SpriteManticore.png",
+
+    {"bin/Resources/Manticore/SpriteManticore.png",
     "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png",
-     "bin/Resources/MH/SpriteMH_0001.png",
+    "bin/Resources/MH/SpriteMH_0003.png"},
+
+    {"bin/Resources/MH/SpriteMH_0001.png",
     "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteFlecha.png",
+    "bin/Resources/MH/SpriteMH_0001.png"},
+
+    "bin/Resources/Archer/SpriteFlecha.png",
     "bin/Resources/Djinni/vientofeericofx.wav",
     Velocidad_media,
     Vida_media,
@@ -400,15 +439,18 @@ inline constexpr Pj_info Manticore = {
 };
 
 // Goblin — Duende cuerpo a cuerpo. Vida y fuerza bajas, pero sin cooldown y proyectil ultra rapido.
-inline constexpr Pj_info Goblin = {
+inline const Pj_info Goblin = {
     "Goblin",
-    "bin/Resources/Goblin/Spritegoblin.png",
+
+    {"bin/Resources/Goblin/Spritegoblin.png",
     "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png",
-     "bin/Resources/MH/SpriteMH_0001.png",
+    "bin/Resources/MH/SpriteMH_0003.png"},
+
+    {"bin/Resources/MH/SpriteMH_0001.png",
     "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteFlecha.png",
+    "bin/Resources/MH/SpriteMH_0001.png"},
+
+    "bin/Resources/Archer/SpriteFlecha.png",
     "bin/Resources/Knight/espadafx.wav",
     Velocidad_media,
     Vida_baja,

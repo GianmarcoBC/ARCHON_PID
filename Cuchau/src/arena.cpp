@@ -237,7 +237,7 @@ void arena::Draw3D()
 
     // ── 7-8. Billboards con Painter's algorithm ─────────────────────
     // Estructura temporal para ordenar todos los billboards por profundidad
-    struct Billboard { Texture2D tex; Vector3 pos; float size; };
+    struct Billboard { Texture2D tex; Vector3 pos; float size; float rotation; };
 
     // Calcular la direccion de vista de la camara (para proyeccion de profundidad)
     Vector3 cam = camera.position;
@@ -255,15 +255,15 @@ void arena::Draw3D()
     billboards.reserve(7 + Disparos_1.size() + Disparos_2.size());
 
     // Obstaculos (5 billboards)
-    billboards.push_back({ palos1->sprite, palos1->pos, palos1->size });
-    billboards.push_back({ palos2->sprite, palos2->pos, palos2->size });
-    billboards.push_back({ palos3->sprite, palos3->pos, palos3->size });
-    billboards.push_back({ palos4->sprite, palos4->pos, palos4->size });
-    billboards.push_back({ fuente->sprite, fuente->pos, fuente->size });
+    billboards.push_back({ palos1->sprite, palos1->pos, palos1->size, 0.0f });
+    billboards.push_back({ palos2->sprite, palos2->pos, palos2->size, 0.0f });
+    billboards.push_back({ palos3->sprite, palos3->pos, palos3->size, 0.0f });
+    billboards.push_back({ palos4->sprite, palos4->pos, palos4->size, 0.0f });
+    billboards.push_back({ fuente->sprite, fuente->pos, fuente->size, 0.0f });
 
     // Personajes (2 billboards)
-    billboards.push_back({ P1.getCurrentFrame(), P1.GetPos3D(), P1.GetCharSize() });
-    billboards.push_back({ P2.getCurrentFrame(), P2.GetPos3D(), P2.GetCharSize() });
+    billboards.push_back({ P1.getCurrentFrame(), P1.GetPos3D(), P1.GetCharSize(), 0.0f });
+    billboards.push_back({ P2.getCurrentFrame(), P2.GetPos3D(), P2.GetCharSize(), 0.0f });
 
     // Disparos activos (variable cantidad)
     for (const auto& d : Disparos_1)
@@ -287,8 +287,16 @@ void arena::Draw3D()
     }
 
     // Dibujar todos los billboards en orden (lejos → cerca)
-    for (const auto& b : billboards)
-        DrawBillboard(camera, b.tex, b.pos, b.size, WHITE);
+    for (const auto& b : billboards) {
+        if (b.rotation != 0.0f) {
+            Rectangle src = { 0, 0, (float)b.tex.width, (float)b.tex.height };
+            Vector2   siz = { b.size, b.size };
+            DrawBillboardPro(camera, b.tex, src, b.pos, { 0,1,0 }, siz, { 0,0 }, b.rotation, WHITE);
+        }
+        else {
+            DrawBillboard(camera, b.tex, b.pos, b.size, WHITE);
+        }
+    }
 
     EndMode3D();
 }

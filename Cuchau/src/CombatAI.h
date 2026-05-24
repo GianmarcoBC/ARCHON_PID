@@ -7,17 +7,16 @@
 #include <cstdlib>
 #include <vector>
 
-// ============================================================================
 //  CombatAI.h — Inteligencia artificial para el combate
 //
-//  Maquina de estados con 3 comportamientos:
+//  "Maquina de estados" con 3 comportamientos:
 //    Acercar  — Se acerca al jugador con movimiento en zigzag
 //    Rodear   — Orbita al jugador a distancia optima de combate
 //    Esquivar — Esquiva perpendicular al detectar un proyectil cercano
 //
 //  Opera completamente en el plano XZ usando Vec2.
 //  Tiene un delay de reaccion configurable (dificultad).
-// ============================================================================
+//  Tiene distintos comportamientos según la difiultad.
 
 class CombatAI {
 

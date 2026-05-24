@@ -2,12 +2,10 @@
 #include "raylib.h"
 #include "Vec2.h"
 
-// ============================================================================
 //  Disparo.h — Proyectil 3D tipo billboard
 //
 //  Cada disparo tiene una posicion 3D (para renderizado) y una velocidad Vec2
 //  en el plano XZ (para la logica de juego). Se desactiva al salir de la arena.
-// ============================================================================
 
 class Disparo
 {
@@ -19,7 +17,7 @@ class Disparo
 
 public:
     // Tamano del billboard del disparo en unidades 3D
-    static constexpr float size = 1.5f;
+    static constexpr float size3D = 1.5f;
 
     // Constructor: posicion inicial, velocidad XZ, textura, y quien lo disparo
     Disparo(Vector3 p, Vec2 v, Texture2D* tx, bool fp = true)
@@ -27,6 +25,11 @@ public:
 
     // Mueve el disparo y lo desactiva si sale de los limites de la arena
     void Update(float dt, float arenaHalfW, float arenaHalfL);
+    // Dibuja el disparo como billboard en su posicion 3D
+	void Draw(Camera camera) const;
+
+
+
 
     // Posicion 3D completa (para renderizado con DrawBillboard)
     Vector3 GetPos3D() const { return pos3d; }
@@ -46,4 +49,8 @@ public:
 
     // Puntero a la textura (para renderizar como billboard)
     Texture2D* getTexture() const { return Disp; }
+
+
+
+	~Disparo() = default; // No necesita destructor personalizado, no gestiona recursos propios
 };

@@ -2,9 +2,7 @@
 #include "raylib.h"
 #include <cstring>
 
-// ============================================================================
 //  GetActual — Devuelve el stream de musica que corresponde al estado actual
-// ============================================================================
 
 Music& Rolitas::GetActual()
 {
@@ -18,7 +16,6 @@ Music& Rolitas::GetActual()
     return musica_menu;  // Fallback por seguridad
 }
 
-// ============================================================================
 //  SetMusic — Determina que musica debe sonar segun el estado del combate
 //
 //  Reglas de seleccion:
@@ -29,9 +26,8 @@ Music& Rolitas::GetActual()
 //
 //  Solo cambia si el nuevo estado es diferente al actual (evita reiniciar
 //  el mismo track cada frame).
-// ============================================================================
 
-void Rolitas::SetMusic(const char* p1, const char* p2, bool fin) {
+void Rolitas::SetMusic(std::string_view p1, std::string_view p2, bool fin) {
 
     EstadoMusica nuevoEstado;
 
@@ -39,13 +35,10 @@ void Rolitas::SetMusic(const char* p1, const char* p2, bool fin) {
         nuevoEstado = EstadoMusica::Victoria;
     }
     else {
-        // Detener la musica del menu al entrar en combate
-        StopMusicStream(musica_menu);
-
         // Seleccionar musica segun los personajes
-        if (!strcmp("MH", p1) && !strcmp("Platero", p2))      nuevoEstado = EstadoMusica::MagoMago;
-        else if (!strcmp("MH", p1) || !strcmp("Platero", p2)) nuevoEstado = EstadoMusica::PeonMago;
-        else                                                  nuevoEstado = EstadoMusica::Combate;
+        if ("MH" == p1 && "Platero" == p2)      nuevoEstado = EstadoMusica::MagoMago;
+        else if ("MH" == p1 || "Platero" == p2) nuevoEstado = EstadoMusica::PeonMago;
+        else                                     nuevoEstado = EstadoMusica::Combate;
     }
 
     // Solo cambiar si el estado es diferente
@@ -57,12 +50,17 @@ void Rolitas::SetMusic(const char* p1, const char* p2, bool fin) {
     PlayMusicStream(GetActual());
 }
 
-// ============================================================================
 //  Update — Actualiza el buffer del stream de musica actual
 //
 //  Debe llamarse cada frame para que la musica siga sonando sin interrupciones.
-// ============================================================================
 
 void Rolitas::Update() {
     UpdateMusicStream(GetActual());
+}
+
+void Rolitas::ResetToMenu()
+{
+    StopMusicStream(GetActual());
+    estado = EstadoMusica::Menu;
+    PlayMusicStream(musica_menu);
 }
