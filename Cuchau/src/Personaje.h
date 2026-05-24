@@ -15,6 +15,7 @@
 
 class Personaje
 {
+
     Pj_info Player{};             // Datos del personaje (stats, rutas de sprites, etc.)
     float max_vida{};             // Vida maxima (para calcular porcentaje en barras de vida)
 	float max_cooldown{};          // Cooldown de disparo (para calcular porcentaje en barra de cooldown)
@@ -80,7 +81,7 @@ public:
     float       GetMaxVida()     const { return max_vida; }              // Vida maxima
     Vec2        GetDir()         const { return l_dir; }                 // Direccion de apuntado
     void        SetDir(Vec2 d)         { l_dir = d.unitario(); }         // Cambia direccion (normalizada)
-    //float       GetVelocidad()   const { return Player.vel * SPEED_SCALE; }  // Velocidad en u/s
+    float       GetVelocidad()   const { return Player.vel * SPEED_SCALE; }  // Velocidad en u/s
     float       get_Cooldown()   const { return Player.cooldown; }       // Tiempo entre disparos
     bool        get_isPlayer()   const { return isPlayer; }              // Es controlado por teclado?
     //void        set_isPlayer(bool ip)  { isPlayer = ip; }

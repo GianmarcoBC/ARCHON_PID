@@ -1,7 +1,9 @@
 #pragma once
 #include "raylib.h"
 #include "Personaje.h"
-#include "CombatAI.h"
+#include "AI_Facil.h"
+#include "AI_Defensiva.h"
+#include "AI_Agresiva.h"
 #include "Interacciones.h"
 #include "Disparo.h"
 #include "obstaculo.h"
