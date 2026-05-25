@@ -63,8 +63,8 @@ public:
         // Configurar caja de colision centrada en la posicion del obstaculo
         colCX = posicion.x;
         colCZ = posicion.z;
-        colHW = (colW > 0) ? colW / 2.0f : tam * 0.4f;  // Mitad del ancho
-        colHL = (colL > 0) ? colL / 2.0f : tam * 0.4f;  // Mitad del largo
+        colHW = colW * 1.5;  // Mitad del ancho
+        colHL = colL / 2.5f;  // Mitad del largo
     }
 
     // Libera texturas y modelo de sombra de la memoria

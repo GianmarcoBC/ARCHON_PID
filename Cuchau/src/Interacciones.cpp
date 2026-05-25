@@ -126,10 +126,10 @@ void Interacciones::ClampArena(Personaje& p, Arena& arena)
     float hs  = p.Size3D / 2.0f;  // Mitad del tamano del personaje
 
     // Clamp en cada borde de la arena
-    if (p.pos3d.x - hs < arena.sueloWidth / 2) p.pos3d.x = arena.sueloWidth / 2 + hs;
-    if (p.pos3d.x + hs > arena.sueloWidth / 2 + arena.sueloWidth) p.pos3d.x = arena.sueloWidth / 2 + arena.sueloWidth  - hs;
-    if (p.pos3d.z - hs < arena.sueloLength / 2) p.pos3d.z = arena.sueloLength / 2 + hs;
-    if (p.pos3d.z + hs > arena.sueloLength / 2 + arena.sueloLength) p.pos3d.z = arena.sueloLength / 2 + arena.sueloLength - hs;
+    if (p.pos3d.x - hs < -arena.sueloWidth / 2)  p.pos3d.x = -arena.sueloWidth / 2 + hs;
+    if (p.pos3d.x + hs > arena.sueloWidth / 2)  p.pos3d.x = arena.sueloWidth / 2 - hs;
+    if (p.pos3d.z - hs < -arena.sueloLength / 2) p.pos3d.z = -arena.sueloLength / 2 + hs;
+    if (p.pos3d.z + hs > arena.sueloLength / 2) p.pos3d.z = arena.sueloLength / 2 - hs;
 
 }
 

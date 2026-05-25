@@ -27,7 +27,7 @@ class Personaje
     Vec2    l_dir{ 1.0f, 0.0f }; // Ultima direccion de movimiento en plano XZ (para apuntar disparos)
 
     // --- Constantes de renderizado y escala ---
-    static constexpr float Size3D    = 4.0f;   // Tamano del billboard en unidades 3D
+    static constexpr float Size3D    = 2.0f;   // Tamano del billboard en unidades 3D
     static constexpr float SPEED_SCALE = 0.02f;  // Factor de conversion: pixeles/s -> unidades/s
                                                   // (arena 40u / pantalla ~2000px ≈ 0.02)
 
