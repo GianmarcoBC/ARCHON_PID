@@ -26,6 +26,9 @@ class obstaculo
     float colHW{}, colHL{};     // Mitad del ancho y largo de la caja de colision
     bool  solido{ true };       // Si es true, empuja a los personajes al colisionar
 
+    // Clase amiga de interacciones
+	friend class Interacciones;
+
     // Dibuja la sombra en el suelo con modo BLEND_MULTIPLIED
     void drawshadow() const;
 

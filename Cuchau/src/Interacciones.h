@@ -4,11 +4,11 @@
 #include "Personaje.h"
 #include "Disparo.h"
 #include "obstaculo.h"
+#include "arena.h"
 #include <vector>
 #include <cmath>
 #include <algorithm>
 
-// ============================================================================
 //  Interacciones.h — Sistema de colisiones del combate
 //
 //  Maneja todas las colisiones en el plano XZ:
@@ -18,12 +18,9 @@
 //    - Limitar personajes dentro de la arena (clamp)
 //
 //  Todas las posiciones y hitboxes son en el plano XZ (Vec2).
-// ============================================================================
 
 class Interacciones
 {
-    Rectangle arena;   // Limites de la arena en XZ: {minX, minZ, anchoX, largoZ}
-
     // Genera un rectangulo de colision centrado en la posicion XZ del personaje
     static Rectangle Hitbox(const Personaje& p);
 
@@ -31,25 +28,23 @@ class Interacciones
     // Devuelve true si hay colision, false si no
     static bool EmpujeAABB(Rectangle a, Rectangle b, Vec2& push);
 
+    // Empuja un personaje fuera de un obstaculo solido si hay colision AABB
+    static void PersonajeContraObstaculo(Personaje& p, const obstaculo& obs);
+
 public:
-    // Constructor: recibe los limites de la arena como Rectangle
-    explicit Interacciones(Rectangle arena) : arena(arena) {}
 
     // Verifica colision circular de cada disparo contra el objetivo.
     // Si impacta: aplica dano y desactiva el disparo. Elimina disparos inactivos del vector.
-    void DisparosContraPersonaje(std::vector<Disparo>& disparos,
+    static void DisparosContraPersonaje(std::vector<Disparo>& disparos,
                                  Personaje& atacante, Personaje& objetivo);
 
-    // Empuja un personaje fuera de un obstaculo solido si hay colision AABB
-    void PersonajeContraObstaculo(Personaje& p, const obstaculo& obs);
-
     // Verifica colision de ambos personajes contra todos los obstaculos
-    void PersonajesContraObstaculos(Personaje& p1, Personaje& p2,
-                                    obstaculo* obs[], int count);
+    static void PersonajesContraObstaculos(Personaje& p1, Personaje& p2,
+                                    std::vector<obstaculo*>& obs);
 
     // Limita la posicion del personaje dentro de los bordes de la arena
-    void ClampArena(Personaje& p) const;
+    static void ClampArena(Personaje& p, Arena& arena);
 
     // Separa dos personajes que se solapan con empuje mutuo (50% cada uno)
-    void PersonajeContraPersonaje(Personaje& p1, Personaje& p2);
+    static void PersonajeContraPersonaje(Personaje& p1, Personaje& p2);
 };

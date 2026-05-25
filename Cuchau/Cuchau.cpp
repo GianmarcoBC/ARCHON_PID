@@ -1,4 +1,3 @@
-// ============================================================================
 //  Cuchau.cpp — Punto de entrada principal de domagic
 //
 //  Flujo del programa:
@@ -10,10 +9,9 @@
 //       Pausa      → menu con Continuar / Guardar / Cargar / Volver al Menu
 //       CargandoSave → frame de transicion para reconstruir la arena desde el save
 //    4. Al cerrar la ventana, liberar recursos
-// ============================================================================
 
 #include "raylib.h"
-#include "arena.h"
+#include "Controlador_Combate.h"
 #include "Menu_Combate.h"
 #include "Rolitas.h"
 #include "SaveManager.h"
@@ -125,7 +123,7 @@ int main()
 
     // Crear sistemas principales
     Menu_Combate menu;
-    arena*    combate = nullptr;
+    ControladorCombate*    combate = nullptr;
     Rolitas   rolitas;
     MenuPausa pausa;
 
@@ -155,9 +153,9 @@ int main()
                 dificultad = menu.GetDificultad();
 
                 if (modoIA)
-                    combate = new arena(menu.GetSelP1(), menu.GetSelP2(), true, dificultad);
+                    combate = new ControladorCombate(menu.GetSelP1(), menu.GetSelP2(), true, dificultad);
                 else
-                    combate = new arena(menu.GetSelP1(), menu.GetSelP2(), false, 0);
+                    combate = new ControladorCombate(menu.GetSelP1(), menu.GetSelP2(), false, 0);
 
                 pausa.Reset();
                 estado = EstadoJuego::Combate;
@@ -191,9 +189,9 @@ int main()
                 delete combate;
 
                 if (savePendiente.modoIA)
-                    combate = new arena(*pj1, *pj2, true, savePendiente.dificultad);
+                    combate = new ControladorCombate(*pj1, *pj2, true, savePendiente.dificultad);
                 else
-                    combate = new arena(*pj1, *pj2, false, 0);
+                    combate = new ControladorCombate(*pj1, *pj2, false, 0);
 
                 combate->CargarEstado(savePendiente);
 

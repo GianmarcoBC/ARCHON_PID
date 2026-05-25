@@ -36,9 +36,9 @@ void Rolitas::SetMusic(std::string_view p1, std::string_view p2, bool fin) {
     }
     else {
         // Seleccionar musica segun los personajes
-        if ("MH" == p1 && "Platero" == p2)      nuevoEstado = EstadoMusica::MagoMago;
-        else if ("MH" == p1 || "Platero" == p2) nuevoEstado = EstadoMusica::PeonMago;
-        else                                     nuevoEstado = EstadoMusica::Combate;
+        if ("MH" == p1.data() && "Platero" == p2.data())      nuevoEstado = EstadoMusica::MagoMago;
+        else if ("MH" == p1.data() || "Platero" == p2.data()) nuevoEstado = EstadoMusica::PeonMago;
+        else                                                     nuevoEstado = EstadoMusica::Combate;
     }
 
     // Solo cambiar si el estado es diferente

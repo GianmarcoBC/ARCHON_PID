@@ -15,6 +15,9 @@ class Disparo
     bool status_{ false };     // true = activo, false = ya impacto o salio de la arena
     bool fromPlayer{ true };   // true = disparado por jugador humano, false = por IA
 
+	// Clase amiga de interacciones
+	friend class Interacciones;
+
 public:
     // Tamano del billboard del disparo en unidades 3D
     static constexpr float size3D = 1.5f;

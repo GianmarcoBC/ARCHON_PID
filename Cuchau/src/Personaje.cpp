@@ -1,4 +1,5 @@
 #include "Personaje.h"
+#include <cassert>
 #include <cmath>
 
 // ============================================================================
@@ -16,6 +17,12 @@ Personaje::Personaje(Pj_info p, cntrl c, Vector3 po, bool ip):
 	max_cooldown(p.cooldown), // Guardar cooldown maximo antes de que se reduzca
 	isPlayer(ip)
 {
+    TraceLog(LOG_INFO, "Cargando personaje: %s, frames: %d",
+        p.nombre.data(), (int)p.Sprites.size());
+
+    assert(!p.Sprites.empty() && "Pj_info.Sprites está vacío");
+    for (const auto& ruta : p.Sprites)
+        Frames.push_back(LoadTexture(ruta.data()));
 
     // Cargar los frames de animacion y sombra del personaje
 	for (int i = 0; i < Player.Sprites.size(); i++) {

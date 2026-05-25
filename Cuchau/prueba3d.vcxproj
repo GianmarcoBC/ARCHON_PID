@@ -136,7 +136,8 @@
     <ClCompile Include="src\AI_Agresiva.cpp" />
     <ClCompile Include="src\AI_Defensiva.cpp" />
     <ClCompile Include="src\AI_Facil.cpp" />
-    <ClCompile Include="src\arena.cpp" />
+    <ClCompile Include="src\Arena.cpp" />
+    <ClCompile Include="src\Controlador_Combate.cpp" />
     <ClCompile Include="src\obstaculo.cpp" />
     <ClCompile Include="src\Personaje.cpp" />
     <ClCompile Include="src\Disparo.cpp" />
@@ -149,7 +150,8 @@
     <ClInclude Include="src\AI_Agresiva.h" />
     <ClInclude Include="src\AI_Defensiva.h" />
     <ClInclude Include="src\AI_Facil.h" />
-    <ClInclude Include="src\arena.h" />
+    <ClInclude Include="src\Arena.h" />
+    <ClInclude Include="src\Controlador_Combate.h" />
     <ClInclude Include="src\obstaculo.h" />
     <ClInclude Include="src\Personaje.h" />
     <ClInclude Include="src\Pj_info.h" />

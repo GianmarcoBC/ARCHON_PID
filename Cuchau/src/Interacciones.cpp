@@ -1,26 +1,21 @@
 #include "Interacciones.h"
 
-// ============================================================================
 //  Hitbox — Genera un rectangulo de colision para un personaje
 //
 //  Crea un rectangulo de charSize x charSize (4x4 unidades) centrado en la
 //  posicion XZ del personaje. Se usa para todas las colisiones AABB.
-// ============================================================================
 
 Rectangle Interacciones::Hitbox(const Personaje& p)
 {
-    float s = p.GetCharSize();
-    Vec2 pos = p.GetPos();   // Posicion en plano XZ (x, z)
-    return { pos.x - s / 2.0f, pos.y - s / 2.0f, s, s };
+    float s = p.Size3D;
+    return { p.pos3d.x - s / 2.0f, p.pos3d.z - s / 2.0f, s, s };
 }
 
-// ============================================================================
 //  EmpujeAABB — Calcula el vector de empuje minimo entre dos rectangulos
 //
 //  Si los rectangulos se solapan, calcula el eje con menor penetracion
 //  y devuelve el vector de empuje necesario para separarlos.
 //  Siempre empuja por el eje con menor solapamiento (resolucion minima).
-// ============================================================================
 
 bool Interacciones::EmpujeAABB(Rectangle a, Rectangle b, Vec2& push)
 {
@@ -48,7 +43,6 @@ bool Interacciones::EmpujeAABB(Rectangle a, Rectangle b, Vec2& push)
     return true;
 }
 
-// ============================================================================
 //  DisparosContraPersonaje — Colision circular disparo vs personaje
 //
 //  Para cada disparo activo, verifica si esta dentro del radio de colision
@@ -56,44 +50,39 @@ bool Interacciones::EmpujeAABB(Rectangle a, Rectangle b, Vec2& push)
 //    1. Aplica el dano del atacante al objetivo
 //    2. Desactiva el disparo
 //  Al final, elimina todos los disparos inactivos del vector.
-// ============================================================================
 
 void Interacciones::DisparosContraPersonaje(
     std::vector<Disparo>& disparos,
     Personaje& atacante, Personaje& objetivo)
 {
-    float radio = objetivo.GetCharSize() / 2.0f;  // Radio de colision = 2.0
+    float radio = objetivo.Size3D / 2.0f;  // Radio de colision = 2.0
 
     for (Disparo& d : disparos) {
-        if (!d.getStatus()) continue;
+        if (!d.status_) continue;
 
         // Calcular distancia al cuadrado entre disparo y objetivo (en XZ)
-        Vec2  dPos = d.GetPos();
-        Vec2  oPos = objetivo.GetPos();
-        float dx   = dPos.x - oPos.x;
-        float dy   = dPos.y - oPos.y;
+        float dx   = d.pos3d.x - objetivo.pos3d.x;
+        float dy   = d.pos3d.z - objetivo.pos3d.z;
 
         // Colision circular: distancia^2 <= radio^2
         if (dx * dx + dy * dy <= radio * radio) {
-            objetivo.pain(atacante.GetFuerza());  // Aplicar daño
-            d.setStatus(false);                   // Desactivar disparo
+            objetivo.pain(atacante.Player.fuerza);  // Aplicar daño
+            d.status_ = false;                   // Desactivar disparo
         }
     }
 
     // Eliminar disparos inactivos del vector (patron erase-remove)
     disparos.erase(
         std::remove_if(disparos.begin(), disparos.end(),
-            [](const Disparo& d) { return !d.getStatus(); }),
+            [](const Disparo& d) { return !d.status_; }),
         disparos.end()
     );
 }
 
-// ============================================================================
 //  PersonajeContraObstaculo — Empuja al personaje fuera de un obstaculo solido
 //
 //  Solo actua si el obstaculo es solido. Construye un rectangulo AABB a partir
 //  de los datos de colision del obstaculo y empuja al personaje si hay solapamiento.
-// ============================================================================
 
 void Interacciones::PersonajeContraObstaculo(Personaje& p, const obstaculo& obs)
 {
@@ -106,22 +95,22 @@ void Interacciones::PersonajeContraObstaculo(Personaje& p, const obstaculo& obs)
     };
 
     Vec2 push{};
-    if (EmpujeAABB(Hitbox(p), obsRect, push))
-        p.SetPos(p.GetPos() + push);  // Empujar al personaje fuera del obstaculo
+    if (EmpujeAABB(Hitbox(p), obsRect, push)) {
+        p.pos3d.x = p.pos3d.x + push.x;  // Empujar al personaje fuera del obstaculo
+        p.pos3d.z = p.pos3d.z + push.y;  // Empujar al personaje fuera del obstaculo
+    }
 }
 
-// ============================================================================
 //  PersonajesContraObstaculos — Verifica colision de ambos personajes
 //  contra todos los obstaculos de la arena
-// ============================================================================
 
 void Interacciones::PersonajesContraObstaculos(
     Personaje& p1, Personaje& p2,
-    obstaculo* obs[], int count)
+    std::vector<obstaculo*>& obs)
 {
-    for (int i = 0; i < count; i++) {
-        PersonajeContraObstaculo(p1, *obs[i]);
-        PersonajeContraObstaculo(p2, *obs[i]);
+    for (auto* o : obs) {
+        PersonajeContraObstaculo(p1, *o);
+        PersonajeContraObstaculo(p2, *o);
     }
 }
 
@@ -132,18 +121,16 @@ void Interacciones::PersonajesContraObstaculos(
 //  de la arena, lo reposiciona al borde.
 // ============================================================================
 
-void Interacciones::ClampArena(Personaje& p) const
+void Interacciones::ClampArena(Personaje& p, Arena& arena)
 {
-    float hs  = p.GetCharSize() / 2.0f;  // Mitad del tamano del personaje
-    Vec2  pos = p.GetPos();
+    float hs  = p.Size3D / 2.0f;  // Mitad del tamano del personaje
 
     // Clamp en cada borde de la arena
-    if (pos.x - hs < arena.x)                    pos.x = arena.x + hs;
-    if (pos.x + hs > arena.x + arena.width)      pos.x = arena.x + arena.width  - hs;
-    if (pos.y - hs < arena.y)                     pos.y = arena.y + hs;
-    if (pos.y + hs > arena.y + arena.height)      pos.y = arena.y + arena.height - hs;
+    if (p.pos3d.x - hs < arena.sueloWidth / 2) p.pos3d.x = arena.sueloWidth / 2 + hs;
+    if (p.pos3d.x + hs > arena.sueloWidth / 2 + arena.sueloWidth) p.pos3d.x = arena.sueloWidth / 2 + arena.sueloWidth  - hs;
+    if (p.pos3d.z - hs < arena.sueloLength / 2) p.pos3d.z = arena.sueloLength / 2 + hs;
+    if (p.pos3d.z + hs > arena.sueloLength / 2 + arena.sueloLength) p.pos3d.z = arena.sueloLength / 2 + arena.sueloLength - hs;
 
-    p.SetPos(pos);
 }
 
 // ============================================================================

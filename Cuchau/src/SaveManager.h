@@ -120,14 +120,14 @@ public:
 
     // Busca un Pj_info por nombre entre los 16 personajes conocidos.
     // Devuelve nullptr si no lo encuentra (save corrupto o de otra version).
-    static const Pj_info* BuscarPjPorNombre(const char* nombre)
+    static const Pj_info* BuscarPjPorNombre(std::string_view nombre)
     {
         static const Pj_info* todos[] = {
             &MH, &Phoenix, &Golem, &Djinni, &Unicorn, &Valkyrie, &Archer, &Knight,
             &Platero, &ShapeShifter, &Troll, &Dragon, &Basilisk, &Banshee, &Manticore, &Goblin
         };
         for (auto* pj : todos)
-            if (strcmp(pj->nombre, nombre) == 0) return pj;
+            if (pj->nombre.data() == nombre.data()) return pj;
         return nullptr;
     }
 };

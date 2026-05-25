@@ -94,10 +94,10 @@ void Menu_Combate::DrawSeleccion(int player, int cx, int cy, int sel, bool listo
         0.0f, scale, WHITE);
 
     // Nombre del personaje seleccionado
-    const char* nombre = (player == 1)
+    std::string_view nombre = (player == 1)
         ? personajes_claro[sel]->nombre
-        : personajes_oscuro[sel]->nombre;
-    DrawText(nombre, cx - MeasureText(nombre, 22) / 2, cy + marcoH / 2 - 60, 22, col);
+        : personajes_oscuro[sel]->nombre;   
+    DrawText(nombre.data(), cx - MeasureText(nombre.data(), 22) / 2, cy + marcoH / 2 - 60, 22, col);
 
     // Fila de miniaturas (iconos pequenos de todos los personajes del equipo)
     int iconSize = 40;
@@ -152,8 +152,8 @@ void Menu_Combate::DrawPanelIA(int cx, int cy)
               (float)(cy - (int)(tx->height * scale) / 2 - 20) },
             0.0f, scale, WHITE);
 
-        const char* nombre = personajes_oscuro[selP2]->nombre;
-        DrawText(nombre, cx - MeasureText(nombre, 22) / 2, cy + marcoH / 2 - 60, 22, RED);
+        std::string_view nombre = personajes_oscuro[selP2]->nombre;
+        DrawText(nombre.data(), cx - MeasureText(nombre.data(), 22) / 2, cy + marcoH / 2 - 60, 22, RED);
 
         // Miniaturas del equipo oscuro
         int iconSize = 40;

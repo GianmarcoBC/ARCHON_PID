@@ -46,6 +46,9 @@ class Personaje
     float frameTimer  = 0.0f;       // Acumulador de tiempo para cambiar de frame
     bool  moviendose{ false };      // true si el personaje se esta moviendo (para animar)
 
+    // Clase amiga de interacciones
+	friend class Interacciones;
+
     // Dibuja la sombra del frame actual en la posicion dada
     void drawshadow(Vector3 shadowpos) const;
 
@@ -71,7 +74,7 @@ public:
 
     // --- Getters y setters ---
 
-    float       GetFuerza()      const { return Player.fuerza; }         // Dano por impacto
+    //float       GetFuerza()      const { return Player.fuerza; }         // Dano por impacto
     Vec2        GetPos()         const { return { pos3d.x, pos3d.z }; }  // Posicion en plano XZ
     void        SetPos(Vec2 p)         { pos3d.x = p.x; pos3d.z = p.y; }// Asigna posicion XZ
     Vector3     GetPos3D()       const { return pos3d; }                 // Posicion 3D completa
@@ -85,7 +88,7 @@ public:
     float       get_Cooldown()   const { return Player.cooldown; }       // Tiempo entre disparos
     bool        get_isPlayer()   const { return isPlayer; }              // Es controlado por teclado?
     //void        set_isPlayer(bool ip)  { isPlayer = ip; }
-    //std::string_view GetNombre()      const { return Player.nombre; }         // Nombre del personaje
+    std::string_view GetNombre()      const { return Player.nombre; }         // Nombre del personaje
     //float       GetCharSize()    const { return Size3D; }              // Tamano del billboard
     //Texture2D*  GetAtaqueTexture()     { return &Ataque; }               // Textura del proyectil
     //float       GetAttackSpeed() const { return Player.attack_speed * SPEED_SCALE; } // Vel. proyectil en u/s
