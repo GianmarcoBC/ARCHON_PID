@@ -40,86 +40,12 @@ void Screens::menuPrincipal(GameState& gs) {
         }
         Color ic = sel ? WHITE : CFloat(0.7f, 0.7f, 0.7f);
         if (i == 0) Drawing::iconoEspada(300, y, ic);
-        if (i == 1) Drawing::iconoOpciones(300, y, ic);
-        if (i == 2) Drawing::iconoLibro(300, y, ic);
+        if (i == 1) Drawing::iconoLibro(300, y, ic);     // Cargar Partida
+        if (i == 2) Drawing::iconoOpciones(300, y, ic);  // Opciones
+        if (i == 3) Drawing::iconoLibro(300, y, ic);     // Enciclopedia
         rlPopMatrix();
     }
     Drawing::instrucciones(260, 50, "W/S: Navegar    ENTER: Confirmar", t);
-}
-
-void Screens::menuJugar(GameState& gs) {
-    float t = gs.tiempo;
-    Background::battle(gs);
-    Drawing::antorchaGrande(80, 230, t);
-    Drawing::antorchaGrande(720, 230, t);
-
-    // Title
-    float pt = 1.0f + sinf(t * 0.006f) * 0.03f;
-    rlPushMatrix();
-    rlTranslatef(400 + gs.jugarOffset, 520, 0); rlScalef(pt, pt, 1);
-    Drawing::texto24(-128, -7, "ELIGE MODO DE BATALLA", CFloat(0.5f, 0.0f, 0.0f));
-    Drawing::texto24(-130, -5, "ELIGE MODO DE BATALLA", CFloat(0.95f, 0.82f, 0.2f));
-    rlPopMatrix();
-
-    // Divider
-    float ly = 497;
-    rlSetLineWidth(2);
-    rlBegin(RL_LINES);
-    rlColor4f(0.7f, 0.5f, 0.1f, 1);
-    rlVertex2f(150 + gs.jugarOffset, ly); rlVertex2f(650 + gs.jugarOffset, ly);
-    rlEnd();
-    float dx = 400 + gs.jugarOffset;
-    rlBegin(RL_LINES);
-    rlColor4f(0.7f, 0.5f, 0.1f, 1);
-    rlVertex2f(dx, ly + 5); rlVertex2f(dx + 5, ly);
-    rlVertex2f(dx + 5, ly); rlVertex2f(dx, ly - 5);
-    rlVertex2f(dx, ly - 5); rlVertex2f(dx - 5, ly);
-    rlVertex2f(dx - 5, ly); rlVertex2f(dx, ly + 5);
-    rlEnd();
-
-    for (int i = 0; i < (int)gs.opcionesJugar.size(); i++) {
-        float y = 390 - i * 100.0f;
-        float offX = std::min(gs.jugarOffset + i * 30.0f, 0.0f);
-        bool sel = (i == gs.opcionJugarSel);
-        rlPushMatrix(); rlTranslatef(offX, 0, 0);
-        if (sel) {
-            float bx2 = sinf(t * 0.01f) * 4, by2 = sinf(t * 0.013f) * 3;
-            rlSetLineWidth(2);
-            rlBegin(RL_LINES);
-            rlColor4f(1, 0.15f, 0.1f, 1);
-            rlVertex2f(148 + bx2, y + 32 + by2); rlVertex2f(658 + bx2, y + 32 + by2);
-            rlVertex2f(658 + bx2, y + 32 + by2); rlVertex2f(698 + bx2, y - 32 + by2);
-            rlVertex2f(698 + bx2, y - 32 + by2); rlVertex2f(188 + bx2, y - 32 + by2);
-            rlVertex2f(188 + bx2, y - 32 + by2); rlVertex2f(148 + bx2, y + 32 + by2);
-            rlEnd();
-        }
-        Drawing::panelBatalla(y, sel);
-        if (sel) {
-            float esc = 1.25f + sinf(t * 0.007f) * 0.04f;
-            rlPushMatrix(); rlTranslatef(310, y + 5, 0); rlScalef(esc, esc, 1);
-            Drawing::texto24(2, -7, gs.opcionesJugar[i], CFloat(0, 0, 0));
-            Drawing::texto24(0, -5, gs.opcionesJugar[i], WHITE);
-            rlPopMatrix();
-            // Description
-            std::string desc = gs.descJugar[i];
-            float dy = y - 12; std::string linea;
-            for (int ci = 0; ci <= (int)desc.size(); ci++) {
-                if (ci == (int)desc.size() || desc[ci] == '\n') {
-                    Drawing::texto12(310, dy, linea, CFloat(0.9f, 0.85f, 0.7f));
-                    dy -= 14; linea.clear();
-                } else linea += desc[ci];
-            }
-            Drawing::cursorAnimado(168, y, t);
-        } else {
-            Drawing::texto24(310, y - 8, gs.opcionesJugar[i], CFloat(0.7f, 0.5f, 0.5f));
-        }
-        Color ic = sel ? WHITE : CFloat(0.7f, 0.7f, 0.7f);
-        if (i == 0) Drawing::iconoEscudos(230, y, ic);
-        if (i == 1) Drawing::iconoIA(230, y, ic);
-        rlPopMatrix();
-    }
-    Particles::drawStars(gs);
-    Drawing::instrucciones(240, 50, "W/S: Seleccionar    ENTER: Confirmar    ESC: Volver", t);
 }
 
 void Screens::menuOpciones(GameState& gs) {
