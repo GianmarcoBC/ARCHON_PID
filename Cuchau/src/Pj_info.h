@@ -70,7 +70,7 @@ inline const Pj_info MH = {
     "bin/Resources/MH/SpriteMH_shadow.png",
     "bin/Resources/MH/SpriteMH_shadow.png"},
 
-    "bin/Resources/Archer/SpriteFlecha.png",
+    "bin/Resources/MH/MHATK.png",
     "bin/Resources/MH/RaspberryPIMH.wav",
     Velocidad_media,
     Vida_media,
@@ -95,8 +95,8 @@ inline const Pj_info Phoenix = {
     "bin/Resources/MH/SpriteMH_shadow.png",
     "bin/Resources/MH/SpriteMH_shadow.png"},
 
-    "bin/Resources/Archer/SpriteFlecha.png",
-    "bin/Resources/Phoenix/fenixfx.wav",
+    "bin/Resources/Phoenix/PhoenixATK.png",
+    "bin/Resources/Phoenix/PhoenixFX.wav",
     Velocidad_media,
     Vida_alta,
     Fuerza_alta,
@@ -121,7 +121,7 @@ inline const Pj_info Golem = {
     "bin/Resources/MH/SpriteMH_shadow.png"},
 
     "bin/Resources/Archer/SpriteFlecha.png",
-    "bin/Resources/Golem/golem.wav",
+    "bin/Resources/Golem/GolemFX.wav",
     Velocidad_baja,
     Vida_alta,
     Fuerza_alta,
@@ -145,8 +145,8 @@ inline const Pj_info Djinni = {
     "bin/Resources/MH/SpriteMH_0006.png",
     "bin/Resources/MH/SpriteMH_0001.png"},
 
-    "bin/Resources/Archer/SpriteFlecha.png",
-    "bin/Resources/Dragon/fierybreathfx.wav",
+    "bin/Resources/Djinni/DjinniATK.png",
+    "bin/Resources/Djinni/DjinniFX.wav",
     Velocidad_media,
     Vida_alta,
     Fuerza_media,
@@ -170,7 +170,7 @@ inline const Pj_info Unicorn = {
     "bin/Resources/MH/SpriteMH_0006.png",
     "bin/Resources/MH/SpriteMH_0001.png"},
 
-    "bin/Resources/Archer/SpriteFlecha.png",
+    "bin/Resources/Unicorn/UnicornATK.png",
     "bin/Resources/Valkyrie/magicspearfx.wav",
     Velocidad_media,
     Vida_media,
@@ -195,8 +195,8 @@ inline const Pj_info Valkyrie = {
     "bin/Resources/MH/SpriteMH_0006.png",
     "bin/Resources/MH/SpriteMH_0001.png"},
 
-    "bin/Resources/Archer/SpriteFlecha.png",
-    "bin/Resources/Knight/espadafx.wav",
+    "bin/Resources/Valkyrie/ValkyrieATK.png",
+    "bin/Resources/Valkyrie/ValkyrieFX.wav",
     Velocidad_media,
     Vida_media,
     Fuerza_media,
@@ -220,8 +220,8 @@ inline const Pj_info Archer = {
     "bin/Resources/MH/SpriteMH_0006.png",
     "bin/Resources/MH/SpriteMH_0001.png"},
 
-    "bin/Resources/Archer/SpriteFlecha.png",
-    "bin/Resources/Knight/flechafx.wav",
+    "bin/Resources/Archer/ArcherATK.png",
+    "bin/Resources/Archer/ArcherFX.wav",
     Velocidad_media,
     Vida_baja,
     Fuerza_baja,
@@ -245,8 +245,8 @@ inline const Pj_info Knight = {
     "bin/Resources/MH/SpriteMH_0006.png",
     "bin/Resources/MH/SpriteMH_0001.png"},
 
-    "bin/Resources/Archer/SpriteFlecha.png",
-    "bin/Resources/Knight/espadafx.wav",
+    "bin/Resources/Knight/KnightATK.png",
+    "bin/Resources/Knight/KnightFX.wav",
     Velocidad_media,
     Vida_baja,
     Fuerza_baja,
@@ -275,7 +275,7 @@ inline const Pj_info Platero = {
     "bin/Resources/MH/SpriteMH_0006.png",
     "bin/Resources/MH/SpriteMH_0001.png"},
 
-    "bin/Resources/Archer/SpriteFlecha.png",
+    "bin/Resources/Platero/PlateroATK.png",
     "bin/Resources/Platero/CorrectoPlatero.wav",
     Velocidad_media,
     Vida_media,
@@ -300,7 +300,7 @@ inline const Pj_info ShapeShifter = {
     "bin/Resources/MH/SpriteMH_0006.png",
     "bin/Resources/MH/SpriteMH_0001.png"},
 
-    "bin/Resources/Archer/SpriteFlecha.png",
+    "bin/Resources/Shapeshifter/ShapeshifterATK.png",
     "bin/Resources/Banshee/scream.wav",
     Velocidad_media,
     Vida_alta,
@@ -326,7 +326,7 @@ inline const Pj_info Troll = {
     "bin/Resources/MH/SpriteMH_0001.png"},
 
     "bin/Resources/Archer/SpriteFlecha.png",
-    "bin/Resources/Troll/trollfx.wav",
+    "bin/Resources/Troll/trollFX.wav",
     Velocidad_baja,
     Vida_alta,
     Fuerza_alta,
@@ -350,8 +350,8 @@ inline const Pj_info Dragon = {
     "bin/Resources/MH/SpriteMH_0006.png",
     "bin/Resources/MH/SpriteMH_0001.png"},
 
-    "bin/Resources/Archer/SpriteFlecha.png",
-    "bin/Resources/Dragon/dragonfx.wav",
+    "bin/Resources/Dragon/DragonATK.png",
+    "bin/Resources/Dragon/DragonFX.wav",
     Velocidad_media,
     Vida_muyalta,
     Fuerza_muyalta,
@@ -375,8 +375,8 @@ inline const Pj_info Basilisk = {
     "bin/Resources/MH/SpriteMH_0006.png",
     "bin/Resources/MH/SpriteMH_0001.png"},
 
-    "bin/Resources/Archer/SpriteFlecha.png",
-    "bin/Resources/Basilisk/basiliskfx.wav",
+    "bin/Resources/Basilisk/BasiliskATK.png",
+    "bin/Resources/Basilisk/BasiliskFX.wav",
     Velocidad_media,
     Vida_baja,
     Fuerza_alta,
@@ -400,8 +400,8 @@ inline const Pj_info Banshee = {
     "bin/Resources/MH/SpriteMH_0006.png",
     "bin/Resources/MH/SpriteMH_0001.png"},
 
-    "bin/Resources/Archer/SpriteFlecha.png",
-    "bin/Resources/Banshee/scream.wav",
+    "bin/Resources/Banshee/BansheeATK.png",
+    "bin/Resources/Banshee/BansheeFX.wav",
     Velocidad_media,
     Vida_media,
     Fuerza_media,
@@ -425,7 +425,7 @@ inline const Pj_info Manticore = {
     "bin/Resources/MH/SpriteMH_0006.png",
     "bin/Resources/MH/SpriteMH_0001.png"},
 
-    "bin/Resources/Archer/SpriteFlecha.png",
+    "bin/Resources/Manticore/ManticoreATK.png",
     "bin/Resources/Djinni/vientofeericofx.wav",
     Velocidad_media,
     Vida_media,
@@ -450,8 +450,8 @@ inline const Pj_info Goblin = {
     "bin/Resources/MH/SpriteMH_0006.png",
     "bin/Resources/MH/SpriteMH_0001.png"},
 
-    "bin/Resources/Archer/SpriteFlecha.png",
-    "bin/Resources/Knight/espadafx.wav",
+    "bin/Resources/Goblin/GoblinATK.png",
+    "bin/Resources/Goblin/GoblinFX.wav",
     Velocidad_media,
     Vida_baja,
     Fuerza_baja,

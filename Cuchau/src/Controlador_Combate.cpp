@@ -20,18 +20,21 @@ ControladorCombate::ControladorCombate(Pj_info pj1, Pj_info pj2, bool vsIA, int 
           !vsIA)                                                         // Es jugador solo si NO es IA
 {
     // --- Crear obstaculos (en heap porque requieren contexto OpenGL) ---
-    // Fuente central: posicion (0, 3.5, 0), billboard tamano 7, colision 5x5
+    // Fuente central: billboard 7, hitbox 5x3 (base ancha, poco profunda)
     obstaculos.push_back(new obstaculo("bin/Resources/AAGraficos/fuente.png", "bin/Resources/AAGraficos/fuente_shadow.png",
-        { 0.0f, 3.5f, 0.0f }, 7, 1.5, 1.5));
-    // 4 postes en las esquinas interiores: tamano 3, colision 2x2
+        { 0.0f, 3.5f, 0.0f }, 7, 2.5, 1.5));
+    // 4 vallas en las esquinas: billboard 3, hitbox 3x1 (anchas y poco profundas)
     obstaculos.push_back(new obstaculo("bin/Resources/AAGraficos/obstaculo.png", "bin/Resources/AAGraficos/obstaculo_shadow.png",
-        { -10.0f, 1.5f, 6.0f }, 3, 2, 2));
+        { -10.0f, 1.5f, 6.0f }, 3, 3.5, 0.5));
     obstaculos.push_back(new obstaculo("bin/Resources/AAGraficos/obstaculo.png", "bin/Resources/AAGraficos/obstaculo_shadow.png",
-        { 10.0f, 1.5f, 6.0f }, 3, 2, 2));
+        { 10.0f, 1.5f, 6.0f }, 3, 3.5, 0.5));
     obstaculos.push_back(new obstaculo("bin/Resources/AAGraficos/obstaculo.png", "bin/Resources/AAGraficos/obstaculo_shadow.png",
-        { -10.0f, 1.5f, -6.0f }, 3, 2, 2));
+        { -10.0f, 1.5f, -6.0f }, 3, 3.5, 0.5));
     obstaculos.push_back(new obstaculo("bin/Resources/AAGraficos/obstaculo.png", "bin/Resources/AAGraficos/obstaculo_shadow.png",
-        { 10.0f, 1.5f, -6.0f }, 3, 2, 2));
+        { 10.0f, 1.5f, -6.0f }, 3, 3.5, 0.5));
+
+    // --- Cargar shader de alpha discard ---
+    alphaDiscard = LoadShader(0, "bin/Resources/alpha_discard.fs");
 
     // --- Crear IA si es modo VS IA ---
     if (vsIA) {
@@ -163,17 +166,19 @@ void ControladorCombate::Draw3D()
     arena.Draw(camera);  // Dibuja fondo, suelo, paredes y bordes
 
 
-    // Sombras de los 5 obstaculos
+    BeginShaderMode(alphaDiscard);
+
     for (auto* obs : obstaculos) {
         obs->Draw(camera);
     }
 
-    // ── 6. Sombras (BLEND_MULTIPLIED para oscurecer el suelo) ────────
     P1.Draw(camera);
     P2.Draw(camera);
 
 	for (const auto& d : Disparos_1) d.Draw(camera);
 	for (const auto& d : Disparos_2) d.Draw(camera);
+
+    EndShaderMode();
 
     EndMode3D();
 
@@ -250,6 +255,7 @@ void ControladorCombate::CargarEstado(const SaveData& d)
 
 ControladorCombate::~ControladorCombate()
 {
+    UnloadShader(alphaDiscard);
     delete ia;
     for (auto* obs : obstaculos) {
         delete obs;

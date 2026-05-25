@@ -15,7 +15,6 @@ void obstaculo::drawshadow() const
 
 void obstaculo::Draw(Camera camera) const
 {
-	drawshadow();  // Primero dibujar la sombra (BLEND_MULTIPLIED)
-	// Luego dibujar el billboard del obstaculo (sin blending, cubre completamente)
+	drawshadow();
 	DrawBillboard(camera, sprite, pos, size, WHITE);
 }

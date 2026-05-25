@@ -86,18 +86,18 @@ void Personaje::Draw(Camera camera) const
     float h = (float)texActual.height;
     float srcW = (l_dir.x < 0) ? -w : w;       // Espejo si va a la izquierda
 
-	DrawBillboardPro(
-        camera, 
-        texActual, 
-        { 0, 0, srcW, h }, 
-        pos3d, 
-        { 0, 1, 0 }, 
-        { Size3D, Size3D }, 
-        { Size3D / 2, Size3D / 2 },
-        0.0f, 
-        WHITE);
-    
     drawshadow({ pos3d.x, 0.01f, pos3d.z - Size3D / 2 });
+
+	DrawBillboardPro(
+        camera,
+        texActual,
+        { 0, 0, srcW, h },
+        pos3d,
+        { 0, 1, 0 },
+        { Size3D, Size3D },
+        { Size3D / 2, Size3D / 2 },
+        0.0f,
+        WHITE);
 }
 
 //  drawshadow — Dibuja la sombra del personaje en el suelo

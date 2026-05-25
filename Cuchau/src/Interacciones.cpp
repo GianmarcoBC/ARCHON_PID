@@ -8,7 +8,8 @@
 Rectangle Interacciones::Hitbox(const Personaje& p)
 {
     float s = p.Size3D;
-    return { p.pos3d.x - s / 2.0f, p.pos3d.z - s / 2.0f, s, s };
+    float sz = s * 0.5f;  // Hitbox mas estrecha en Z (profundidad)
+    return { p.pos3d.x - s / 2.0f, p.pos3d.z - sz / 2.0f, s, sz };
 }
 
 //  EmpujeAABB — Calcula el vector de empuje minimo entre dos rectangulos

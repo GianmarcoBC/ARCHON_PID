@@ -40,11 +40,11 @@ void Disparo::Draw(Camera camera) const
 	DrawBillboardPro(
 		camera,
 		*Disp,
-		{ 0, 0, w1, h },              // Región fuente (sprite completo)
-		{ pos3d.x, pos3d.y, pos3d.z }, // Región destino (posicion 3D)
-		{ 0,1,0 },  // Up vector (para que el billboard se mantenga vertical)
-		{ size3D, size3D }, // Tamaño del billboard en unidades 3D
-		{ w / 2, h / 2 },            // Origen en el centro (pivote de rotación)
+		{ 0, 0, w1, h },
+		{ pos3d.x, pos3d.y, pos3d.z },
+		{ 0,1,0 },
+		{ size3D, size3D },
+		{ size3D / 2, size3D / 2 },
 		angulo,
 		WHITE
 	);

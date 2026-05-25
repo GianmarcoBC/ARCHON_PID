@@ -49,6 +49,9 @@ class ControladorCombate
     std::vector<Disparo> Disparos_2{}; // Disparos del jugador 2 (o IA)
     float cooldown1 = 0.0f, cooldown2 = 0.0f;  // Cooldowns de disparo
 
+    // --- Shader de alpha discard (descarta pixeles transparentes del depth buffer) ---
+    Shader alphaDiscard{};
+
     // --- Metodos privados de dibujo ---
 
     // Renderiza todo el escenario 3D: fondo, suelo, paredes, bordes, sombras, billboards
