@@ -25,10 +25,12 @@ float CombatAI::Pared_cerc(Vec2 pos) const {
 //  evitar_pared — Corrige direccion para no chocar con los bordes
 
 void CombatAI::evitar_pared(Vec2& v, Vec2 pos, Vec2 lim_x, Vec2 lim_y, float margin) {
-    if (pos.x - lim_x.x < margin) v.x = fabsf(v.x);
-    if (lim_x.y - pos.x < margin) v.x = -fabsf(v.x);
-    if (pos.y - lim_y.x < margin) v.y = fabsf(v.y);
-    if (lim_y.y - pos.y < margin) v.y = -fabsf(v.y);
+    if (pos.x - lim_x.x < margin && v.x < 0) v.x = fabsf(v.x);   // cerca borde izq y va izq → empuja der
+    if (lim_x.y - pos.x < margin && v.x > 0) v.x = -fabsf(v.x);  // cerca borde der y va der → empuja izq
+    if (pos.y - lim_y.x < margin && v.y < 0) v.y = fabsf(v.y);   // cerca borde arr y va arr → empuja aba
+    if (lim_y.y - pos.y < margin && v.y > 0) v.y = -fabsf(v.y);  // cerca borde aba y va aba → empuja arr
+
+    if (v.modulo() > 0) v = v.unitario();
 }
 
 //  debe_esquivar — Detecta proyectiles peligrosos y calcula direccion de escape
@@ -60,13 +62,17 @@ bool CombatAI::Update(float dt, const std::vector<Disparo>& disparos) {
         cooldown_IA -= dt;
     }
     else {
+        // Apuntar al jugador ANTES de decidir para que la punteria sea correcta
+
+        Vec2 toPlayer = (Jugador.GetPos() - IA.GetPos()).unitario();
+        IA.SetDir(toPlayer);
+
         ultima_accion = decide(disparos, dt);
         cooldown_IA = delay_IA;
     }
 
     if (ultima_accion.d.x != 0 || ultima_accion.d.y != 0) {
-        Vec2 toPlayer = (Jugador.GetPos() - IA.GetPos()).unitario();
-        IA.SetDir(toPlayer);
+
         IA.Move(ultima_accion.d, dt);
     }
 

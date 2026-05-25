@@ -28,7 +28,7 @@ CombatAI::Accion AI_Facil::decide(const std::vector<Disparo>& disparos, float dt
     Vec2 dir_esq{};
     if (debe_esquivar(disparos, dir_esq))
         estado = Esquivar;
-    else if (dist > distancia_combate_optima + rango_seguro)
+    else if (dist > 10.0f)
         estado = Acercar;
     else
         estado = Rodear;
@@ -64,9 +64,7 @@ CombatAI::Accion AI_Facil::decide(const std::vector<Disparo>& disparos, float dt
     }
 
     // Corregir direccion para no acercarse a menos de 2 unidades de los bordes
-    evitar_pared(dir_mov, IA.GetPos(),
-        { arena.x, arena.x + arena.width },
-        { arena.y, arena.y + arena.height }, 2.0f);
+    // evitar_pared(dir_mov, IA.GetPos(), { arena.x, arena.x + arena.width }, { arena.y, arena.y + arena.height }, 5.0f);
 
     // Disparar si la punteria supera el umbral:
     // umbral oscila ligeramente con seno para que no sea robotico
