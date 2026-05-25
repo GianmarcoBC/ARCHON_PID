@@ -12,11 +12,11 @@
 ControladorCombate::ControladorCombate(Pj_info pj1, Pj_info pj2, bool vsIA, int dificultad)
     : P1(pj1,
           { KEY_W, KEY_S, KEY_A, KEY_D },                               // Controles P1: WASD
-          { -arena.getSueloWidth() * 0.35f, 2.0f, -arena.getSueloLength() * 0.35f },         // Posicion inicial P1
+          { -40.0 * 0.35f, 2.0f, -20.0 * 0.35f },         // Posicion inicial P1
           true)                                                          // Es jugador humano
     , P2(pj2,
           vsIA ? cntrl{ 0, 0, 0, 0 } : cntrl{ KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT },  // Sin teclas si es IA
-          {  arena.getSueloWidth() * 0.35f, 2.0f,  arena.getSueloLength() * 0.35f },         // Posicion inicial P2
+          {  40.0 * 0.35f, 2.0f,  20.0 * 0.35f },         // Posicion inicial P2
           !vsIA)                                                         // Es jugador solo si NO es IA
 {
     // --- Crear obstaculos (en heap porque requieren contexto OpenGL) ---
@@ -155,7 +155,12 @@ void ControladorCombate::Draw()
 
 void ControladorCombate::Draw3D()
 {
-	arena.Draw(camera);  // Dibuja fondo, suelo, paredes y bordes
+	arena.DrawFondo(); // Dibuja el fondo 2D (ciudad)
+
+
+    BeginMode3D(camera);
+
+    arena.Draw(camera);  // Dibuja fondo, suelo, paredes y bordes
 
 
     // Sombras de los 5 obstaculos
@@ -164,13 +169,16 @@ void ControladorCombate::Draw3D()
     }
 
     // ── 6. Sombras (BLEND_MULTIPLIED para oscurecer el suelo) ────────
-    P1.Draw(camera, SKYBLUE);
-    P2.Draw(camera, RED);
+    P1.Draw(camera);
+    P2.Draw(camera);
 
 	for (auto d : Disparos_1) d.Draw(camera);
 	for (auto d : Disparos_2) d.Draw(camera);
 
     EndMode3D();
+
+    P1.drawHUD(camera, SKYBLUE);
+    P2.drawHUD(camera, RED);
 }
 
 //  PANTALLA DE VICTORIA

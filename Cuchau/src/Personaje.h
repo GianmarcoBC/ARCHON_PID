@@ -52,8 +52,7 @@ class Personaje
     // Dibuja la sombra del frame actual en la posicion dada
     void drawshadow(Vector3 shadowpos) const;
 
-	// Dibuja la vida, el cooldown y el nombre del personaje sobre su cabeza (en coordenadas 2D)
-	void drawHUD(Camera camera, Color color) const; // Dibuja la barra de vida, el cooldown y el nombre del personaje sobre su cabeza (en coordenadas 2D)
+	
 
 public:
     Personaje() = default;
@@ -67,7 +66,9 @@ public:
     // Actualiza movimiento y animacion
     void Update(float dt);
 
-	void Draw(Camera camera, Color color) const;
+    // Dibuja la vida, el cooldown y el nombre del personaje sobre su cabeza (en coordenadas 2D)
+    void drawHUD(Camera camera, Color color) const; // Dibuja la barra de vida, el cooldown y el nombre del personaje sobre su cabeza (en coordenadas 2D)
+	void Draw(Camera camera) const;
 
     // Devuelve la textura del frame actual de animacion
     Texture2D getCurrentFrame() const { return Frames[frameActual]; }
