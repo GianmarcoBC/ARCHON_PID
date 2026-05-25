@@ -113,6 +113,7 @@ int main()
     SetTargetFPS(60);
     InitAudioDevice();
 
+
     // Frames de calentamiento
     for (int i = 0; i < 10; i++) {
         BeginDrawing();
@@ -216,7 +217,7 @@ int main()
             combate->Update();
             combate->Draw();
 
-            rolitas.SetMusic(combate->GetP1Name(), combate->GetP2Name(), combate->IsGameOver());
+            rolitas.SetMusic(combate->GetP1Name().data(), combate->GetP2Name().data(), combate->IsGameOver());
 
             if (!combate->IsGameOver()) {
                 // F6 = abrir pausa

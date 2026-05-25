@@ -63,7 +63,7 @@ public:
         // Configurar caja de colision centrada en la posicion del obstaculo
         colCX = posicion.x;
         colCZ = posicion.z;
-        colHW = colW * 1.5;  // Mitad del ancho
+        colHW = colW * 1.5f;  // Mitad del ancho
         colHL = colL / 2.5f;  // Mitad del largo
     }
 

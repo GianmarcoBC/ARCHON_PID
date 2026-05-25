@@ -12,17 +12,17 @@
 ControladorCombate::ControladorCombate(Pj_info pj1, Pj_info pj2, bool vsIA, int dificultad)
     : P1(pj1,
           { KEY_W, KEY_S, KEY_A, KEY_D },                               // Controles P1: WASD
-          { -40.0 * 0.35f, 2.0f, -20.0 * 0.35f },         // Posicion inicial P1
+          { -arena.getSueloWidth() * 0.35f, 1.0f, -arena.getSueloLength() * 0.35f },         // Posicion inicial P1
           true)                                                          // Es jugador humano
     , P2(pj2,
           vsIA ? cntrl{ 0, 0, 0, 0 } : cntrl{ KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT },  // Sin teclas si es IA
-          {  40.0 * 0.35f, 2.0f,  20.0 * 0.35f },         // Posicion inicial P2
+          {  arena.getSueloWidth() * 0.35f, 1.0f,  arena.getSueloLength() * 0.35f },         // Posicion inicial P2
           !vsIA)                                                         // Es jugador solo si NO es IA
 {
     // --- Crear obstaculos (en heap porque requieren contexto OpenGL) ---
     // Fuente central: posicion (0, 3.5, 0), billboard tamano 7, colision 5x5
     obstaculos.push_back(new obstaculo("bin/Resources/AAGraficos/fuente.png", "bin/Resources/AAGraficos/fuente_shadow.png",
-        { 0.0f, 3.5f, 0.0f }, 7, 5, 5));
+        { 0.0f, 3.5f, 0.0f }, 7, 1.5, 1.5));
     // 4 postes en las esquinas interiores: tamano 3, colision 2x2
     obstaculos.push_back(new obstaculo("bin/Resources/AAGraficos/obstaculo.png", "bin/Resources/AAGraficos/obstaculo_shadow.png",
         { -10.0f, 1.5f, 6.0f }, 3, 2, 2));
@@ -172,8 +172,8 @@ void ControladorCombate::Draw3D()
     P1.Draw(camera);
     P2.Draw(camera);
 
-	for (auto d : Disparos_1) d.Draw(camera);
-	for (auto d : Disparos_2) d.Draw(camera);
+	for (const auto& d : Disparos_1) d.Draw(camera);
+	for (const auto& d : Disparos_2) d.Draw(camera);
 
     EndMode3D();
 
