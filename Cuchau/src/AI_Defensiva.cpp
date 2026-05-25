@@ -11,7 +11,7 @@
 AI_Defensiva::AI_Defensiva(Personaje& IA, Personaje& Jugador, Rectangle arena)
     : CombatAI(IA, Jugador, arena)
 {
-    delay_IA = 60.0f * 0.12f;        // Intervalo de decision: ~120ms (nivel medio entre Facil y Agresiva)
+    delay_IA = 0.12f;        // Intervalo de decision: ~120ms (nivel medio entre Facil y Agresiva)
     distancia_combate_optima *= 1.3f; // Aumenta la distancia optima: prefiere combatir desde lejos
     aimbot = 0.97f;                   // Umbral de punteria alto: solo dispara apuntando casi perfecto
 }
@@ -76,7 +76,7 @@ CombatAI::Accion AI_Defensiva::decide(const std::vector<Disparo>& disparos, floa
         if (cont_giro >= cambio_giro) {
             sentido_giro = -sentido_giro;
             cont_giro = 0;
-            cambio_giro = 60.0f * (1.5f + (rand() % 100) / 49.0f);
+            cambio_giro = (1.5f + (rand() % 100) / 49.0f);
         }
     }
 

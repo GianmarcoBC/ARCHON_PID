@@ -8,7 +8,7 @@
 AI_Facil::AI_Facil(Personaje& IA, Personaje& Jugador, Rectangle arena)
     : CombatAI(IA, Jugador, arena)
 {
-    delay_IA = 60.0f * 0.25f;  // Intervalo de decision: ~250ms (el mas lento de los tres niveles)
+    delay_IA = 0.25f;  // Intervalo de decision: ~250ms (el mas lento de los tres niveles)
 }
 
 //  decide — Estrategia neutra: acercarse en zigzag, orbitar, esquivar si toca
@@ -59,7 +59,7 @@ CombatAI::Accion AI_Facil::decide(const std::vector<Disparo>& disparos, float dt
         if (cont_giro >= cambio_giro) {
             sentido_giro = -sentido_giro;
             cont_giro = 0;
-            cambio_giro = 60.0f * (1.5f + (rand() % 100) / 49.0f);
+            cambio_giro = (1.5f + (rand() % 100) / 49.0f);
         }
     }
 

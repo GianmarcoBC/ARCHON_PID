@@ -6,6 +6,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <vector>
+#include "Arena.h"
 
 //  CombatAI.h — Inteligencia artificial para el combate
 //

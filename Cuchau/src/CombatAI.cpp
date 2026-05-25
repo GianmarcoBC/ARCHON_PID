@@ -12,7 +12,7 @@ CombatAI::CombatAI(Personaje& IA, Personaje& Jugador, Rectangle arena)
     rango_seguro = distancia_combate_optima * 0.25f;
     rango_esquiva = 2.0f;
     aimbot = 0.93f;
-    cambio_giro = 60.0f * (1.8f + (rand() % 100) / 72.0f);
+    cambio_giro = (1.8f + (rand() % 100) / 72.0f);
 }
 
 //  Pared_cerc — Distancia a la pared mas cercana

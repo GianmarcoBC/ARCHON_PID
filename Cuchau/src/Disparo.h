@@ -14,6 +14,8 @@ class Disparo
     Vec2 vel{};                // Velocidad en el plano XZ (Vec2.y = eje Z del mundo)
     bool status_{ false };     // true = activo, false = ya impacto o salio de la arena
     bool fromPlayer{ true };   // true = disparado por jugador humano, false = por IA
+	float distanciaRecorrida{ 0.0f }; // Distancia total recorrida (para limitar alcance de disparos)
+	float maxDistancia{ 0.0f }; // Distancia maxima que puede recorrer un disparo antes de desactivarse
 
 	// Clase amiga de interacciones
 	friend class Interacciones;
@@ -23,8 +25,8 @@ public:
     static constexpr float size3D = 1.5f;
 
     // Constructor: posicion inicial, velocidad XZ, textura, y quien lo disparo
-    Disparo(Vector3 p, Vec2 v, Texture2D* tx, bool fp = true)
-        : Disp(tx), pos3d(p), vel(v), status_(true), fromPlayer(fp) {}
+    Disparo(Vector3 p, Vec2 v, Texture2D* tx, bool fp = true, float maxDist = 0.0f)
+        : Disp(tx), pos3d(p), vel(v), status_(true), fromPlayer(fp), maxDistancia(maxDist) {}
 
     // Mueve el disparo y lo desactiva si sale de los limites de la arena
     void Update(float dt, float arenaHalfW, float arenaHalfL);

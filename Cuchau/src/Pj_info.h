@@ -29,10 +29,21 @@ inline constexpr float Cooldown_alto = 5.0f, Cooldown_medio = 3.0f, Cooldown_baj
 // Velocidad de los proyectiles (en pixeles/segundo originales, se escalan con SPEED_SCALE)
 inline constexpr float AttackSpeed_muyalto = 1000.0f, AttackSpeed_alto = 800.0f, AttackSpeed_medio = 500.0f, AttackSpeed_bajo = 200.0f;
 
+// Rango maximo del ataque (en unidades del juego, para calcular alcance de proyectiles)
+inline constexpr float Rango_inf = 0.0f, Rango_medio = 6.0f, Rango_bajo = 2.0f;
+
 // --- Estructura de controles del teclado ---
 struct cntrl
 {
     int up, down, left, right;  // Teclas de movimiento asignadas al personaje
+};
+
+// --- Tipo de ataque ---
+enum class TipoAtaque
+{
+	Rango,      // Disparo a distancia con proyectil
+	CuerpoACuerpo, // Ataque cuerpo a cuerpo sin proyectil (hitbox instantanea)
+	Area        // Ataque de area (explosion, etc.) con proyectiles en las 8 direcciones
 };
 
 // --- Estructura con todas las propiedades de un personaje ---
@@ -50,7 +61,8 @@ struct Pj_info
     float attack_speed;             // Velocidad del proyectil
     int   frameCount;               // Numero de frames de animacion
     float frameSpeed;               // Tiempo por frame de animacion (segundos)
-    bool rango;                     // TRUE = ataque a distancia, FALSE = cuerpo a cuerpo
+	float rango_max;                 // Rango maximo del ataque (en unidades del juego, para calcular alcance de proyectiles)
+	TipoAtaque tipoAtaque;          // Tipo de ataque (rango, cuerpo a cuerpo, area)
     bool vuela;                     // TRUE = puede volar, FALSE = terrestre
 };
 
@@ -79,7 +91,8 @@ inline const Pj_info MH = {
     AttackSpeed_medio,
     3,
     0.1f,
-    true, // Rango
+    Rango_inf,
+    TipoAtaque::Rango,          // Tipo de ataque
     true // Vuela
 };
 
@@ -104,7 +117,8 @@ inline const Pj_info Phoenix = {
     AttackSpeed_bajo,
     3,
     0.1f,
-    false, // No rango
+    Rango_medio,
+    TipoAtaque::Area,          // Tipo de ataque
     true // Vuela
 };
 
@@ -129,7 +143,8 @@ inline const Pj_info Golem = {
     AttackSpeed_bajo,
     3,
     0.1f,
-    true, // Rango
+	Rango_inf,
+    TipoAtaque::Rango,          // Tipo de ataque
     false // No vuela
 };
 
@@ -154,7 +169,8 @@ inline const Pj_info Djinni = {
     AttackSpeed_medio,
     3,
     0.1f,
-    true, // Rango
+	Rango_inf,
+    TipoAtaque::Rango,          // Tipo de ataque
     true // Vuela
 };
 
@@ -179,7 +195,8 @@ inline const Pj_info Unicorn = {
     AttackSpeed_alto,
     3,
     0.1f,
-    true, // Rango
+	Rango_inf,
+    TipoAtaque::Rango,          // Tipo de ataque
     false // No vuela
 };
 
@@ -204,7 +221,8 @@ inline const Pj_info Valkyrie = {
     AttackSpeed_bajo,
     3,
     0.1f,
-    true, // Rango
+	Rango_bajo,
+    TipoAtaque::CuerpoACuerpo,          // Tipo de ataque
     true // Vuela
 };
 
@@ -229,7 +247,8 @@ inline const Pj_info Archer = {
     AttackSpeed_medio,
     3,
     0.1f,
-    true, // Rango
+	Rango_bajo,
+    TipoAtaque::Rango,          // Tipo de ataque
     false // No vuela
 };
 
@@ -254,7 +273,8 @@ inline const Pj_info Knight = {
     AttackSpeed_muyalto,
     3,
     0.1f,
-    false, // No rango
+    Rango_bajo,
+    TipoAtaque::CuerpoACuerpo,          // Tipo de ataque
     false // No vuela
 };
 
@@ -284,7 +304,8 @@ inline const Pj_info Platero = {
     AttackSpeed_alto,
     3,
     0.1f,
-    true, // Rango
+	Rango_inf,
+    TipoAtaque::Rango,          // Tipo de ataque
     true // Vuela
 };
 
@@ -309,7 +330,8 @@ inline const Pj_info ShapeShifter = {
     AttackSpeed_bajo,
     3,
     0.1f,
-    false, // No rango
+	Rango_inf,
+    TipoAtaque::CuerpoACuerpo,          // Tipo de ataque
     true // Vuela
 };
 
@@ -334,7 +356,8 @@ inline const Pj_info Troll = {
     AttackSpeed_bajo,
     3,
     0.1f,
-    true, // Rango
+	Rango_bajo,
+    TipoAtaque::CuerpoACuerpo,          // Tipo de ataque
     false // No vuela
 };
 
@@ -359,7 +382,8 @@ inline const Pj_info Dragon = {
     AttackSpeed_medio,
     3,
     0.1f,
-    true, // Rango
+	Rango_inf,
+    TipoAtaque::Rango,          // Tipo de ataque
     true // Vuela
 };
 
@@ -384,7 +408,8 @@ inline const Pj_info Basilisk = {
     AttackSpeed_alto,
     3,
     0.1f,
-    true, // Rango
+	Rango_inf,
+    TipoAtaque::Rango,          // Tipo de ataque
     false // No vuela
 };
 
@@ -409,7 +434,8 @@ inline const Pj_info Banshee = {
     AttackSpeed_muyalto,
     3,
     0.1f,
-    true, // Rango
+    Rango_medio,
+    TipoAtaque::CuerpoACuerpo,          // Tipo de ataque
     true // Vuela
 };
 
@@ -434,7 +460,8 @@ inline const Pj_info Manticore = {
     AttackSpeed_bajo,
     3,
     0.1f,
-    true, // Rango
+	Rango_inf,
+    TipoAtaque::Rango,          // Tipo de ataque
     false // No vuela
 };
 
@@ -459,6 +486,7 @@ inline const Pj_info Goblin = {
     AttackSpeed_muyalto,
     3,
     0.1f,
-    false, // No rango
+	Rango_bajo,
+    TipoAtaque::CuerpoACuerpo,          // Tipo de ataque
     false // No vuela
 };

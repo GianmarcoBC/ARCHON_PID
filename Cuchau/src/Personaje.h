@@ -98,7 +98,7 @@ public:
     void    pain(float damage);
 
     // Crea y devuelve un Disparo en la posicion del personaje, en su direccion de apuntado
-    Disparo Shoot();
+    std::vector<Disparo> Shoot();
 
     // Reproduce el sonido de ataque del personaje
     void    PlayAttackSound();

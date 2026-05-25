@@ -15,10 +15,11 @@ void Disparo::Update(float dt, float arenaHalfW, float arenaHalfL)
     pos3d.z += vel.y * dt;   // Vec2.y  -->  mundo Z
 
     // Desactivar si sale de los limites de la arena
-    if (pos3d.x < -arenaHalfW || pos3d.x > arenaHalfW ||
-        pos3d.z < -arenaHalfL || pos3d.z > arenaHalfL)
-    {
-        status_ = false;
+    if (pos3d.x < -arenaHalfW || pos3d.x > arenaHalfW || pos3d.z < -arenaHalfL || pos3d.z > arenaHalfL) status_ = false;
+    if (maxDistancia > 0.0f) {
+        distanciaRecorrida += sqrtf(vel.x * dt * vel.x * dt + vel.y * dt * vel.y * dt);
+        if (distanciaRecorrida >= maxDistancia)
+            status_ = false;
     }
 }
 

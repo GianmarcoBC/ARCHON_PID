@@ -161,13 +161,32 @@ void Personaje::pain(float damage)
 //  (para que salga del borde del billboard, no del centro).
 //  La velocidad del proyectil es la direccion de apuntado * velocidad de ataque.
 
-Disparo Personaje::Shoot()
+std::vector<Disparo> Personaje::Shoot()
 {
+	std::vector<Disparo> disparos;
     float offset = Size3D / 2.0f;
-    Vec2  pos2d  = GetPos() + l_dir * offset;                  // Posicion de origen en XZ
-    Vector3 origin = { pos2d.x, Size3D / 2.0f, pos2d.y };   // Convertir a 3D (y = altura del billboard)
-    Vec2    vel    = l_dir * Player.attack_speed * SPEED_SCALE;     // Velocidad del proyectil en XZ
-    return Disparo(origin, vel, &Ataque, isPlayer);
+
+    if (Player.tipoAtaque == TipoAtaque::Area) {
+        const Vec2 dirs[8] = {
+            {1,0},{-1,0},{0,1},{0,-1},
+            {0.707f,0.707f},{-0.707f,0.707f},
+            {0.707f,-0.707f},{-0.707f,-0.707f}
+        };
+        for (const auto& d : dirs) {
+            Vec2    pos2d = GetPos() + d * offset;
+            Vector3 origin = { pos2d.x, Size3D / 2.0f, pos2d.y };
+            Vec2    vel = d * Player.attack_speed * SPEED_SCALE;
+            disparos.push_back(Disparo(origin, vel, &Ataque, isPlayer, Player.rango_max));
+        }
+    }
+    else {
+        float rangoMax = (Player.tipoAtaque == TipoAtaque::CuerpoACuerpo) ? Player.rango_max : 0.0f;
+        Vec2    pos2d = GetPos() + l_dir * offset;
+        Vector3 origin = { pos2d.x, Size3D / 2.0f, pos2d.y };
+        Vec2    vel = l_dir * Player.attack_speed * SPEED_SCALE;
+        disparos.push_back(Disparo(origin, vel, &Ataque, isPlayer, rangoMax));
+    }
+    return disparos;
 }
 
 //  PlayAttackSound — Reproduce el efecto de sonido de ataque

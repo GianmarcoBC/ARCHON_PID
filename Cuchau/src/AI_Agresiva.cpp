@@ -9,7 +9,7 @@
 AI_Agresiva::AI_Agresiva(Personaje& IA, Personaje& Jugador, Rectangle arena)
     : CombatAI(IA, Jugador, arena)
 {
-    delay_IA = 60.0f * 0.04f;       // Intervalo de decision: ~40ms (el mas rapido de los tres niveles)
+    delay_IA = 0.04f;       // Intervalo de decision: ~40ms (el mas rapido de los tres niveles)
     distancia_combate_optima *= 0.6f; // Reduce la distancia optima para mantenerse pegado al jugador
     aimbot = 0.85f;                  // Umbral de punteria bajo: dispara aunque no apunte perfecto
 }
@@ -56,7 +56,7 @@ CombatAI::Accion AI_Agresiva::decide(const std::vector<Disparo>& disparos, float
         if (cont_giro >= cambio_giro) {
             sentido_giro = -sentido_giro;
             cont_giro = 0;
-            cambio_giro = 60.0f * (1.5f + (rand() % 100) / 49.0f);
+            cambio_giro =(1.5f + (rand() % 100) / 49.0f);
         }
     }
 

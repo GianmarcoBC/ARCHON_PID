@@ -38,7 +38,7 @@ ControladorCombate::ControladorCombate(Pj_info pj1, Pj_info pj2, bool vsIA, int 
 
     // --- Crear IA si es modo VS IA ---
     if (vsIA) {
-        Rectangle arenaBounds = { -arena.getSueloWidth() / 2, -arena.getSueloLength() / 2, arena.getSueloWidth(), arena.getSueloLength() };
+        Rectangle arenaBounds = { -arena.getSueloWidth() / 2, -arena.getSueloLength() / 2,   };
         switch (dificultad) {
         case 0:  ia = new AI_Facil(P2, P1, arenaBounds); break;
         case 1:  ia = new AI_Defensiva(P2, P1, arenaBounds); break;
@@ -72,7 +72,8 @@ void ControladorCombate::Update()
 
     if (cooldown1 <= 0.0f) {
         if (IsKeyPressed(KEY_SPACE)) {
-            Disparos_1.push_back(P1.Shoot());   // Crear disparo
+            auto nuevos1 = P1.Shoot();
+            Disparos_1.insert(Disparos_1.end(), nuevos1.begin(), nuevos1.end());
             P1.PlayAttackSound();                // Sonido de ataque
             cooldown1 = P1.get_Cooldown();       // Reiniciar cooldown
         }
@@ -86,7 +87,8 @@ void ControladorCombate::Update()
         bool dispara = ia->Update(dt, Disparos_1);
         if (cooldown2 <= 0.0f) {
             if (dispara) {
-                Disparos_2.push_back(P2.Shoot());
+                auto nuevos2 = P2.Shoot();
+                Disparos_2.insert(Disparos_2.end(), nuevos2.begin(), nuevos2.end());
                 P2.PlayAttackSound();
                 cooldown2 = P2.get_Cooldown();
             }
@@ -99,7 +101,8 @@ void ControladorCombate::Update()
         P2.Update(dt);
         if (cooldown2 <= 0.0f) {
             if (IsKeyPressed(KEY_RIGHT_CONTROL)) {
-                Disparos_2.push_back(P2.Shoot());
+                auto nuevos2 = P2.Shoot();
+                Disparos_2.insert(Disparos_2.end(), nuevos2.begin(), nuevos2.end());
                 P2.PlayAttackSound();
                 cooldown2 = P2.get_Cooldown();
             }
