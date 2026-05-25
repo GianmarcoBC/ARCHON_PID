@@ -1,13 +1,13 @@
 #include "Disparo.h"
 
-void Disparo::Update()
+void Disparo::Update(float dt)
 {
     if (!status_) return; // Solo actualiza si el disparo está activo
 
-    pos.x += vel.x;
-    pos.y += vel.y;
+    pos.x += vel.x * dt;
+    pos.y += vel.y * dt;
 
-    if (pos.y < 0 || pos.y > 580 || pos.x < 0 || pos.x > 970) {
+    if (pos.y < 0 || pos.y > GetScreenHeight() || pos.x < 0 || pos.x > GetScreenWidth()) {
         status_ = false; // Desactiva el disparo si sale de la pantalla
     }
 }
@@ -18,8 +18,8 @@ void Disparo::Draw()
 
     float angulo = 0.0f;
 
-    float w = Disp->width, w1=w;
-    float h = Disp->height;
+    float w = (float)Disp->width, w1=w;
+    float h = (float)Disp->height;
 
     // Calcula el ángulo según la dirección
     if (vel.x > 0) { angulo = 0.0f; w1 = w; } // →
