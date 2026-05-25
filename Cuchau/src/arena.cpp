@@ -18,16 +18,17 @@ Arena::Arena()
     wallModel.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texPared;
 }
 
-void Arena::Draw(Camera camera) const
+void Arena::DrawFondo() const
 {
     // 1. Fondo 2D (dibujado antes de Mode3D, cubre toda la pantalla)
     DrawTexturePro(texBg,
         { 0, 0, (float)texBg.width, (float)texBg.height },
         { 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() },
         { 0, 0 }, 0.0f, WHITE);
+}
 
-    BeginMode3D(camera);
-
+void Arena::Draw(Camera camera) const
+{
     // 2. Suelo texturizado
     DrawModel(sueloModel, { 0.0f, 0.0f, 0.0f }, 1.0f, WHITE);
 

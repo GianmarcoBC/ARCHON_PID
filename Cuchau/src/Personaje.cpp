@@ -17,12 +17,6 @@ Personaje::Personaje(Pj_info p, cntrl c, Vector3 po, bool ip):
 	max_cooldown(p.cooldown), // Guardar cooldown maximo antes de que se reduzca
 	isPlayer(ip)
 {
-    TraceLog(LOG_INFO, "Cargando personaje: %s, frames: %d",
-        p.nombre.data(), (int)p.Sprites.size());
-
-    assert(!p.Sprites.empty() && "Pj_info.Sprites está vacío");
-    for (const auto& ruta : p.Sprites)
-        Frames.push_back(LoadTexture(ruta.data()));
 
     // Cargar los frames de animacion y sombra del personaje
 	for (int i = 0; i < Player.Sprites.size(); i++) {
@@ -37,8 +31,8 @@ Personaje::Personaje(Pj_info p, cntrl c, Vector3 po, bool ip):
     // Generar modelos planos para las sombras (uno por frame de animacion)
     // Cada sombra es un plano de charSize x charSize con la textura de sombra
     for (int i = 0; i < Frames_shadow.size(); i++) {
-        shadowMesh[i] = GenMeshPlane(Size3D, Size3D, 1, 1);
-        shadow[i]     = LoadModelFromMesh(shadowMesh[i]);
+        shadowMesh.push_back(GenMeshPlane(Size3D, Size3D, 1, 1));
+        shadow.push_back(LoadModelFromMesh(shadowMesh[i]));
         shadow[i].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = Frames_shadow[i];
     }
 }
@@ -85,7 +79,7 @@ void Personaje::Update(float dt)
     Move(dir, dt);
 }
 
-void Personaje::Draw(Camera camera, Color color) const
+void Personaje::Draw(Camera camera) const
 {
     const Texture2D& texActual = Frames[frameActual]; // Usa el frame actual
     float w = (float)texActual.width;
@@ -99,13 +93,11 @@ void Personaje::Draw(Camera camera, Color color) const
         pos3d, 
         { 0, 1, 0 }, 
         { Size3D, Size3D }, 
-        { w / 2, h / 2 }, 
+        { Size3D / 2, Size3D / 2 },
         0.0f, 
-        color);
+        WHITE);
     
     drawshadow({ pos3d.x, 0.01f, pos3d.z - Size3D / 2 });
-	drawHUD(camera, color);
-
 }
 
 //  drawshadow — Dibuja la sombra del personaje en el suelo

@@ -31,6 +31,7 @@ public:
 	float getSueloWidth()  const { return sueloWidth; }
 	float getSueloLength() const { return sueloLength; }
 
+	void DrawFondo() const; // Dibuja el fondo 2D (ciudad) cubriendo toda la pantalla
     void Draw(Camera camera) const;
 
 	~Arena() {
