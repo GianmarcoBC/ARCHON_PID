@@ -36,6 +36,15 @@ ControladorCombate::ControladorCombate(Pj_info pj1, Pj_info pj2, bool vsIA, int 
     // --- Cargar shader de alpha discard ---
     alphaDiscard = LoadShader(0, "bin/Resources/alpha_discard.fs");
 
+    // --- Copia si es Shapeshifter ---
+	if ("ShapeShifter" == pj1.nombre) {
+        P1.copy(P2);
+	}
+	else if ("ShapeShifter" == pj2.nombre) {
+		P2.copy(P1);
+	}
+
+
     // --- Crear IA si es modo VS IA ---
     if (vsIA) {
         Rectangle arenaBounds = { -arena.getSueloWidth() / 2, -arena.getSueloLength() / 2,   };
@@ -74,7 +83,6 @@ void ControladorCombate::Update()
     if (IsKeyPressed(KEY_SPACE)) {
         auto nuevos1 = P1.Shoot();
         Disparos_1.insert(Disparos_1.end(), nuevos1.begin(), nuevos1.end());
-        P1.PlayAttackSound();                // Sonido de ataque
     }
 
 
@@ -86,7 +94,6 @@ void ControladorCombate::Update()
         if (dispara) {
             auto nuevos2 = P2.Shoot();
             Disparos_2.insert(Disparos_2.end(), nuevos2.begin(), nuevos2.end());
-            P2.PlayAttackSound();
         }
 
     }
@@ -97,7 +104,6 @@ void ControladorCombate::Update()
         if (IsKeyPressed(KEY_RIGHT_CONTROL)) {
             auto nuevos2 = P2.Shoot();
             Disparos_2.insert(Disparos_2.end(), nuevos2.begin(), nuevos2.end());
-            P2.PlayAttackSound();
         }
 
     }

@@ -158,6 +158,24 @@ void Personaje::pain(float damage)
         Player.vida = 0;
 }
 
+void Personaje::copy(Personaje& other)
+{
+	Player.Ataque = other.Player.Ataque;
+	Player.attack_speed = other.Player.attack_speed;
+	Player.cooldown = other.Player.cooldown;
+	Player.Efecto_ataque = other.Player.Efecto_ataque;
+	Player.fuerza = other.Player.fuerza;
+	Player.rango_max = other.Player.rango_max;
+	Player.vel = other.Player.vel;
+	Player.vida = other.Player.vida;
+	Player.tipoAtaque = other.Player.tipoAtaque;
+
+    max_vida = other.max_vida;
+    cooldown = other.cooldown;
+    Ataque = other.Ataque;
+    efecto_ataque = other.efecto_ataque;
+}
+
 //  Shoot — Crea un disparo desde la posicion del personaje
 //
 //  El proyectil aparece desplazado medio Size3D en la direccion de apuntado
@@ -191,6 +209,8 @@ std::vector<Disparo> Personaje::Shoot()
             Vec2    vel = l_dir * Player.attack_speed * SPEED_SCALE;
             disparos.push_back(Disparo(origin, vel, &Ataque, isPlayer, rangoMax));
         }
+
+        PlayAttackSound();
         return disparos;
 
     }

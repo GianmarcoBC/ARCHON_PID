@@ -98,6 +98,8 @@ public:
     // Recibe dano y reduce vida (minimo 0)
     void    pain(float damage);
 
+    void copy(Personaje& other);
+
     // Crea y devuelve un Disparo en la posicion del personaje, en su direccion de apuntado
     std::vector<Disparo> Shoot();
 
