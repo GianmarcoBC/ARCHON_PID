@@ -34,29 +34,29 @@ public:
 
 // Bando + Dificultad para Juego Completo con IA
 class ConfigJuegoCompletoScreen : public Screen {
+    void drawPanelBando(GameState& gs, float ox);
+    void drawPanelDificultad(GameState& gs, float ox);
 public:
     void Draw(GameState& gs)        override;
     void HandleInput(GameState& gs) override;
     void HandleMouse(GameState& gs) override;
     void OnEnter(GameState& gs)     override;
-private:
-    void drawPanelBando(GameState& gs, float ox);
-    void drawPanelDificultad(GameState& gs, float ox);
+
 };
 
 // Elegir equipo (Luz u Oscuridad) en Combate
 class SeleccionEquipoScreen : public Screen {
+    // Dibuja la tarjeta de un equipo con sprites, stats y descripción
+    void drawTarjetaEquipo(GameState& gs, int idx,
+        float cx, float cy,
+        bool seleccionado, float t);
+    void drawBarraStat(float x, float y, float w, int val, Color col);
 public:
     void Draw(GameState& gs)        override;
     void HandleInput(GameState& gs) override;
     void HandleMouse(GameState& gs) override;
     void OnEnter(GameState& gs)     override;
-private:
-    // Dibuja la tarjeta de un equipo con sprites, stats y descripción
-    void drawTarjetaEquipo(GameState& gs, int idx,
-                           float cx, float cy,
-                           bool seleccionado, float t);
-    void drawBarraStat(float x, float y, float w, int val, Color col);
+
 };
 
 // Dificultad IA para Combate (después de elegir equipo)
@@ -70,20 +70,21 @@ public:
 
 // Lista de partidas guardadas con carga y borrado
 class CargarPartidaScreen : public Screen {
+    void drawTarjetaPartida(const PartidaGuardada& p,
+        float x, float y, float w,
+        bool sel, float t);
+    void drawTarjetaSlot(const SaveData& s,
+        float x, float y, float w,
+        bool sel, float t);
+    std::array<SaveData, 5> slots{};
+    int seccionActiva = 0; // 0=partidas menú, 1=slots combate  
+    SaveData slotPendiente{};
 public:
     void Draw(GameState& gs)        override;
     void HandleInput(GameState& gs) override;
     void HandleMouse(GameState& gs) override;
     void OnEnter(GameState& gs)     override;
-private:
-    void drawTarjetaPartida(const PartidaGuardada& p,
-                            float x, float y, float w,
-                            bool sel, float t);
-    void drawTarjetaSlot(const SaveData& s,        
-        float x, float y, float w,
-        bool sel, float t);
-    std::array<SaveData, 5> slots{};               
-    int seccionActiva = 0; // 0=partidas menú, 1=slots combate  
+
 };
 
 // Overlay de pausa — aparece sin slash, desde arriba

@@ -711,6 +711,9 @@ void CargarPartidaScreen::OnEnter(GameState& gs) {
     seccionActiva = 0;
     SaveSystem::cargarTodas(gs);
     slots = SaveSystem::ObtenerSlots();
+    // Corregir si el índice quedó fuera de rango tras un borrado previo
+    if (gs.opcionCargaSel >= (int)gs.partidas.size())
+        gs.opcionCargaSel = std::max(0, (int)gs.partidas.size() - 1);
 }
 
 void CargarPartidaScreen::drawTarjetaPartida(const PartidaGuardada& p,
@@ -855,7 +858,7 @@ void CargarPartidaScreen::HandleInput(GameState& gs) {
                 gs.opcionCargaSel = (gs.opcionCargaSel + 1) % n;
             if (IsKeyPressed(KEY_ENTER)) {
                 SaveSystem::restaurar(gs, gs.opcionCargaSel);
-                transicion(gs, JUGAR_IA);
+                transicion(gs, gs.modoActual == MODO_COMBATE ? CUCHAU_COMBATE : SELECCION_MODO);
             }
             if (IsKeyPressed(KEY_DELETE)) {
                 SaveSystem::borrar(gs, gs.opcionCargaSel);
@@ -870,7 +873,7 @@ void CargarPartidaScreen::HandleInput(GameState& gs) {
         if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN))
             gs.opcionSlotSel = (gs.opcionSlotSel + 1) % 5;
         if (IsKeyPressed(KEY_ENTER) && slots[gs.opcionSlotSel].valida) {
-            gs.slotCombatePendiente = slots[gs.opcionSlotSel];
+            slotPendiente = slots[gs.opcionSlotSel];
             transicion(gs, CUCHAU_COMBATE);
         }
         if (IsKeyPressed(KEY_DELETE) && slots[gs.opcionSlotSel].valida) {
@@ -913,7 +916,7 @@ void CargarPartidaScreen::HandleMouse(GameState& gs) {
             transicion(gs, JUGAR_IA);
         }
         else if (seccionActiva == 1 && slots[gs.opcionSlotSel].valida) {
-            gs.slotCombatePendiente = slots[gs.opcionSlotSel];
+            slotPendiente = slots[gs.opcionSlotSel];
             transicion(gs, CUCHAU_COMBATE);
         }
     }

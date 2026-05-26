@@ -100,10 +100,10 @@ void CuchauCombateScreen::DrawPausa()
 void CuchauCombateScreen::OnEnter(GameState& gs)
 {
     // Si venimos con un slot pendiente del menú, cargarlo directamente
-    if (gs.slotCombatePendiente.valida) {
-        savePendiente = gs.slotCombatePendiente;
-        gs.slotCombatePendiente = SaveData{};
-        estado = 3; // ir directo a CargandoSave
+    if (SaveSystem::pendiente.valida) {
+        savePendiente = SaveSystem::pendiente;
+        SaveSystem::pendiente = SaveData{};
+        estado = 3;
         return;
     }
     // Reset Cuchau state when entering

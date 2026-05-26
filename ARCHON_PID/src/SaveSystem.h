@@ -32,6 +32,7 @@ class SaveSystem {
 
     static std::vector<SaveData> CargarTodosCombate();
 
+    inline static SaveData pendiente{};
 public:
     // Guarda la partida actual al final del fichero. Devuelve true si va bien.
     static bool guardar(const GameState& gs, const std::string& nombrePartida);
