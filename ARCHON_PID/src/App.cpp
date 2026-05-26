@@ -44,7 +44,6 @@ void App::Init() {
     screens[(int)SELECCION_EQUIPO]     = std::make_unique<SeleccionEquipoScreen>();
     screens[(int)CONFIG_DIFICULTAD]    = std::make_unique<ConfigDificultadScreen>();
     screens[(int)CARGAR_PARTIDA]       = std::make_unique<CargarPartidaScreen>();
-    screens[(int)CARGAR_COMBATE]       = std::make_unique<CargarCombateScreen>();
     screens[(int)PAUSA]                = std::make_unique<PausaScreen>();
     screens[(int)CUCHAU_COMBATE]       = std::make_unique<CuchauCombateScreen>();
 }
@@ -110,7 +109,6 @@ void App::Update() {
     if (gs.estadoActual == SELECCION_EQUIPO   && gs.selEquipoOffset < 0) gs.selEquipoOffset += 3.f;
     if (gs.estadoActual == CONFIG_DIFICULTAD  && gs.configDifiOffset< 0) gs.configDifiOffset+= 3.f;
     if (gs.estadoActual == CARGAR_PARTIDA     && gs.cargaOffset     < 0) gs.cargaOffset     += 3.f;
-    if (gs.estadoActual == CARGAR_COMBATE     && gs.cargaCombateOffset < 0) gs.cargaCombateOffset += 3.f;
     // La pausa baja desde arriba (positivo → 0)
     if (gs.estadoActual == PAUSA && gs.pausaOffset > 0)
         gs.pausaOffset = std::max(0.f, gs.pausaOffset - 18.f);
@@ -162,7 +160,6 @@ void App::Update() {
                 case SELECCION_EQUIPO:    gs.selEquipoOffset = -800.f; break;
                 case CONFIG_DIFICULTAD:   gs.configDifiOffset= -800.f; break;
                 case CARGAR_PARTIDA:      gs.cargaOffset     = -800.f; break;
-                case CARGAR_COMBATE:  gs.cargaCombateOffset = -800.f; break;
                 default: break;
             }
             if (auto* scr = GetCurrentScreen()) scr->OnEnter(gs);
