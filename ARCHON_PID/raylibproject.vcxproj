@@ -137,8 +137,10 @@
     <ClCompile Include="raylibproject.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\Background.cpp" />
+    <ClCompile Include="src\CuchauScreen.cpp" />
     <ClCompile Include="src\Drawing.cpp" />
     <ClCompile Include="src\Particles.cpp" />
+    <ClCompile Include="src\SaveSystem.cpp" />
     <ClCompile Include="src\Screens.cpp" />
     <ClCompile Include="src\ScreensNew.cpp" />
     <ClCompile Include="src\cuchau\AI_Agresiva.cpp" />
@@ -149,9 +151,7 @@
     <ClCompile Include="src\cuchau\Disparo.cpp" />
     <ClCompile Include="src\cuchau\Interacciones.cpp" />
     <ClCompile Include="src\cuchau\Menu_Combate.cpp" />
-    <ClCompile Include="src\cuchau\P.cpp" />
     <ClCompile Include="src\cuchau\Personaje.cpp" />
-    <ClCompile Include="src\cuchau\Pj.cpp" />
     <ClCompile Include="src\cuchau\Rolitas.cpp" />
     <ClCompile Include="src\cuchau\arena.cpp" />
     <ClCompile Include="src\cuchau\obstaculo.cpp" />
@@ -176,12 +176,9 @@
     <ClInclude Include="src\cuchau\Interacciones.h" />
     <ClInclude Include="src\cuchau\Menu_Combate.h" />
     <ClInclude Include="src\cuchau\Music.h" />
-    <ClInclude Include="src\cuchau\P.h" />
     <ClInclude Include="src\cuchau\Personaje.h" />
-    <ClInclude Include="src\cuchau\Pj.h" />
     <ClInclude Include="src\cuchau\Pj_info.h" />
     <ClInclude Include="src\cuchau\Rolitas.h" />
-    <ClInclude Include="src\cuchau\SaveManager.h" />
     <ClInclude Include="src\cuchau\Vec2.h" />
     <ClInclude Include="src\cuchau\obstaculo.h" />
   </ItemGroup>

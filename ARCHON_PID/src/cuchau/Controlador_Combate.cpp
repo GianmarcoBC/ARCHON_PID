@@ -225,17 +225,17 @@ void ControladorCombate::DrawVictory()
 bool ControladorCombate::GuardarEstado(bool modoIA, int dificultad) const
 {
     SaveData d;
-    d.nombreP1   = P1.GetNombre().data();
+    d.nombreP1   = P1.GetNombre();
     d.vidaP1     = P1.GetVida();
     d.posP1x     = P1.GetPos().x;
     d.posP1y     = P1.GetPos().y;
-    d.nombreP2   = P2.GetNombre().data();
+    d.nombreP2   = P2.GetNombre();
     d.vidaP2     = P2.GetVida();
     d.posP2x     = P2.GetPos().x;
     d.posP2y     = P2.GetPos().y;
     d.modoIA     = modoIA;
     d.dificultad = dificultad;
-    return SaveManager::Guardar(d);
+    return SaveSystem::GuardarCombate(d);
 }
 
 void ControladorCombate::CargarEstado(const SaveData& d)
