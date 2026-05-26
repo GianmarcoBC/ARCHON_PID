@@ -21,6 +21,7 @@ enum Estado {
     SELECCION_EQUIPO,      // Elegir Luz u Oscuridad (Combate)
     CONFIG_DIFICULTAD,     // Dificultad IA (Combate)
     CARGAR_PARTIDA,
+    CARGAR_COMBATE,
     PAUSA,
     JUGAR_PVP, JUGAR_IA,
     CUCHAU_COMBATE,        // Modo Combate 3D (Cuchau)
@@ -141,6 +142,9 @@ struct GameState {
     // Cargar partida
     int opcionCargaSel = 0;
     std::vector<PartidaGuardada> partidas;
+
+    SaveData slotCombatePendiente;
+    int opcionSlotSel = 0;   
 
     // Enciclopedia
     int paginaLibro = 0;

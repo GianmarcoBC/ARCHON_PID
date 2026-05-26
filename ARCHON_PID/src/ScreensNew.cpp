@@ -706,9 +706,11 @@ void ConfigDificultadScreen::HandleMouse(GameState& gs) {
 // Lee del disco al entrar y muestra las partidas guardadas.
 // ============================================================
 void CargarPartidaScreen::OnEnter(GameState& gs) {
-    gs.opcionCargaSel=0;
-    // Recargar del fichero cada vez que se entra en esta pantalla
+    gs.opcionCargaSel = 0;
+    gs.opcionSlotSel = 0;
+    seccionActiva = 0;
     SaveSystem::cargarTodas(gs);
+    slots = SaveSystem::ObtenerSlots();
 }
 
 void CargarPartidaScreen::drawTarjetaPartida(const PartidaGuardada& p,
@@ -753,68 +755,181 @@ void CargarPartidaScreen::drawTarjetaPartida(const PartidaGuardada& p,
     if(sel) Drawing::cursorAnimado(x+5,y+h/2,t);
 }
 
-void CargarPartidaScreen::Draw(GameState& gs) {
-    float t=gs.tiempo, ox=gs.cargaOffset;
-    Background::library(gs);
-    drawPanel(50+ox,88,700,428, 0.65f,0.5f,0.08f, 0.05f,0.03f,0.01f,0.90f);
-    drawTitulo("CARGAR PARTIDA", 400+ox, 530, t, 0.85f,0.75f,0.15f);
-    drawSeparador(65+ox,505,735+ox, 0.55f,0.4f,0.07f);
+void CargarPartidaScreen::drawTarjetaSlot(const SaveData& s,
+    float x, float y, float w, bool sel, float t)
+{
+    float h = 72;
+    rlBegin(RL_QUADS);
+    rlColor4f(sel ? 0.04f : 0.02f, sel ? 0.08f : 0.04f, sel ? 0.14f : 0.06f, 0.95f);
+    rlVertex2f(x, y); rlVertex2f(x + w, y); rlVertex2f(x + w, y + h); rlVertex2f(x, y + h);
+    rlEnd();
+    float al = sel ? 0.6f + 0.4f * sinf(t * 0.012f) : 0.3f;
+    rlSetLineWidth(sel ? 2.f : 1.f);
+    rlBegin(RL_LINES);
+    rlColor4f(0.2f * al, 0.4f * al, 0.7f * al, 1);
+    rlVertex2f(x, y);     rlVertex2f(x + w, y);
+    rlVertex2f(x + w, y);   rlVertex2f(x + w, y + h);
+    rlVertex2f(x + w, y + h); rlVertex2f(x, y + h);
+    rlVertex2f(x, y + h);   rlVertex2f(x, y);
+    rlEnd();
 
-    if(gs.partidas.empty()){
-        Drawing::texto18(230+ox,290,"No hay partidas guardadas.",CFloat(0.5f,0.45f,0.35f));
-    } else {
-        float startY=478, step=92;
-        for(int i=0;i<(int)gs.partidas.size();i++){
-            float y=startY-i*step;
-            drawTarjetaPartida(gs.partidas[i],65+ox,y-80,670,(i==gs.opcionCargaSel),t);
+    std::string label = "SLOT " + std::to_string(s.slot + 1);
+    if (!s.valida) {
+        Drawing::texto12(x + 10, y + h / 2 - 6, label + "  —  vacio", CFloat(0.3f, 0.3f, 0.35f));
+        return;
+    }
+    Drawing::texto18(x + 10, y + h - 22,
+        label + ":  " + s.nombreP1 + " vs " + s.nombreP2,
+        sel ? CFloat(0.5f, 0.8f, 1.f) : CFloat(0.55f, 0.7f, 0.85f));
+    std::string difi = s.dificultad == 0 ? "Facil" : s.dificultad == 1 ? "Normal" :
+        s.dificultad == 2 ? "Dificil" : "Maestro";
+    Drawing::texto12(x + 10, y + h - 38, s.modoIA ? "IA | " + difi : "PvP", CFloat(0.5f, 0.6f, 0.75f));
+    Drawing::texto12(x + 10, y + 8,
+        s.nombreP1 + " " + std::to_string((int)s.vidaP1) + "hp  |  " +
+        s.nombreP2 + " " + std::to_string((int)s.vidaP2) + "hp",
+        CFloat(0.45f, 0.6f, 0.5f));
+    if (sel) Drawing::cursorAnimado(x + 4, y + h / 2, t);
+}
+
+void CargarPartidaScreen::Draw(GameState& gs) {
+    float t = gs.tiempo, ox = gs.cargaOffset;
+    Background::library(gs);
+    drawPanel(50 + ox, 88, 700, 428, 0.65f, 0.5f, 0.08f, 0.05f, 0.03f, 0.01f, 0.90f);
+    drawTitulo("CARGAR PARTIDA", 400 + ox, 530, t, 0.85f, 0.75f, 0.15f);
+    drawSeparador(65 + ox, 505, 735 + ox, 0.55f, 0.4f, 0.07f);
+
+    // Línea divisoria central
+    float cx = 400 + ox;
+    rlBegin(RL_LINES);
+    rlColor4f(0.4f, 0.35f, 0.1f, 0.5f);
+    rlVertex2f(cx, 100); rlVertex2f(cx, 500);
+    rlEnd();
+
+    // — Columna izquierda: partidas del menú —
+    Color colIzq = (seccionActiva == 0) ? CFloat(1, 0.9f, 0.5f) : CFloat(0.5f, 0.45f, 0.3f);
+    Drawing::texto14(90 + ox, 490, "PARTIDAS", colIzq);
+
+    if (gs.partidas.empty()) {
+        Drawing::texto12(70 + ox, 280, "No hay partidas guardadas.", CFloat(0.4f, 0.35f, 0.25f));
+    }
+    else {
+        float startY = 472, step = 84;
+        for (int i = 0;i < (int)gs.partidas.size();i++) {
+            float y = startY - i * step;
+            bool sel = (seccionActiva == 0 && i == gs.opcionCargaSel);
+            drawTarjetaPartida(gs.partidas[i], 65 + ox, y - 72, 320, sel, t);
         }
     }
 
-    drawPanel(78+ox,100,200,30, 0.7f,0.1f,0.05f, 0.12f,0.04f,0.02f);
-    Drawing::texto12(96+ox,108,"CARGAR  [ENTER]",CFloat(1,0.9f,0.5f));
-    drawPanel(518+ox,100,200,30, 0.35f,0.1f,0.1f, 0.1f,0.04f,0.04f);
-    Drawing::texto12(538+ox,108,"BORRAR  [DEL]",  CFloat(0.85f,0.5f,0.5f));
+    // — Columna derecha: slots de combate —
+    Color colDer = (seccionActiva == 1) ? CFloat(0.5f, 0.8f, 1.f) : CFloat(0.25f, 0.4f, 0.5f);
+    Drawing::texto14(420 + ox, 490, "COMBATES", colDer);
 
-    Drawing::instrucciones(155+ox,58,"W/S: Navegar    ENTER: Cargar    DEL: Borrar    ESC: Volver",t);
+    float startY = 472, step = 76;
+    for (int i = 0;i < 5;i++) {
+        float y = startY - i * step;
+        bool sel = (seccionActiva == 1 && i == gs.opcionSlotSel);
+        drawTarjetaSlot(slots[i], 410 + ox, y - 68, 310, sel, t);
+    }
+
+    // Botones inferiores según sección activa
+    drawPanel(78 + ox, 100, 180, 28, 0.7f, 0.1f, 0.05f, 0.12f, 0.04f, 0.02f);
+    Drawing::texto12(90 + ox, 107, "CARGAR  [ENTER]", CFloat(1, 0.9f, 0.5f));
+    drawPanel(270 + ox, 100, 160, 28, 0.35f, 0.1f, 0.1f, 0.1f, 0.04f, 0.04f);
+    Drawing::texto12(280 + ox, 107, "BORRAR  [DEL]", CFloat(0.85f, 0.5f, 0.5f));
+
+    Drawing::instrucciones(100 + ox, 58,
+        "W/S: Navegar    TAB: Cambiar seccion    ENTER: Cargar    DEL: Borrar    ESC: Volver", t);
 }
 
 void CargarPartidaScreen::HandleInput(GameState& gs) {
-    if(IsKeyPressed(KEY_W)||IsKeyPressed(KEY_UP))
-        { if(--gs.opcionCargaSel<0) gs.opcionCargaSel=(int)gs.partidas.size()-1; }
-    if(IsKeyPressed(KEY_S)||IsKeyPressed(KEY_DOWN))
-        { if(++gs.opcionCargaSel>=(int)gs.partidas.size()) gs.opcionCargaSel=0; }
-    if(IsKeyPressed(KEY_ENTER)&&!gs.partidas.empty()){
-        SaveSystem::restaurar(gs,gs.opcionCargaSel);
-        transicion(gs, gs.modoActual==MODO_COMPLETO ? JUGAR_IA : JUGAR_IA);
+    if (IsKeyPressed(KEY_TAB))
+        seccionActiva = 1 - seccionActiva;
+
+    if (seccionActiva == 0) {
+        int n = (int)gs.partidas.size();
+        if (n > 0) {
+            if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP))
+                gs.opcionCargaSel = (gs.opcionCargaSel - 1 + n) % n;
+            if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN))
+                gs.opcionCargaSel = (gs.opcionCargaSel + 1) % n;
+            if (IsKeyPressed(KEY_ENTER)) {
+                SaveSystem::restaurar(gs, gs.opcionCargaSel);
+                transicion(gs, JUGAR_IA);
+            }
+            if (IsKeyPressed(KEY_DELETE)) {
+                SaveSystem::borrar(gs, gs.opcionCargaSel);
+                if (gs.opcionCargaSel >= n - 1)
+                    gs.opcionCargaSel = std::max(0, n - 2);
+            }
+        }
     }
-    if(IsKeyPressed(KEY_DELETE)&&!gs.partidas.empty()){
-        SaveSystem::borrar(gs,gs.opcionCargaSel);
-        if(gs.opcionCargaSel>=(int)gs.partidas.size())
-            gs.opcionCargaSel=std::max(0,(int)gs.partidas.size()-1);
+    else {
+        if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP))
+            gs.opcionSlotSel = (gs.opcionSlotSel - 1 + 5) % 5;
+        if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN))
+            gs.opcionSlotSel = (gs.opcionSlotSel + 1) % 5;
+        if (IsKeyPressed(KEY_ENTER) && slots[gs.opcionSlotSel].valida) {
+            gs.slotCombatePendiente = slots[gs.opcionSlotSel];
+            transicion(gs, CUCHAU_COMBATE);
+        }
+        if (IsKeyPressed(KEY_DELETE) && slots[gs.opcionSlotSel].valida) {
+            SaveSystem::BorrarCombate(gs.opcionSlotSel);
+            slots = SaveSystem::ObtenerSlots();
+        }
     }
-    if(IsKeyPressed(KEY_ESCAPE)) transicion(gs,MENU);
+
+    if (IsKeyPressed(KEY_ESCAPE)) transicion(gs, MENU);
 }
 
 void CargarPartidaScreen::HandleMouse(GameState& gs) {
-    if(!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) return;
-    float mxv=(float)GetMouseX()*800.f/GetScreenWidth(),myv=600.f-(float)GetMouseY()*600.f/GetScreenHeight(),ox=gs.cargaOffset;
-    float startY=478,step=92;
-    for(int i=0;i<(int)gs.partidas.size();i++){
-        float y=startY-i*step;
-        if(mxv>65+ox&&mxv<735+ox&&myv>y-80&&myv<y)
-            gs.opcionCargaSel=i;
+    if (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) return;
+    float mxv = (float)GetMouseX() * 800.f / GetScreenWidth();
+    float myv = 600.f - (float)GetMouseY() * 600.f / GetScreenHeight();
+    float ox = gs.cargaOffset;
+
+    // Columna izquierda — partidas
+    float startY = 472, step = 84;
+    for (int i = 0;i < (int)gs.partidas.size();i++) {
+        float y = startY - i * step;
+        if (mxv > 65 + ox && mxv<385 + ox && myv>y - 72 && myv < y)
+        {
+            seccionActiva = 0; gs.opcionCargaSel = i;
+        }
     }
-    if(mxv>78+ox&&mxv<278+ox&&myv>100&&myv<130&&!gs.partidas.empty()){
-        SaveSystem::restaurar(gs,gs.opcionCargaSel);
-        transicion(gs,JUGAR_IA);
+    // Columna derecha — slots
+    float stepS = 76;
+    for (int i = 0;i < 5;i++) {
+        float y = startY - i * stepS;
+        if (mxv > 410 + ox && mxv<720 + ox && myv>y - 68 && myv < y)
+        {
+            seccionActiva = 1; gs.opcionSlotSel = i;
+        }
     }
-    if(mxv>518+ox&&mxv<718+ox&&myv>100&&myv<130&&!gs.partidas.empty()){
-        SaveSystem::borrar(gs,gs.opcionCargaSel);
-        if(gs.opcionCargaSel>=(int)gs.partidas.size())
-            gs.opcionCargaSel=std::max(0,(int)gs.partidas.size()-1);
+    // Botón cargar
+    if (mxv > 78 + ox && mxv < 258 + ox && myv>100 && myv < 128) {
+        if (seccionActiva == 0 && !gs.partidas.empty()) {
+            SaveSystem::restaurar(gs, gs.opcionCargaSel);
+            transicion(gs, JUGAR_IA);
+        }
+        else if (seccionActiva == 1 && slots[gs.opcionSlotSel].valida) {
+            gs.slotCombatePendiente = slots[gs.opcionSlotSel];
+            transicion(gs, CUCHAU_COMBATE);
+        }
+    }
+    // Botón borrar
+    if (mxv > 270 + ox && mxv < 430 + ox && myv>100 && myv < 128) {
+        if (seccionActiva == 0 && !gs.partidas.empty()) {
+            SaveSystem::borrar(gs, gs.opcionCargaSel);
+            int n = (int)gs.partidas.size();
+            if (gs.opcionCargaSel >= n) gs.opcionCargaSel = std::max(0, n - 1);
+        }
+        else if (seccionActiva == 1 && slots[gs.opcionSlotSel].valida) {
+            SaveSystem::BorrarCombate(gs.opcionSlotSel);
+            slots = SaveSystem::ObtenerSlots();
+        }
     }
 }
-
 // ============================================================
 // PAUSA — overlay que entra desde arriba sin slash.
 // Desde aquí se puede guardar la partida actual.

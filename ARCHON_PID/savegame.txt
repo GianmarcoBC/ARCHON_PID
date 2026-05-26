@@ -8,5 +8,17 @@ posX1=-14
 posY1=-8.75
 jugador2=Platero
 vida2=500
+posX2=-3.5
+posY2=-1.33636
+---
+slot=1
+modoIA=0
+dificultad=1
+jugador1=Phoenix
+vida1=1000
+posX1=2.18024
+posY1=3.91914
+jugador2=Dragon
+vida2=2000
 posX2=14
 posY2=8.75

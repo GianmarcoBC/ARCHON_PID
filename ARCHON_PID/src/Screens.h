@@ -79,6 +79,11 @@ private:
     void drawTarjetaPartida(const PartidaGuardada& p,
                             float x, float y, float w,
                             bool sel, float t);
+    void drawTarjetaSlot(const SaveData& s,        
+        float x, float y, float w,
+        bool sel, float t);
+    std::array<SaveData, 5> slots{};               
+    int seccionActiva = 0; // 0=partidas menú, 1=slots combate  
 };
 
 // Overlay de pausa — aparece sin slash, desde arriba

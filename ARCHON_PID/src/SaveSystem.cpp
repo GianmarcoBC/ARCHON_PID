@@ -184,7 +184,10 @@ std::vector<SaveData> SaveSystem::CargarTodosCombate() {
     while (fgets(linea, sizeof(linea), f)) {
         if (linea[0] == '#' || linea[0] == '\n' || linea[0] == '\r') continue;
         if (strncmp(linea, "---", 3) == 0) {
-            if (dentroDeBloque && d.valida) slots.push_back(d);
+            if (dentroDeBloque) {
+                d.valida = (!d.nombreP1.empty() && !d.nombreP2.empty());
+                if (d.valida) slots.push_back(d);
+            }
             d = SaveData{};
             dentroDeBloque = true;
             continue;
@@ -206,12 +209,10 @@ std::vector<SaveData> SaveSystem::CargarTodosCombate() {
         else if (strcmp(clave, "posX2") == 0) d.posP2x = (float)atof(valor);
         else if (strcmp(clave, "posY2") == 0) d.posP2y = (float)atof(valor);
     }
-    if (dentroDeBloque && d.valida) slots.push_back(d);
-    fclose(f);
-
-    // Validar cada slot
-    for (auto& s : slots)
-        s.valida = (!s.nombreP1.empty() && !s.nombreP2.empty());
+    if (dentroDeBloque) {
+        d.valida = (!d.nombreP1.empty() && !d.nombreP2.empty());
+        if (d.valida) slots.push_back(d);
+    }    fclose(f);
 
     return slots;
 }
