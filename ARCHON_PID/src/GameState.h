@@ -23,6 +23,7 @@ enum Estado {
     CARGAR_PARTIDA,
     PAUSA,
     JUGAR_PVP, JUGAR_IA,
+    CUCHAU_COMBATE,        // Modo Combate 3D (Cuchau)
 };
 
 enum ModoJuego  { MODO_NINGUNO, MODO_COMBATE, MODO_COMPLETO };
@@ -98,7 +99,7 @@ struct GameState {
 
     // Menú principal — 4 opciones
     std::vector<std::string> opcionesMenu = {
-        "JUGAR", "CARGAR PARTIDA", "OPCIONES", "ENCICLOPEDIA"
+        "JUGAR", "CARGAR PARTIDA", "OPCIONES", "ENCICLOPEDIA", "SALIR"
     };
     int opcionMenuSel = 0;
 
@@ -143,7 +144,7 @@ struct GameState {
 
     // Enciclopedia
     int paginaLibro = 0;
-    static const int TOTAL_PAGINAS = 4;
+    static const int TOTAL_PAGINAS = 16;
     std::vector<DatosTropa> tropas;
 
     std::vector<OpcionControl> controlesOpciones;
@@ -171,20 +172,58 @@ struct GameState {
     std::vector<DatosEquipo> equipos;
 
     void init() {
-        // Tropas para la enciclopedia
+        // Tropas para la enciclopedia — Equipo Claro (0-7) + Equipo Oscuro (8-15)
         tropas = {
-            {"CABALLERO","Fuerzas de Luz","ATQ: Alto","DEF: Alto","MOV: Medio",
-             {"Guerrero de elite blindado con","armadura sagrada. Lidera la carga",
-              "en nombre del rey de la Luz.","Efectivo contra unidades pesadas."}},
-            {"ARQUERO","Fuerzas de Luz","ATQ: Medio","DEF: Bajo","MOV: Alto",
+            // --- EQUIPO CLARO ---
+            {"MH","Fuerzas de Luz","ATQ: Alto","DEF: Medio","MOV: Medio",
+             {"Mago principal del equipo de Luz.","Domina las artes arcanas y ataca",
+              "a distancia con proyectiles magicos.","Vuela sobre el campo de batalla."}},
+            {"PHOENIX","Fuerzas de Luz","ATQ: Alto","DEF: Alto","MOV: Medio",
+             {"Ave fenix renacida del fuego.","Vida y fuerza altas pero ataque lento.",
+              "Sus llamas arrasan en area.","Vuela majestuosamente sobre el campo."}},
+            {"GOLEM","Fuerzas de Luz","ATQ: Alto","DEF: Alto","MOV: Bajo",
+             {"Tanque de piedra imparable.","Lento pero resistente, golpea con",
+              "fuerza devastadora.","Su presencia intimida al enemigo."}},
+            {"DJINNI","Fuerzas de Luz","ATQ: Medio","DEF: Alto","MOV: Medio",
+             {"Genio mistico de los vientos.","Equilibrado en todas sus estadisticas.",
+              "Flota por el aire lanzando","hechizos a sus rivales."}},
+            {"UNICORN","Fuerzas de Luz","ATQ: Medio","DEF: Medio","MOV: Medio",
+             {"Criatura magica de gran agilidad.","Dispara rapido y con precision.",
+              "Su cooldown bajo le permite","mantener presion constante."}},
+            {"VALKYRIE","Fuerzas de Luz","ATQ: Medio","DEF: Medio","MOV: Medio",
+             {"Guerrera alada del Valhalla.","Combate cuerpo a cuerpo con su lanza.",
+              "Vuela sobre las lineas enemigas","y ataca sin piedad."}},
+            {"ARCHER","Fuerzas de Luz","ATQ: Bajo","DEF: Bajo","MOV: Medio",
              {"Explorador agil de ojos certeros.","Sus flechas besan el viento antes",
-              "de encontrar su blanco.","Efectivo contra unidades voladoras."}},
-            {"ORCO","Fuerzas Oscuras","ATQ: Muy Alto","DEF: Medio","MOV: Bajo",
-             {"Bestia de la oscuridad. Su furia","es legendaria en el campo de batalla.",
-              "Arremete sin miedo ni piedad.","Efectivo contra estructuras."}},
-            {"NIGROMANTE","Fuerzas Oscuras","ATQ: Bajo","DEF: Bajo","MOV: Medio",
-             {"Maestro de la magia sombria.","Invoca espiritus y corroe la",
-              "voluntad del enemigo.","Efectivo contra grupos numerosos."}}
+              "de encontrar su blanco.","Ataca a distancia con precision."}},
+            {"KNIGHT","Fuerzas de Luz","ATQ: Bajo","DEF: Bajo","MOV: Medio",
+             {"Caballero de elite con armadura","sagrada. Sin tiempo de espera entre",
+              "ataques, golpea sin cesar.","Rapido y letal en combate cercano."}},
+            // --- EQUIPO OSCURO ---
+            {"PLATERO","Fuerzas Oscuras","ATQ: Medio","DEF: Medio","MOV: Medio",
+             {"Mago oscuro de mirada siniestra.","Lanza proyectiles rapidos desde",
+              "las sombras. Vuela envuelto","en oscuridad arcana."}},
+            {"SHAPESHIFTER","Fuerzas Oscuras","ATQ: Alto","DEF: Alto","MOV: Medio",
+             {"Cambiaformas bestial y feroz.","Vida y fuerza altas, ataca cuerpo",
+              "a cuerpo con garras letales.","Vuela adoptando formas terrorificas."}},
+            {"TROLL","Fuerzas Oscuras","ATQ: Alto","DEF: Alto","MOV: Bajo",
+             {"Tanque del equipo oscuro.","Lento pero devastador en combate",
+              "cercano. Su piel gruesa","resiste los golpes mas duros."}},
+            {"DRAGON","Fuerzas Oscuras","ATQ: Muy Alto","DEF: Muy Alto","MOV: Medio",
+             {"La criatura mas poderosa.","Vida y fuerza descomunales. Su aliento",
+              "arrasa todo a su paso.","El terror alado del campo de batalla."}},
+            {"BASILISK","Fuerzas Oscuras","ATQ: Alto","DEF: Bajo","MOV: Medio",
+             {"Serpiente mitica de mirada mortal.","Fuerza alta con cooldown bajo,",
+              "dispara rapido y certero.","Fragil pero extremadamente letal."}},
+            {"BANSHEE","Fuerzas Oscuras","ATQ: Medio","DEF: Medio","MOV: Medio",
+             {"Fantasma aullador de ultratumba.","Cooldown alto pero proyectil",
+              "muy rapido. Ataca cuerpo a cuerpo","con gritos que hielan la sangre."}},
+            {"MANTICORE","Fuerzas Oscuras","ATQ: Bajo","DEF: Medio","MOV: Medio",
+             {"Bestia mitica con cuerpo de leon.","Fuerza baja pero ataca a distancia",
+              "con proyectiles. Su presencia","impone respeto en el campo."}},
+            {"GOBLIN","Fuerzas Oscuras","ATQ: Bajo","DEF: Bajo","MOV: Medio",
+             {"Duende veloz y escurridizo.","Sin tiempo de espera entre ataques,",
+              "golpea sin cesar cuerpo a cuerpo.","Pequeno pero implacable."}},
         };
 
         // Los dos únicos equipos del juego

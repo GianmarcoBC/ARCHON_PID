@@ -19,6 +19,7 @@ private:
     void HandleInput();
     void HandleMouse();
     void IniciarTransicion(Estado destino);
+    void FinalizarTransicion();
     void TogglePantallaCompleta();
     Screen* GetCurrentScreen();
 };

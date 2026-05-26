@@ -111,8 +111,23 @@ static void drawBarraStat(float x, float y, float w, int val, Color col) {
 }
 
 // Función de transición que usan las Screen (no tienen acceso a App)
+// Instantly finish any ongoing transition
+static void finalizarTransicion(GameState& gs) {
+    if (!gs.slashActivo) return;
+    gs.slashActivo = false;
+    gs.slashX      = -1000.f;
+    if (gs.estadoActual != gs.siguienteEstado) {
+        gs.estadoActual = gs.siguienteEstado;
+        // Set offsets to 0 so the screen appears instantly
+        gs.menuOffset = gs.encicloOffset = gs.opcionesOffset = gs.musicaOffset = 0.f;
+        gs.modoJuegoOffset = gs.selModoOffset = gs.configJCOffset = 0.f;
+        gs.selEquipoOffset = gs.configDifiOffset = gs.cargaOffset = 0.f;
+    }
+}
+
 static void transicion(GameState& gs, Estado dest) {
-    if (gs.slashActivo) return;
+    // If mid-animation, finish it instantly before starting the new one
+    if (gs.slashActivo) finalizarTransicion(gs);
     // La pausa usa animación propia, sin slash
     if (dest == PAUSA) {
         gs.estadoAnterior = gs.estadoActual;
@@ -148,7 +163,7 @@ void ModoJuegoScreen::Draw(GameState& gs) {
     };
 
     for (int i = 0; i < 2; i++) {
-        float y    = 380 - i*115.f;
+        float y    = 430 - i*100.f;
         float offX = std::min(ox + i*30.f, 0.f);
         bool  sel  = (i == gs.opcionModoSel);
         rlPushMatrix(); rlTranslatef(offX,0,0);
@@ -170,14 +185,14 @@ void ModoJuegoScreen::Draw(GameState& gs) {
             Drawing::texto12(310, y-18, modos[i].desc, CFloat(0.9f,0.85f,0.7f));
             Drawing::cursorAnimado(165, y, t);
             // Icono según el modo
-            if (i==0) Drawing::iconoEscudos(240, y, WHITE);
-            else      Drawing::iconoLibro(240, y, WHITE);
+            if (i==0)      Drawing::iconoEscudos(240, y, WHITE);
+            else if (i==1) Drawing::iconoLibro(240, y, WHITE);
         } else {
             Drawing::panelBatalla(y, false);
             Drawing::texto24(310, y-8, modos[i].label, CFloat(0.7f,0.5f,0.5f));
             Color ic = CFloat(0.5f,0.5f,0.5f);
-            if (i==0) Drawing::iconoEscudos(240, y, ic);
-            else      Drawing::iconoLibro(240, y, ic);
+            if (i==0)      Drawing::iconoEscudos(240, y, ic);
+            else if (i==1) Drawing::iconoLibro(240, y, ic);
         }
         rlPopMatrix();
     }
@@ -197,9 +212,9 @@ void ModoJuegoScreen::HandleInput(GameState& gs) {
 }
 
 void ModoJuegoScreen::HandleMouse(GameState& gs) {
-    float mxv=(float)GetMouseX(), myv=600.f-(float)GetMouseY();
+    float mxv=(float)GetMouseX()*800.f/GetScreenWidth(), myv=600.f-(float)GetMouseY()*600.f/GetScreenHeight();
     for(int i=0;i<2;i++){
-        float oy=380-i*115.f;
+        float oy=430-i*100.f;
         if(mxv>145&&mxv<695&&myv>oy-38&&myv<oy+38){
             gs.opcionModoSel=i;
             gs.modoActual=(i==0)?MODO_COMBATE:MODO_COMPLETO;
@@ -276,19 +291,19 @@ void SeleccionModoScreen::HandleInput(GameState& gs) {
         if(gs.modoActual==MODO_COMPLETO)
             transicion(gs, CONFIG_JUEGO_COMPLETO);
         else
-            transicion(gs, SELECCION_EQUIPO);
+            transicion(gs, CUCHAU_COMBATE);
     }
     if(IsKeyPressed(KEY_ESCAPE)) transicion(gs, MODO_JUEGO);
 }
 
 void SeleccionModoScreen::HandleMouse(GameState& gs) {
-    float mxv=(float)GetMouseX(),myv=600.f-(float)GetMouseY();
+    float mxv=(float)GetMouseX()*800.f/GetScreenWidth(),myv=600.f-(float)GetMouseY()*600.f/GetScreenHeight();
     for(int i=0;i<2;i++){
         float oy=390-i*110.f;
         if(mxv>145&&mxv<695&&myv>oy-35&&myv<oy+35){
             gs.opcionSelModoSel=i;
             if(gs.modoActual==MODO_COMPLETO) transicion(gs,CONFIG_JUEGO_COMPLETO);
-            else transicion(gs,SELECCION_EQUIPO);
+            else transicion(gs,CUCHAU_COMBATE);
         }
     }
 }
@@ -432,7 +447,7 @@ void ConfigJuegoCompletoScreen::HandleInput(GameState& gs) {
 }
 
 void ConfigJuegoCompletoScreen::HandleMouse(GameState& gs) {
-    float mxv=(float)GetMouseX(),myv=600.f-(float)GetMouseY(),ox=gs.configJCOffset;
+    float mxv=(float)GetMouseX()*800.f/GetScreenWidth(),myv=600.f-(float)GetMouseY()*600.f/GetScreenHeight(),ox=gs.configJCOffset;
     if(mxv>60+ox&&mxv<360+ox&&myv>110&&myv<440){
         gs.configJCFoco=0;
         for(int i=0;i<3;i++){float by=440-80-i*82.f;if(myv>by-28&&myv<by+28) gs.opcionBandoSel=i;}
@@ -579,7 +594,7 @@ void SeleccionEquipoScreen::HandleInput(GameState& gs) {
 
 void SeleccionEquipoScreen::HandleMouse(GameState& gs) {
     if(!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) return;
-    float mxv=(float)GetMouseX(),myv=600.f-(float)GetMouseY(),ox=gs.selEquipoOffset;
+    float mxv=(float)GetMouseX()*800.f/GetScreenWidth(),myv=600.f-(float)GetMouseY()*600.f/GetScreenHeight(),ox=gs.selEquipoOffset;
     float cx1=220+ox, cx2=580+ox, cy=285, hw=92, hh=135;
     // Clic en tarjeta izquierda (equipo 0)
     if(mxv>cx1-hw&&mxv<cx1+hw&&myv>cy-hh&&myv<cy+hh){
@@ -675,7 +690,7 @@ void ConfigDificultadScreen::HandleInput(GameState& gs) {
 }
 
 void ConfigDificultadScreen::HandleMouse(GameState& gs) {
-    float mxv=(float)GetMouseX(),myv=600.f-(float)GetMouseY(),ox=gs.configDifiOffset;
+    float mxv=(float)GetMouseX()*800.f/GetScreenWidth(),myv=600.f-(float)GetMouseY()*600.f/GetScreenHeight(),ox=gs.configDifiOffset;
     for(int i=0;i<4;i++){
         float y=430-i*70.f;
         if(mxv>170+ox&&mxv<630+ox&&myv>y-24&&myv<y+24) gs.opcionDifiCombateSel=i;
@@ -782,7 +797,7 @@ void CargarPartidaScreen::HandleInput(GameState& gs) {
 
 void CargarPartidaScreen::HandleMouse(GameState& gs) {
     if(!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) return;
-    float mxv=(float)GetMouseX(),myv=600.f-(float)GetMouseY(),ox=gs.cargaOffset;
+    float mxv=(float)GetMouseX()*800.f/GetScreenWidth(),myv=600.f-(float)GetMouseY()*600.f/GetScreenHeight(),ox=gs.cargaOffset;
     float startY=478,step=92;
     for(int i=0;i<(int)gs.partidas.size();i++){
         float y=startY-i*step;
@@ -924,7 +939,7 @@ void PausaScreen::HandleInput(GameState& gs) {
 
 void PausaScreen::HandleMouse(GameState& gs) {
     if(!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) return;
-    float mxv=(float)GetMouseX(), myv=600.f-(float)GetMouseY();
+    float mxv=(float)GetMouseX()*800.f/GetScreenWidth(), myv=600.f-(float)GetMouseY()*600.f/GetScreenHeight();
     float oy=gs.pausaOffset, panY=110-oy, panH=360;
     for(int i=0;i<(int)gs.opcionesPausa.size();i++){
         float y=panY+panH-96-i*68.f;

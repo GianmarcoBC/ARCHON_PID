@@ -70,6 +70,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(ProjectDir)</OutDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -102,11 +105,11 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)\lib;$(ProjectDir)\src</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(ProjectDir)\lib;$(ProjectDir)\src;$(ProjectDir)\src\cuchau</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,21 +136,54 @@
   <ItemGroup>
     <ClCompile Include="raylibproject.cpp" />
     <ClCompile Include="src\App.cpp" />
+    <ClCompile Include="src\Background.cpp" />
     <ClCompile Include="src\Drawing.cpp" />
     <ClCompile Include="src\Particles.cpp" />
-    <ClCompile Include="src\Background.cpp" />
     <ClCompile Include="src\Screens.cpp" />
     <ClCompile Include="src\ScreensNew.cpp" />
+    <ClCompile Include="src\cuchau\AI_Agresiva.cpp" />
+    <ClCompile Include="src\cuchau\AI_Defensiva.cpp" />
+    <ClCompile Include="src\cuchau\AI_Facil.cpp" />
+    <ClCompile Include="src\cuchau\CombatAI.cpp" />
+    <ClCompile Include="src\cuchau\Controlador_Combate.cpp" />
+    <ClCompile Include="src\cuchau\Disparo.cpp" />
+    <ClCompile Include="src\cuchau\Interacciones.cpp" />
+    <ClCompile Include="src\cuchau\Menu_Combate.cpp" />
+    <ClCompile Include="src\cuchau\P.cpp" />
+    <ClCompile Include="src\cuchau\Personaje.cpp" />
+    <ClCompile Include="src\cuchau\Pj.cpp" />
+    <ClCompile Include="src\cuchau\Rolitas.cpp" />
+    <ClCompile Include="src\cuchau\arena.cpp" />
+    <ClCompile Include="src\cuchau\obstaculo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\App.h" />
-    <ClInclude Include="src\GameState.h" />
-    <ClInclude Include="src\Drawing.h" />
-    <ClInclude Include="src\Particles.h" />
     <ClInclude Include="src\Background.h" />
-    <ClInclude Include="src\Screen.h" />
+    <ClInclude Include="src\CuchauScreen.h" />
+    <ClInclude Include="src\Drawing.h" />
+    <ClInclude Include="src\GameState.h" />
+    <ClInclude Include="src\Particles.h" />
     <ClInclude Include="src\SaveSystem.h" />
+    <ClInclude Include="src\Screen.h" />
     <ClInclude Include="src\Screens.h" />
+    <ClInclude Include="src\cuchau\AI_Agresiva.h" />
+    <ClInclude Include="src\cuchau\AI_Defensiva.h" />
+    <ClInclude Include="src\cuchau\AI_Facil.h" />
+    <ClInclude Include="src\cuchau\Arena.h" />
+    <ClInclude Include="src\cuchau\CombatAI.h" />
+    <ClInclude Include="src\cuchau\Controlador_Combate.h" />
+    <ClInclude Include="src\cuchau\Disparo.h" />
+    <ClInclude Include="src\cuchau\Interacciones.h" />
+    <ClInclude Include="src\cuchau\Menu_Combate.h" />
+    <ClInclude Include="src\cuchau\Music.h" />
+    <ClInclude Include="src\cuchau\P.h" />
+    <ClInclude Include="src\cuchau\Personaje.h" />
+    <ClInclude Include="src\cuchau\Pj.h" />
+    <ClInclude Include="src\cuchau\Pj_info.h" />
+    <ClInclude Include="src\cuchau\Rolitas.h" />
+    <ClInclude Include="src\cuchau\SaveManager.h" />
+    <ClInclude Include="src\cuchau\Vec2.h" />
+    <ClInclude Include="src\cuchau\obstaculo.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

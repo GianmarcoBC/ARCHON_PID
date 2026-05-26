@@ -4,6 +4,7 @@
 #include "Background.h"
 #include "Screens.h"
 #include "SaveSystem.h"
+#include "CuchauScreen.h"
 #include "rlgl.h"
 
 // Devuelve la pantalla activa o nullptr 
@@ -15,8 +16,21 @@ Screen* App::GetCurrentScreen() {
 
 void App::Init() {
     srand((unsigned)time(nullptr));
-    InitWindow(800, 600, "ARCHON");
+    InitWindow(0, 0, "ARCHON");
+    SetExitKey(0);  // Disable ESC auto-close; we handle ESC manually
     SetTargetFPS(60);
+    InitAudioDevice();
+
+    // Ensure working directory is the project root (where bin/Resources lives)
+    // GetApplicationDirectory() returns exe location — walk up until bin/ is found
+    const char* appDir = GetApplicationDirectory();
+    ChangeDirectory(appDir);
+    if (!DirectoryExists("bin/Resources")) ChangeDirectory("..");
+    if (!DirectoryExists("bin/Resources")) ChangeDirectory("..");
+
+    TraceLog(LOG_INFO, "Working directory: %s", GetWorkingDirectory());
+
+    gs.pantallaCompleta = true;
     gs.init();
     Particles::init(gs);
 
@@ -31,10 +45,36 @@ void App::Init() {
     screens[(int)CONFIG_DIFICULTAD]    = std::make_unique<ConfigDificultadScreen>();
     screens[(int)CARGAR_PARTIDA]       = std::make_unique<CargarPartidaScreen>();
     screens[(int)PAUSA]                = std::make_unique<PausaScreen>();
+    screens[(int)CUCHAU_COMBATE]       = std::make_unique<CuchauCombateScreen>();
+}
+
+// Instantly finish any ongoing transition, applying the pending state
+void App::FinalizarTransicion() {
+    if (!gs.slashActivo) return;
+    gs.slashActivo  = false;
+    gs.slashX       = -1000.f;
+    if (gs.estadoActual != gs.siguienteEstado) {
+        gs.estadoActual = gs.siguienteEstado;
+        switch (gs.estadoActual) {
+            case MENU:                gs.menuOffset      = 0.f; break;
+            case ENCICLOPEDIA:        gs.encicloOffset   = 0.f; break;
+            case OPCIONES:            gs.opcionesOffset  = 0.f; break;
+            case MUSICA:              gs.musicaOffset    = 0.f; break;
+            case MODO_JUEGO:          gs.modoJuegoOffset = 0.f; break;
+            case SELECCION_MODO:      gs.selModoOffset   = 0.f; break;
+            case CONFIG_JUEGO_COMPLETO: gs.configJCOffset= 0.f; break;
+            case SELECCION_EQUIPO:    gs.selEquipoOffset = 0.f; break;
+            case CONFIG_DIFICULTAD:   gs.configDifiOffset= 0.f; break;
+            case CARGAR_PARTIDA:      gs.cargaOffset     = 0.f; break;
+            default: break;
+        }
+        if (auto* scr = GetCurrentScreen()) scr->OnEnter(gs);
+    }
 }
 
 void App::IniciarTransicion(Estado destino) {
-    if (gs.slashActivo) return;
+    // If mid-animation, finish it instantly before starting the new one
+    if (gs.slashActivo) FinalizarTransicion();
     // La pausa no necesita slash — entra deslizándose desde arriba
     if (destino == PAUSA) {
         gs.estadoAnterior = gs.estadoActual;
@@ -106,11 +146,9 @@ void App::Update() {
     // Slash de transición
     if (gs.slashActivo) {
         gs.slashX += 12;
-        if (gs.slashX > 900) {
-            gs.slashActivo  = false;
-            gs.slashX       = -1000.f;
+        // Switch state at midpoint so the new screen loads while slash exits
+        if (gs.slashX >= 0 && gs.estadoActual != gs.siguienteEstado) {
             gs.estadoActual = gs.siguienteEstado;
-            // Resetear el offset de la pantalla destino para que entre deslizando
             switch (gs.estadoActual) {
                 case MENU:                gs.menuOffset      = -400.f; break;
                 case ENCICLOPEDIA:        gs.encicloOffset   = -800.f; break;
@@ -126,13 +164,21 @@ void App::Update() {
             }
             if (auto* scr = GetCurrentScreen()) scr->OnEnter(gs);
         }
+        // End animation when slash exits screen
+        if (gs.slashX > 900) {
+            gs.slashActivo = false;
+            gs.slashX      = -1000.f;
+        }
     }
 }
 
 void App::Draw() {
     BeginDrawing();
     ClearBackground(BLACK);
-    Drawing::setupProjection();
+
+    // Cuchau sets its own projection — skip ARCHON's 800x600 ortho
+    if (gs.estadoActual != CUCHAU_COMBATE)
+        Drawing::setupProjection();
 
     switch (gs.estadoActual) {
         case MENU:         Screens::menuPrincipal(gs); break;
@@ -144,17 +190,41 @@ void App::Draw() {
             break;
     }
 
+    // Restore ARCHON projection for the slash overlay if needed
+    if (gs.estadoActual == CUCHAU_COMBATE && gs.slashActivo) {
+        rlDrawRenderBatchActive();
+        rlMatrixMode(RL_PROJECTION);
+        rlLoadIdentity();
+        rlOrtho(0, 800, 0, 600, -1, 1);
+        rlMatrixMode(RL_MODELVIEW);
+        rlLoadIdentity();
+    }
+
     Screens::espadaSlash(gs);
     EndDrawing();
 }
 
 void App::HandleInput() {
     if (IsKeyPressed(KEY_F11)) { TogglePantallaCompleta(); return; }
-    // P activa la pausa desde estados de juego activo
-    if (IsKeyPressed(KEY_P) &&
+    // P o ESC activa la pausa desde estados de juego activo
+    if ((IsKeyPressed(KEY_P) || IsKeyPressed(KEY_ESCAPE)) &&
         (gs.estadoActual == JUGAR_PVP || gs.estadoActual == JUGAR_IA)) {
         IniciarTransicion(PAUSA);
         return;
+    }
+    // SPACE, ENTER or ESC skip all transition animations (slash + slide-in offsets)
+    bool skipAnim = IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_ESCAPE);
+    if (skipAnim && (gs.slashActivo || gs.menuOffset < 0 || gs.encicloOffset < 0 ||
+        gs.opcionesOffset < 0 || gs.musicaOffset < 0 || gs.modoJuegoOffset < 0 ||
+        gs.selModoOffset < 0 || gs.configJCOffset < 0 || gs.selEquipoOffset < 0 ||
+        gs.configDifiOffset < 0 || gs.cargaOffset < 0 || gs.pausaOffset > 0)) {
+        if (gs.slashActivo) FinalizarTransicion();
+        gs.menuOffset = gs.encicloOffset = gs.opcionesOffset = gs.musicaOffset = 0.f;
+        gs.modoJuegoOffset = gs.selModoOffset = gs.configJCOffset = 0.f;
+        gs.selEquipoOffset = gs.configDifiOffset = gs.cargaOffset = 0.f;
+        gs.pausaOffset = 0.f;
+        // SPACE only skips; ENTER/ESC fall through to act on the now-visible screen
+        if (IsKeyPressed(KEY_SPACE)) return;
     }
     if (gs.slashActivo) return;
 
@@ -176,6 +246,7 @@ void App::HandleInput() {
             if (gs.opcionMenuSel == 1) IniciarTransicion(CARGAR_PARTIDA);
             if (gs.opcionMenuSel == 2) IniciarTransicion(OPCIONES);
             if (gs.opcionMenuSel == 3) IniciarTransicion(ENCICLOPEDIA);
+            if (gs.opcionMenuSel == 4) CloseWindow();
         }
     }
     else if (gs.estadoActual == OPCIONES) {
@@ -242,8 +313,8 @@ void App::HandleMouse() {
         return;
     }
 
-    float mxv = (float)GetMouseX();
-    float myv = 600.f - (float)GetMouseY();
+    float mxv = (float)GetMouseX() * 800.f / GetScreenWidth();
+    float myv = 600.f - (float)GetMouseY() * 600.f / GetScreenHeight();
 
     if (gs.estadoActual == MENU) {
         for (int i = 0; i < (int)gs.opcionesMenu.size(); i++) {
@@ -254,6 +325,7 @@ void App::HandleMouse() {
                 if (i==1) IniciarTransicion(CARGAR_PARTIDA);
                 if (i==2) IniciarTransicion(OPCIONES);
                 if (i==3) IniciarTransicion(ENCICLOPEDIA);
+                if (i==4) CloseWindow();
             }
         }
     }
@@ -307,5 +379,6 @@ void App::Run() {
         Update();
         Draw();
     }
+    CloseAudioDevice();
     CloseWindow();
 }

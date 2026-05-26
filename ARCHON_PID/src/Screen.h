@@ -28,7 +28,7 @@ public:
 protected:
     // Helpers comunes a todas las pantallas
     // (accesibles desde cualquier subclase)
-    static float yFlip(float y) { return 600.0f - (float)GetMouseY(); }
-    static float mx()           { return (float)GetMouseX(); }
-    static float my()           { return 600.0f - (float)GetMouseY(); }
+    static float yFlip(float y) { return 600.0f - (float)GetMouseY() * 600.0f / GetScreenHeight(); }
+    static float mx()           { return (float)GetMouseX() * 800.0f / GetScreenWidth(); }
+    static float my()           { return 600.0f - (float)GetMouseY() * 600.0f / GetScreenHeight(); }
 };

@@ -3,6 +3,43 @@
 #include "Background.h"
 #include "Particles.h"
 #include "rlgl.h"
+#include "cuchau/Pj_info.h"
+
+// Sprite textures for the encyclopedia (loaded on first use)
+static Texture2D encicloSprites[16];  // [page] — one unique sprite per character
+static bool      encicloSpritesLoaded = false;
+
+static void cargarEncicloSprites() {
+    if (encicloSpritesLoaded) return;
+    // Light team (0-7), Dark team (8-15) — matches tropas[] order in GameState::init()
+    const Pj_info* pjs[16] = {
+        &MH, &Phoenix, &Golem, &Djinni, &Unicorn, &Valkyrie, &Archer, &Knight,
+        &Platero, &ShapeShifter, &Troll, &Dragon, &Basilisk, &Banshee, &Manticore, &Goblin,
+    };
+    for (int p = 0; p < 16; p++) {
+        encicloSprites[p] = LoadTexture(pjs[p]->Sprites[0].data());
+    }
+    encicloSpritesLoaded = true;
+}
+
+// Draw a texture sprite in the Y-up rlgl projection, centered at (cx, cy)
+// Draw sprite fitted inside a fixed box (maxW x maxH), centered at (cx, cy)
+static void drawEncicloSprite(int page, float cx, float cy, float maxW, float maxH) {
+    Texture2D& tex = encicloSprites[page];
+    if (tex.id == 0) return;
+    float scaleX = maxW / tex.width;
+    float scaleY = maxH / tex.height;
+    float s = (scaleX < scaleY) ? scaleX : scaleY;  // fit, keep aspect ratio
+    float w = tex.width  * s;
+    float h = tex.height * s;
+    Rectangle src  = { 0, 0, (float)tex.width, (float)tex.height };
+    Rectangle dest = { 0, 0, w, h };
+    rlPushMatrix();
+    rlTranslatef(cx - w * 0.5f, cy + h * 0.5f, 0);
+    rlScalef(1.0f, -1.0f, 1.0f);
+    DrawTexturePro(tex, src, dest, {0, 0}, 0, WHITE);
+    rlPopMatrix();
+}
 
 void Screens::menuPrincipal(GameState& gs) {
     float t = gs.tiempo;
@@ -43,6 +80,7 @@ void Screens::menuPrincipal(GameState& gs) {
         if (i == 1) Drawing::iconoLibro(300, y, ic);     // Cargar Partida
         if (i == 2) Drawing::iconoOpciones(300, y, ic);  // Opciones
         if (i == 3) Drawing::iconoLibro(300, y, ic);     // Enciclopedia
+        if (i == 4) Drawing::iconoEspada(300, y, ic);    // Salir
         rlPopMatrix();
     }
     Drawing::instrucciones(260, 50, "W/S: Navegar    ENTER: Confirmar", t);
@@ -429,9 +467,10 @@ void Screens::enciclopedia(GameState& gs) {
 
     Drawing::texto18(130 + ox, 510, "CODEX ARCHON", CFloat(0.2f, 0.1f, 0.02f));
 
-    // Troop sprite
+    // Troop sprite — texture fitted into a fixed box with floating animation
+    cargarEncicloSprites();
     float flotacion = sinf(t * 0.012f) * 4;
-    Drawing::dibujarSprite(gs.paginaLibro, 230 + ox, 350 + flotacion, 1.4f, t);
+    drawEncicloSprite(gs.paginaLibro, 230 + ox, 350 + flotacion, 140, 160);
 
     DatosTropa& tropa = gs.tropas[gs.paginaLibro];
     bool esLuz = (tropa.bando == "Fuerzas de Luz");
@@ -455,9 +494,9 @@ void Screens::enciclopedia(GameState& gs) {
     }
     rlEnd();
 
-    Drawing::texto24(430 + ox, 505, tropa.nombre, CFloat(0.15f, 0.07f, 0.01f));
+    Drawing::texto24(430 + ox, 505, tropa.nombre, CFloat(0.15f, 0.15f, 0.55f));
     for (int i = 0; i < (int)tropa.descripcion.size(); i++)
-        Drawing::texto12(430 + ox, 470 - i * 22.0f, tropa.descripcion[i], CFloat(0.2f, 0.12f, 0.03f));
+        Drawing::texto12(430 + ox, 470 - i * 22.0f, tropa.descripcion[i], CFloat(0.12f, 0.12f, 0.45f));
 
     // Faction emblem
     float selX = 565 + ox, selY = 280;
