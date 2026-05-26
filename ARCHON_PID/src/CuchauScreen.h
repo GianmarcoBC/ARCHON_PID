@@ -21,11 +21,14 @@ class CuchauCombateScreen : public Screen {
     bool modoIA = false;
     int dificultad = 1;
     SaveData savePendiente;
+    int  pausa_submenu = 0;  // 0=menú principal, 1=eligiendo slot guardar, 2=eligiendo slot cargar
+    int  pausa_slotCursor = 0;  // cursor dentro del submenú de slots
 
     // Pausa state
     int pausa_cursor = 0;
     bool pausa_guardadoOK = false;
     float pausa_timerMsg = 0.f;
+    int slotCombate = 0;  // slot activo (0-4)
 
     // Returns: -1=nothing, 0=continuar, 1=guardar, 2=cargar, 3=volver menu
     int UpdatePausa(float dt);

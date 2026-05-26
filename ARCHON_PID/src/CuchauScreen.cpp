@@ -1,20 +1,38 @@
 #include "CuchauScreen.h"
 
-int CuchauCombateScreen::UpdatePausa(float dt)
-{
+int CuchauCombateScreen::UpdatePausa(float dt) {
+    // — Submenú de slots —
+    if (pausa_submenu == 1 || pausa_submenu == 2) {
+        if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN))
+            pausa_slotCursor = (pausa_slotCursor + 1) % 5;
+        if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP))
+            pausa_slotCursor = (pausa_slotCursor - 1 + 5) % 5;
+        if (IsKeyPressed(KEY_ESCAPE)) { pausa_submenu = 0; return -1; }
+        if (IsKeyPressed(KEY_ENTER)) {
+            int accion = (pausa_submenu == 1) ? 1 : 2;
+            pausa_submenu = 0;
+            return accion; // devuelve 1=guardar o 2=cargar con pausa_slotCursor ya fijado
+        }
+        return -1;
+    }
+
+    // — Menú principal de pausa —
     if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN))
         pausa_cursor = (pausa_cursor + 1) % 4;
     if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP))
         pausa_cursor = (pausa_cursor - 1 + 4) % 4;
-    if (IsKeyPressed(KEY_ENTER)) return pausa_cursor;
     if (IsKeyPressed(KEY_ESCAPE)) return 0;
+    if (IsKeyPressed(KEY_ENTER)) {
+        if (pausa_cursor == 1) { pausa_submenu = 1; pausa_slotCursor = 0; return -1; } // Guardar → submenú
+        if (pausa_cursor == 2) { pausa_submenu = 2; pausa_slotCursor = 0; return -1; } // Cargar → submenú
+        return pausa_cursor; // 0=continuar, 3=volver menú
+    }
     return -1;
 }
 
 void CuchauCombateScreen::DrawPausa()
 {
-    int W = GetScreenWidth();
-    int H = GetScreenHeight();
+    int W = GetScreenWidth(), H = GetScreenHeight();
     DrawRectangle(0, 0, W, H, { 0, 0, 0, 160 });
 
     int panelW = 380, panelH = 310;
@@ -24,6 +42,31 @@ void CuchauCombateScreen::DrawPausa()
     DrawRectangle(px, py, panelW, panelH, { 20, 20, 30, 230 });
     DrawRectangleLines(px, py, panelW, panelH, WHITE);
 
+    // — Submenú de slots —
+    if (pausa_submenu == 1 || pausa_submenu == 2) {
+        const char* titulo = (pausa_submenu == 1) ? "GUARDAR EN SLOT" : "CARGAR SLOT";
+        DrawText(titulo, W / 2 - MeasureText(titulo, 28) / 2, py + 18, 28, YELLOW);
+
+        auto slots = SaveSystem::ObtenerSlots(); // array[5], índice == slot
+        for (int i = 0; i < 5; i++) {
+            int bY = py + 70 + i * 44;
+            bool sel = (i == pausa_slotCursor);
+            bool ocupado = slots[i].valida;
+            std::string etiqueta = ocupado
+                ? "Slot " + std::to_string(i + 1) + ": " + slots[i].nombreP1 + " vs " + slots[i].nombreP2
+                : "Slot " + std::to_string(i + 1) + " — vacío";
+
+            if (sel) DrawRectangle(px + 20, bY - 4, panelW - 40, 34, { 255,255,255,25 });
+            Color col = sel ? YELLOW : (ocupado ? WHITE : DARKGRAY);
+            DrawText(etiqueta.c_str(), px + 30, bY, 20, col);
+        }
+
+        DrawText("ESC = volver", W / 2 - MeasureText("ESC = volver", 14) / 2,
+            H - 28, 14, DARKGRAY);
+        return;
+    }
+
+    // — Menú principal de pausa —
     const char* titulo = "PAUSA";
     DrawText(titulo, W / 2 - MeasureText(titulo, 36) / 2, py + 18, 36, YELLOW);
 
@@ -39,7 +82,8 @@ void CuchauCombateScreen::DrawPausa()
         int bY = py + 88 + i * 52;
         bool sel = (i == pausa_cursor);
         if (sel) DrawRectangle(px + 20, bY - 4, panelW - 40, 38, { 255,255,255,25 });
-        DrawText(etiquetas[i], W / 2 - MeasureText(etiquetas[i], 24) / 2, bY, 24, sel ? YELLOW : colores[i]);
+        DrawText(etiquetas[i], W / 2 - MeasureText(etiquetas[i], 24) / 2,
+            bY, 24, sel ? YELLOW : colores[i]);
     }
 
     if (pausa_timerMsg > 0.f) {
@@ -86,12 +130,6 @@ void CuchauCombateScreen::Draw(GameState& gs)
     switch (estado) {
     case 0: // Menu
         if (menu) menu->Draw();
-        if (SaveSystem::ExisteGuardado()) {
-            const char* hint = "[ F5 ]  Continuar partida guardada";
-            DrawText(hint,
-                GetScreenWidth() / 2 - MeasureText(hint, 16) / 2,
-                GetScreenHeight() - 50, 16, LIME);
-        }
         break;
 
     case 1: // Combate
@@ -152,15 +190,6 @@ void CuchauCombateScreen::Update(GameState& gs)
             pausa_timerMsg = 0.f;
             estado = 1;
         }
-
-        // F5 carga partida guardada
-        if (SaveSystem::ExisteGuardado() && IsKeyPressed(KEY_F5)) {
-            SaveData save = SaveSystem::CargarCombate();
-            if (save.valida) {
-                savePendiente = save;
-                estado = 3; // CargandoSave
-            }
-        }
         break;
     }
 
@@ -178,10 +207,6 @@ void CuchauCombateScreen::Update(GameState& gs)
                 pausa_guardadoOK = false;
                 pausa_timerMsg = 0.f;
                 estado = 2;
-            }
-            if (IsKeyPressed(KEY_F5)) {
-                combate->GuardarEstado(modoIA, dificultad);
-                pausa_timerMsg = 2.f;
             }
         }
 
@@ -204,17 +229,14 @@ void CuchauCombateScreen::Update(GameState& gs)
         }
         else if (accion == 1) { // Guardar
             if (combate) {
-                pausa_guardadoOK = combate->GuardarEstado(modoIA, dificultad);
+                pausa_guardadoOK = combate->GuardarEstado(modoIA, dificultad, pausa_slotCursor);
                 pausa_timerMsg = 2.f;
             }
         }
         else if (accion == 2) { // Cargar
-            if (SaveSystem::ExisteGuardado()) {
-                SaveData save = SaveSystem::CargarCombate();
-                if (save.valida) {
-                    savePendiente = save;
-                    estado = 3;
-                }
+            if (SaveSystem::ExisteGuardado(pausa_slotCursor)) {
+                SaveData save = SaveSystem::CargarCombate(pausa_slotCursor);
+                if (save.valida) { savePendiente = save; estado = 3; }
             }
         }
         else if (accion == 3) { // Volver al menu principal

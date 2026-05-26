@@ -113,65 +113,52 @@ void SaveSystem::restaurar(GameState& gs, int idx)
 
 bool SaveSystem::GuardarCombate(const SaveData& d)
 {
+    // Cargar los slots actuales
+    std::vector<SaveData> slots = CargarTodosCombate();
+
+    // Reemplazar el slot si ya existe, si no añadir
+    bool encontrado = false;
+    for (auto& s : slots) {
+        if (s.slot == d.slot) { s = d; encontrado = true; break; }
+    }
+    if (!encontrado) slots.push_back(d);
+
+    // Reescribir el fichero completo
     FILE* f = fopen(SAVE_FILE, "w");
     if (!f) return false;
-    fprintf(f, "# ARCHON 3D - Fichero de partida guardada\n");
-    fprintf(f, "# No editar manualmente salvo que sepas lo que haces.\n\n");
-    fprintf(f, "[partida]\nmodoIA=%d\ndificultad=%d\n", d.modoIA ? 1 : 0, d.dificultad);
-    fprintf(f, "\n[jugador1]\nnombre=%s\nvida=%g\nposX=%g\nposY=%g\n",
-        d.nombreP1.c_str(), d.vidaP1, d.posP1x, d.posP1y);
-    fprintf(f, "\n[jugador2]\nnombre=%s\nvida=%g\nposX=%g\nposY=%g\n",
-        d.nombreP2.c_str(), d.vidaP2, d.posP2x, d.posP2y);
-    fclose(f);
-    return true;
-}
-
-SaveData SaveSystem::CargarCombate()
-{
-    SaveData d{};
-    FILE* f = fopen(SAVE_FILE, "r");
-    if (!f) return d;
-
-    char linea[256];
-    int seccion = 0;
-
-    while (fgets(linea, sizeof(linea), f)) {
-        if (linea[0] == '#' || linea[0] == '\n' || linea[0] == '\r') continue;
-        if (strncmp(linea, "[partida]", 9) == 0) { seccion = 1; continue; }
-        if (strncmp(linea, "[jugador1]", 10) == 0) { seccion = 2; continue; }
-        if (strncmp(linea, "[jugador2]", 10) == 0) { seccion = 3; continue; }
-
-        char clave[64]{}, valor[128]{};
-        if (sscanf(linea, "%63[^=]=%127[^\n\r]", clave, valor) != 2) continue;
-
-        if (seccion == 1) {
-            if (strcmp(clave, "modoIA") == 0) d.modoIA = (atoi(valor) != 0);
-            if (strcmp(clave, "dificultad") == 0) d.dificultad = atoi(valor);
-        }
-        else if (seccion == 2) {
-            if (strcmp(clave, "nombre") == 0) d.nombreP1 = valor;
-            if (strcmp(clave, "vida") == 0) d.vidaP1 = (float)atof(valor);
-            if (strcmp(clave, "posX") == 0) d.posP1x = (float)atof(valor);
-            if (strcmp(clave, "posY") == 0) d.posP1y = (float)atof(valor);
-        }
-        else if (seccion == 3) {
-            if (strcmp(clave, "nombre") == 0) d.nombreP2 = valor;
-            if (strcmp(clave, "vida") == 0) d.vidaP2 = (float)atof(valor);
-            if (strcmp(clave, "posX") == 0) d.posP2x = (float)atof(valor);
-            if (strcmp(clave, "posY") == 0) d.posP2y = (float)atof(valor);
-        }
+    for (const auto& s : slots) {
+        fprintf(f, "---\n");
+        fprintf(f, "slot=%d\n", s.slot);
+        fprintf(f, "modoIA=%d\n", s.modoIA ? 1 : 0);
+        fprintf(f, "dificultad=%d\n", s.dificultad);
+        fprintf(f, "jugador1=%s\n", s.nombreP1.c_str());
+        fprintf(f, "vida1=%g\n", s.vidaP1);
+        fprintf(f, "posX1=%g\n", s.posP1x);
+        fprintf(f, "posY1=%g\n", s.posP1y);
+        fprintf(f, "jugador2=%s\n", s.nombreP2.c_str());
+        fprintf(f, "vida2=%g\n", s.vidaP2);
+        fprintf(f, "posX2=%g\n", s.posP2x);
+        fprintf(f, "posY2=%g\n", s.posP2y);
     }
     fclose(f);
-    d.valida = (!d.nombreP1.empty() && !d.nombreP2.empty());
-    return d;
+    return true;
 }
 
-bool SaveSystem::ExisteGuardado()
-{
-    FILE* f = fopen(SAVE_FILE, "r");
-    if (!f) return false;
-    fclose(f);
-    return true;
+SaveData SaveSystem::CargarCombate(int slot) {
+    std::vector<SaveData> slots = CargarTodosCombate();
+    for (auto& s : slots)
+        if (s.slot == slot) return s;
+    return SaveData{};
+}
+
+bool SaveSystem::ExisteGuardado(int slot) {
+    // slot == -1: comprueba si hay algún slot ocupado
+    // slot >= 0:  comprueba si ese slot concreto está ocupado
+    std::vector<SaveData> slots = CargarTodosCombate();
+    if (slot < 0) return !slots.empty();
+    for (const auto& s : slots)
+        if (s.slot == slot) return true;
+    return false;
 }
 
 const Pj_info* SaveSystem::BuscarPjPorNombre(std::string_view nombre)
@@ -183,4 +170,84 @@ const Pj_info* SaveSystem::BuscarPjPorNombre(std::string_view nombre)
     for (auto* pj : todos)
         if (pj->nombre == nombre) return pj;
     return nullptr;
+}
+
+std::vector<SaveData> SaveSystem::CargarTodosCombate() {
+    std::vector<SaveData> slots;
+    FILE* f = fopen(SAVE_FILE, "r");
+    if (!f) return slots;
+
+    char linea[256];
+    SaveData d{};
+    bool dentroDeBloque = false;
+
+    while (fgets(linea, sizeof(linea), f)) {
+        if (linea[0] == '#' || linea[0] == '\n' || linea[0] == '\r') continue;
+        if (strncmp(linea, "---", 3) == 0) {
+            if (dentroDeBloque && d.valida) slots.push_back(d);
+            d = SaveData{};
+            dentroDeBloque = true;
+            continue;
+        }
+        if (!dentroDeBloque) continue;
+
+        char clave[64]{}, valor[128]{};
+        if (sscanf(linea, "%63[^=]=%127[^\n\r]", clave, valor) != 2) continue;
+
+        if (strcmp(clave, "slot") == 0) d.slot = atoi(valor);
+        else if (strcmp(clave, "modoIA") == 0) d.modoIA = (atoi(valor) != 0);
+        else if (strcmp(clave, "dificultad") == 0) d.dificultad = atoi(valor);
+        else if (strcmp(clave, "jugador1") == 0) d.nombreP1 = valor;
+        else if (strcmp(clave, "vida1") == 0) d.vidaP1 = (float)atof(valor);
+        else if (strcmp(clave, "posX1") == 0) d.posP1x = (float)atof(valor);
+        else if (strcmp(clave, "posY1") == 0) d.posP1y = (float)atof(valor);
+        else if (strcmp(clave, "jugador2") == 0) d.nombreP2 = valor;
+        else if (strcmp(clave, "vida2") == 0) d.vidaP2 = (float)atof(valor);
+        else if (strcmp(clave, "posX2") == 0) d.posP2x = (float)atof(valor);
+        else if (strcmp(clave, "posY2") == 0) d.posP2y = (float)atof(valor);
+    }
+    if (dentroDeBloque && d.valida) slots.push_back(d);
+    fclose(f);
+
+    // Validar cada slot
+    for (auto& s : slots)
+        s.valida = (!s.nombreP1.empty() && !s.nombreP2.empty());
+
+    return slots;
+}
+
+void SaveSystem::BorrarCombate(int slot) {
+    std::vector<SaveData> slots = CargarTodosCombate();
+    slots.erase(std::remove_if(slots.begin(), slots.end(),
+        [slot](const SaveData& s) { return s.slot == slot; }), slots.end());
+
+    FILE* f = fopen(SAVE_FILE, "w");
+    if (!f) return;
+    for (const auto& s : slots) {
+        fprintf(f, "---\n");
+        fprintf(f, "slot=%d\n", s.slot);
+        fprintf(f, "modoIA=%d\n", s.modoIA ? 1 : 0);
+        fprintf(f, "dificultad=%d\n", s.dificultad);
+        fprintf(f, "jugador1=%s\n", s.nombreP1.c_str());
+        fprintf(f, "vida1=%g\n", s.vidaP1);
+        fprintf(f, "posX1=%g\n", s.posP1x);
+        fprintf(f, "posY1=%g\n", s.posP1y);
+        fprintf(f, "jugador2=%s\n", s.nombreP2.c_str());
+        fprintf(f, "vida2=%g\n", s.vidaP2);
+        fprintf(f, "posX2=%g\n", s.posP2x);
+        fprintf(f, "posY2=%g\n", s.posP2y);
+    }
+    fclose(f);
+}
+
+std::array<SaveData, 5> SaveSystem::ObtenerSlots()
+{
+    std::array<SaveData, 5> resultado{};
+    for (int i = 0; i < 5; i++) resultado[i].slot = i;
+
+    std::vector<SaveData> slots = CargarTodosCombate();
+    for (const auto& s : slots)
+        if (s.slot >= 0 && s.slot < 5) resultado[s.slot] = s;
+
+    return resultado;
 }

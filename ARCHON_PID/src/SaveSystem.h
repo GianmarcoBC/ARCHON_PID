@@ -6,10 +6,13 @@
 #include "Pj_info.h"
 #include <cstdio>
 #include <cstring>
+#include <array>
+
 
 inline constexpr const char* SAVE_FILE = "savegame.txt";
 
 struct SaveData {
+    int   slot = 0;
     std::string nombreP1, nombreP2;
     float vidaP1 = 0.f, posP1x = 0.f, posP1y = 0.f;
     float vidaP2 = 0.f, posP2x = 0.f, posP2y = 0.f;
@@ -27,6 +30,8 @@ class SaveSystem {
     // Reescribe el fichero entero con las partidas que quedan en memoria.
     static void reescribir(const GameState& gs);
 
+    static std::vector<SaveData> CargarTodosCombate();
+
 public:
     // Guarda la partida actual al final del fichero. Devuelve true si va bien.
     static bool guardar(const GameState& gs, const std::string& nombrePartida);
@@ -42,9 +47,13 @@ public:
 
     static bool GuardarCombate(const SaveData& d);
 
-    static SaveData CargarCombate();
+    static SaveData CargarCombate(int slot = 0);
 
-    static bool ExisteGuardado();
+	static bool ExisteGuardado(int slot = -1);
 
     static const Pj_info* BuscarPjPorNombre(std::string_view nombre);
+
+    static void BorrarCombate(int slot);
+
+    static std::array<SaveData, 5> ObtenerSlots();
 };

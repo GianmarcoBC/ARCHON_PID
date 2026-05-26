@@ -222,9 +222,10 @@ void ControladorCombate::DrawVictory()
 
 //  GUARDADO / CARGA — Persiste y restaura el estado del combate
 
-bool ControladorCombate::GuardarEstado(bool modoIA, int dificultad) const
+bool ControladorCombate::GuardarEstado(bool modoIA, int dificultad, int slot) const
 {
     SaveData d;
+    d.slot       = slot;
     d.nombreP1   = P1.GetNombre();
     d.vidaP1     = P1.GetVida();
     d.posP1x     = P1.GetPos().x;

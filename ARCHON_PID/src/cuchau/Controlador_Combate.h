@@ -89,7 +89,7 @@ public:
     std::string_view GetP2Name() const { return P2.GetNombre(); }
 
     // Guardado / Carga de estado
-    bool GuardarEstado(bool modoIA, int dificultad) const;
+    bool GuardarEstado(bool modoIA, int dificultad, int slot) const;
     void CargarEstado(const SaveData& d);
 
     // Destructor: libera IA, personajes, obstaculos, modelos y texturas

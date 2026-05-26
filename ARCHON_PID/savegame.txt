@@ -1,18 +1,12 @@
-# ARCHON 3D - Fichero de partida guardada
-# No editar manualmente salvo que sepas lo que haces.
-
-[partida]
+---
+slot=0
 modoIA=0
 dificultad=1
-
-[jugador1]
-nombre=MH
-vida=500
-posX=-13
-posY=-3.83333
-
-[jugador2]
-nombre=Troll
-vida=1000
-posX=14
-posY=8.75
+jugador1=MH
+vida1=500
+posX1=-14
+posY1=-8.75
+jugador2=Platero
+vida2=500
+posX2=14
+posY2=8.75
