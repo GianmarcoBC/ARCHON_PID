@@ -35,4 +35,7 @@ struct Vec2 {
 
     // Devuelve el vector perpendicular (rotacion 90 grados en sentido horario)
     Vec2  perp() const { return { -y, x }; }
+
+	// Convierte a Vector2 de raylib (para funciones de colision)
+	Vector2 toVector2() const { return { x, y }; }
 };

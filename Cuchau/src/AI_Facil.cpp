@@ -26,7 +26,7 @@ CombatAI::Accion AI_Facil::decide(const std::vector<Disparo>& disparos, float dt
     float dmax{ 10.0 };
 
     if (Jugador.GetRangoMax() == Rango_bajo)
-        dmax *= 0.2f; // Si el jugador es de corto alcance, la IA se acerca mas
+        dmax *= 0.1f; // Si el jugador es de corto alcance, la IA se acerca mas
     else if (Jugador.GetRangoMax() == Rango_medio)
         dmax *= 0.6f; // Para los demas personajes, mantiene la distancia optima con margen
 

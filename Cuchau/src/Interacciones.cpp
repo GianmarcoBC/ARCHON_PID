@@ -115,6 +115,24 @@ void Interacciones::PersonajesContraObstaculos(
     }
 }
 
+void Interacciones::DisparosContraObstaculos(std::vector<Disparo>& disparos, std::vector<obstaculo*>& obs)
+{
+    for (const auto* o : obs) {
+        for (auto& d : disparos) {
+            if (!d.getStatus()) continue;
+            // Construir rectangulo de colision del obstaculo desde su centro y mitades
+            Rectangle obsRect = {
+                o->colCX - o->colHW, o->colCZ - o->colHL,
+                o->colHW * 2.0f, o->colHL * 2.0f
+            };
+            // Verificar colision entre el disparo y el obstaculo
+            if (CheckCollisionCircleRec(d.GetPos().toVector2(), Disparo::size3D / 2.0f, obsRect)) {
+                d.setStatus(false); // Desactivar el disparo al impactar con el obstaculo
+            }
+        }
+    }
+}
+
 // ============================================================================
 //  ClampArena — Limita al personaje dentro de los bordes de la arena
 //

@@ -42,6 +42,9 @@ public:
     static void PersonajesContraObstaculos(Personaje& p1, Personaje& p2,
                                     std::vector<obstaculo*>& obs);
 
+	// Verifica colision de cada disparo contra cada obstaculo solido. Si impacta, desactiva el disparo.
+	static void DisparosContraObstaculos(std::vector<Disparo>& disparos, std::vector<obstaculo*>& obs);
+
     // Limita la posicion del personaje dentro de los bordes de la arena
     static void ClampArena(Personaje& p, Arena& arena);
 

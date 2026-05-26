@@ -115,6 +115,8 @@ void ControladorCombate::Update()
     // ── Colision disparos vs personajes (aplica dano) ────────────────
     Interacciones::DisparosContraPersonaje(Disparos_1, P1, P2);   // Disparos de P1 → danan a P2
     Interacciones::DisparosContraPersonaje(Disparos_2, P2, P1);   // Disparos de P2 → danan a P1
+	Interacciones::DisparosContraObstaculos(Disparos_1, obstaculos); // Disparos de P1 → colisionan con obstaculos
+	Interacciones::DisparosContraObstaculos(Disparos_2, obstaculos); // Disparos de P2 → colisionan con obstaculos
 
     // ── Colisiones fisicas ───────────────────────────────────────────
     Interacciones::PersonajesContraObstaculos(P1, P2, obstaculos);  // Empuje vs obstaculos
