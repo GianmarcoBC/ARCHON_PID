@@ -29,12 +29,18 @@ CombatAI::Accion AI_Agresiva::decide(const std::vector<Disparo>& disparos, float
     // 'disparos' se recibe por firma comun pero no se usa: esta IA no esquiva
     Vec2  n = (Jugador.GetPos() - IA.GetPos()).unitario();
     float dist = (Jugador.GetPos() - IA.GetPos()).modulo();
+    float dmax{5.0};
+
+	if (Jugador.GetRangoMax() == Rango_bajo)
+		dmax *= 0.2f; // Si el jugador es de corto alcance, la IA se acerca mas
+	else if (Jugador.GetRangoMax() == Rango_medio)
+		dmax *= 0.6f; // Para los demas personajes, mantiene la distancia optima con margen
 
     // Nunca esquiva — solo Acercar o Rodear
-    if (dist > distancia_combate_optima + rango_seguro)
+    if (dist > dmax)
         estado = Acercar;
     else
-        estado = Rodear;
+        estado = Huir;
 
     Vec2 dir_mov{};
 
@@ -44,31 +50,13 @@ CombatAI::Accion AI_Agresiva::decide(const std::vector<Disparo>& disparos, float
         dir_mov = n;
     }
     else {
-        // Orbita agresiva: predomina el componente tangencial (95%) sobre el radial (20%)
-        // El resultado es una orbita rapida que apenas se corrige, manteniendose
-        // muy cerca del jugador aunque se salga ligeramente de la distancia optima
-        float err = (dist - distancia_combate_optima) / fmaxf(distancia_combate_optima * 0.3f, 1.0f);
-        err = fmaxf(-1.0f, fminf(1.0f, err));  // Clamp para evitar correcciones bruscas
-        dir_mov = (n * sentido_giro).perp() * 0.95f + n * err * 0.2f;
+        dir_mov = n.unitario() * -1.0f;
 
-        // Cambiar sentido de giro periodicamente con intervalo aleatorio
-        cont_giro += dt;
-        if (cont_giro >= cambio_giro) {
-            sentido_giro = -sentido_giro;
-            cont_giro = 0;
-            cambio_giro =(1.5f + (rand() % 100) / 49.0f);
-        }
     }
 
-    // Corregir direccion para no acercarse a menos de 2 unidades de los bordes
-    evitar_pared(dir_mov, IA.GetPos(),
-        { arena.x, arena.x + arena.width },
-        { arena.y, arena.y + arena.height }, 2.0f);
-
-    // Disparar si la punteria supera el umbral (0.85 = cos ~32°):
-    // margen de disparo mucho mas amplio que AI_Facil o AI_Defensiva,
-    // generando mayor cadencia de fuego a costa de menos precision
-    float punteria = IA.GetDir().unitario() * n;
+    Vec2  toPlayer = (Jugador.GetPos() - IA.GetPos()).unitario();
+    Vec2  dir_norm = dir_mov.modulo() > 0 ? dir_mov.unitario() : Vec2{ 0,0 };
+    float punteria = dir_norm * toPlayer;  // cuanto se alinea el movimiento con el jugador
     float umbral = aimbot + sinf((float)GetTime() * 7.3f) * 0.03f;
 
     return { dir_mov, punteria >= umbral };

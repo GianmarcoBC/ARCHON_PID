@@ -22,7 +22,7 @@
 class CombatAI {
 protected:
     // Estados de la maquina de estados
-    enum Estado { Acercar, Rodear, Esquivar };
+    enum Estado { Acercar, Huir, Esquivar };
 
     // Resultado de una decision: direccion de movimiento + si debe disparar
     struct Accion {
@@ -56,9 +56,6 @@ protected:
 
     // Devuelve la distancia a la pared mas cercana desde una posicion
     float Pared_cerc(Vec2 pos) const;
-
-    // Modifica un vector de movimiento para evitar acercarse demasiado a las paredes
-    void  evitar_pared(Vec2& v, Vec2 pos, Vec2 lim_x, Vec2 lim_y, float margin);
 
     // Revisa todos los disparos del jugador y determina si hay que esquivar alguno
     // Si hay que esquivar, outDir recibe la direccion perpendicular de escape

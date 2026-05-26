@@ -18,7 +18,7 @@ class Personaje
 
     Pj_info Player{};             // Datos del personaje (stats, rutas de sprites, etc.)
     float max_vida{};             // Vida maxima (para calcular porcentaje en barras de vida)
-	float max_cooldown{};          // Cooldown de disparo (para calcular porcentaje en barra de cooldown)
+	float cooldown{};          // Cooldown de disparo (para calcular porcentaje en barra de cooldown)
     cntrl Controles{};            // Teclas de movimiento asignadas
     bool  isPlayer{ true };       // true = controlado por teclado, false = controlado por IA
 
@@ -90,6 +90,7 @@ public:
     bool        get_isPlayer()   const { return isPlayer; }              // Es controlado por teclado?
     //void        set_isPlayer(bool ip)  { isPlayer = ip; }
     std::string_view GetNombre()      const { return Player.nombre; }         // Nombre del personaje
+	float 	 GetRangoMax()     const { return Player.rango_max; }      // Rango maximo del ataque (en unidades del juego, para calcular alcance de proyectiles)
     //float       GetCharSize()    const { return Size3D; }              // Tamano del billboard
     //Texture2D*  GetAtaqueTexture()     { return &Ataque; }               // Textura del proyectil
     //float       GetAttackSpeed() const { return Player.attack_speed * SPEED_SCALE; } // Vel. proyectil en u/s

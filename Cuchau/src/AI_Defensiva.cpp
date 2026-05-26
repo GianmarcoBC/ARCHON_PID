@@ -39,6 +39,12 @@ CombatAI::Accion AI_Defensiva::decide(const std::vector<Disparo>& disparos, floa
     Vec2 dir_esq{};
     bool esquiva = debe_esquivar(disparos, dir_esq);
     bool demasiado_cerca = dist < distancia_combate_optima * 0.6f;  // Jugador demasiado cerca
+    float dmax{ 15.0 };
+
+    if (Jugador.GetRangoMax() == Rango_bajo)
+        dmax *= 0.2f; // Si el jugador es de corto alcance, la IA se acerca mas
+    else if (Jugador.GetRangoMax() == Rango_medio)
+        dmax *= 0.6f; // Para los demas personajes, mantiene la distancia optima con margen
 
     if (esquiva || demasiado_cerca) {
         estado = Esquivar;
@@ -46,10 +52,10 @@ CombatAI::Accion AI_Defensiva::decide(const std::vector<Disparo>& disparos, floa
             dir_esq = (n * -1.0);   // Sin proyectil peligroso: retroceder directamente alejandose del jugador
         // Si hay proyectil, dir_esq ya viene calculada por debe_esquivar()
     }
-    else if (dist > distancia_combate_optima + rango_seguro)
+    else if (dist > dmax)
         estado = Acercar;
     else
-        estado = Rodear;
+        estado = Huir;
 
     Vec2 dir_mov{};
 
@@ -58,37 +64,17 @@ CombatAI::Accion AI_Defensiva::decide(const std::vector<Disparo>& disparos, floa
         dir_mov = dir_esq;
     }
     else if (estado == Acercar) {
-        // Zigzag mas pronunciado que AI_Facil (amplitud 0.7 vs 0.45, frecuencia 3.0 vs 2.5)
         // Al tener que acercarse desde mas lejos, necesita ser mas impredecible durante el acercamiento
-        float zigzag = sinf((float)GetTime() * 3.0f) * 0.7f;
-        dir_mov = (n + n.perp() * zigzag).unitario();
+        dir_mov = n.unitario();
     }
     else {
-        // Orbita con mayor peso radial (80%) que tangencial (60%):
-        // prioriza mantener la distancia optima sobre la velocidad de orbita,
-        // al contrario que AI_Agresiva que hace lo opuesto
-        float err = (dist - distancia_combate_optima) / fmaxf(distancia_combate_optima * 0.3f, 1.0f);
-        err = fmaxf(-1.0f, fminf(1.0f, err));  // Clamp para evitar correcciones bruscas
-        dir_mov = (n * sentido_giro).perp() * 0.6f + n * err * 0.8f;
+        dir_mov = n.unitario() * -1.0f;
 
-        // Cambiar sentido de giro periodicamente con intervalo aleatorio
-        cont_giro += dt;
-        if (cont_giro >= cambio_giro) {
-            sentido_giro = -sentido_giro;
-            cont_giro = 0;
-            cambio_giro = (1.5f + (rand() % 100) / 49.0f);
-        }
     }
 
-    // Corregir direccion para no acercarse a menos de 2 unidades de los bordes
-    evitar_pared(dir_mov, IA.GetPos(),
-        { arena.x, arena.x + arena.width },
-        { arena.y, arena.y + arena.height }, 2.0f);
-
-    // Disparar solo si la punteria supera el umbral (0.97 = cos ~14°):
-    // el margen de disparo mas estrecho de los tres niveles genera
-    // menos disparos pero mas precisos
-    float punteria = IA.GetDir().unitario() * n;
+    Vec2  toPlayer = (Jugador.GetPos() - IA.GetPos()).unitario();
+    Vec2  dir_norm = dir_mov.modulo() > 0 ? dir_mov.unitario() : Vec2{ 0,0 };
+    float punteria = dir_norm * toPlayer;  // cuanto se alinea el movimiento con el jugador
     float umbral = aimbot + sinf((float)GetTime() * 7.3f) * 0.03f;
 
     return { dir_mov, punteria >= umbral };

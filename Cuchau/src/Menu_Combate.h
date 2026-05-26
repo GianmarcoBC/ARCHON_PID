@@ -65,7 +65,7 @@ class Menu_Combate
     Color colores[2] = { SKYBLUE, RED };
 
     // Textos y colores de dificultad
-    const char* nombresDif[3] = { "FACIL", "NORMAL", "DIFICIL" };
+    const char* nombresDif[3] = { "FACIL", "DEFENSIVA", "AGRESIVA" };
     Color       coloresDif[3] = { GREEN,   YELLOW,    RED };
 
     // Arrays de punteros a los datos y texturas de cada equipo

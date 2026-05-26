@@ -47,7 +47,6 @@ class ControladorCombate
     CombatAI*      ia = nullptr;       // IA para P2 (nullptr si es modo 2 jugadores)
     std::vector<Disparo> Disparos_1{}; // Disparos del jugador 1
     std::vector<Disparo> Disparos_2{}; // Disparos del jugador 2 (o IA)
-    float cooldown1 = 0.0f, cooldown2 = 0.0f;  // Cooldowns de disparo
 
     // --- Shader de alpha discard (descarta pixeles transparentes del depth buffer) ---
     Shader alphaDiscard{};

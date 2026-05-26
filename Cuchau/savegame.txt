@@ -1,0 +1,18 @@
+# ARCHON 3D - Fichero de partida guardada
+# No editar manualmente salvo que sepas lo que haces.
+
+[partida]
+modoIA=1
+dificultad=1
+
+[jugador1]
+nombre=MH
+vida=500
+posX=-8.15202
+posY=1.68135
+
+[jugador2]
+nombre=Platero
+vida=500
+posX=-19
+posY=-11.5

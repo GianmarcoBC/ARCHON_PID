@@ -14,7 +14,7 @@ Personaje::Personaje(Pj_info p, cntrl c, Vector3 po, bool ip):
     Controles(c), 
     pos3d(po),
 	max_vida(p.vida),   // Guardar vida maxima antes de que se reduzca
-	max_cooldown(p.cooldown), // Guardar cooldown maximo antes de que se reduzca
+	cooldown(0.0f), // Guardar cooldown maximo antes de que se reduzca
 	isPlayer(ip)
 {
 
@@ -77,6 +77,8 @@ void Personaje::Update(float dt)
     if (IsKeyDown(Controles.down))  { dir.y = 1; }
 
     Move(dir, dt);
+	if (cooldown > 0.0f) cooldown -= dt;  // Reducir cooldown
+	else cooldown = 0.0f;
 }
 
 void Personaje::Draw(Camera camera) const
@@ -131,15 +133,16 @@ void Personaje::drawHUD(Camera camera, Color color) const
         (int)(sp1.x - 16), (int)(sp1.y - 66), 16, WHITE);    // Numero de vida
 
     // --- Cooldown ---
-    float cd1 = Player.cooldown / max_cooldown;  // Porcentaje de cooldown
-    DrawRectangle((int)(sp1.x - barW / 2), (int)(sp1.y - 100), (int)barW, (int)barH, DARKGRAY);        // Fondo
-    DrawRectangle((int)(sp1.x - barW / 2), (int)(sp1.y - 100), (int)(barW * cd1), (int)barH, color);   // Cooldown actual
-    DrawText(TextFormat("%.1f", Player.cooldown),
-        (int)(sp1.x - 16), (int)(sp1.y - 116), 16, WHITE);    // Numero de cooldown
+    float cd1 = cooldown / Player.cooldown;  // Porcentaje de cooldown
+    DrawRectangle((int)(sp1.x - barW / 2), (int)(sp1.y - 75), (int)barW, (int)barH, DARKGRAY);        // Fondo
+    DrawRectangle((int)(sp1.x - barW / 2), (int)(sp1.y - 75), (int)(barW * cd1), (int)barH, color);   // Cooldown actual
+    DrawText(TextFormat("%.1f", cooldown),
+        (int)(sp1.x - 16), (int)(sp1.y - 86), 16, WHITE);    // Numero de cooldown
 
     DrawText(Player.nombre.data(),
-        (int)(sp1.x) - MeasureText(Player.nombre.data(), 14) / 2,
-        (int)(sp1.y - 130), 14, color);                     // Nombre
+        (int)(sp1.x) - MeasureText(Player.nombre.data(), 16) / 2,
+        (int)(sp1.y - 100), 16, color);                     // Nombre
+
 }
 
 
@@ -163,30 +166,34 @@ void Personaje::pain(float damage)
 
 std::vector<Disparo> Personaje::Shoot()
 {
-	std::vector<Disparo> disparos;
+    std::vector<Disparo> disparos{};
     float offset = Size3D / 2.0f;
 
-    if (Player.tipoAtaque == TipoAtaque::Area) {
-        const Vec2 dirs[8] = {
-            {1,0},{-1,0},{0,1},{0,-1},
-            {0.707f,0.707f},{-0.707f,0.707f},
-            {0.707f,-0.707f},{-0.707f,-0.707f}
-        };
-        for (const auto& d : dirs) {
-            Vec2    pos2d = GetPos() + d * offset;
-            Vector3 origin = { pos2d.x, Size3D / 2.0f, pos2d.y };
-            Vec2    vel = d * Player.attack_speed * SPEED_SCALE;
-            disparos.push_back(Disparo(origin, vel, &Ataque, isPlayer, Player.rango_max));
+    if (cooldown <= 0.0f) {
+        cooldown = Player.cooldown;
+        if (Player.tipoAtaque == TipoAtaque::Area) {
+            const Vec2 dirs[8] = {
+                {1,0},{-1,0},{0,1},{0,-1},
+                {0.707f,0.707f},{-0.707f,0.707f},
+                {0.707f,-0.707f},{-0.707f,-0.707f}
+            };
+            for (const auto& d : dirs) {
+                Vec2    pos2d = GetPos() + d * offset;
+                Vector3 origin = { pos2d.x, Size3D / 2.0f, pos2d.y };
+                Vec2    vel = d * Player.attack_speed * SPEED_SCALE;
+                disparos.push_back(Disparo(origin, vel, &Ataque, isPlayer, Player.rango_max));
+            }
         }
+        else {
+            float rangoMax = (Player.tipoAtaque == TipoAtaque::CuerpoACuerpo) ? Player.rango_max : 0.0f;
+            Vec2    pos2d = GetPos() + l_dir * offset;
+            Vector3 origin = { pos2d.x, Size3D / 2.0f, pos2d.y };
+            Vec2    vel = l_dir * Player.attack_speed * SPEED_SCALE;
+            disparos.push_back(Disparo(origin, vel, &Ataque, isPlayer, rangoMax));
+        }
+        return disparos;
+
     }
-    else {
-        float rangoMax = (Player.tipoAtaque == TipoAtaque::CuerpoACuerpo) ? Player.rango_max : 0.0f;
-        Vec2    pos2d = GetPos() + l_dir * offset;
-        Vector3 origin = { pos2d.x, Size3D / 2.0f, pos2d.y };
-        Vec2    vel = l_dir * Player.attack_speed * SPEED_SCALE;
-        disparos.push_back(Disparo(origin, vel, &Ataque, isPlayer, rangoMax));
-    }
-    return disparos;
 }
 
 //  PlayAttackSound — Reproduce el efecto de sonido de ataque

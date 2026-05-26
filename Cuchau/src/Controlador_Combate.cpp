@@ -70,45 +70,36 @@ void ControladorCombate::Update()
     // ── Player 1: movimiento y disparo ───────────────────────────────
     P1.Update(dt);
 
-    if (cooldown1 <= 0.0f) {
-        if (IsKeyPressed(KEY_SPACE)) {
-            auto nuevos1 = P1.Shoot();
-            Disparos_1.insert(Disparos_1.end(), nuevos1.begin(), nuevos1.end());
-            P1.PlayAttackSound();                // Sonido de ataque
-            cooldown1 = P1.get_Cooldown();       // Reiniciar cooldown
-        }
-    } else {
-        cooldown1 -= dt;  // Reducir cooldown
+    
+    if (IsKeyPressed(KEY_SPACE)) {
+        auto nuevos1 = P1.Shoot();
+        Disparos_1.insert(Disparos_1.end(), nuevos1.begin(), nuevos1.end());
+        P1.PlayAttackSound();                // Sonido de ataque
     }
+
 
     // ── Player 2 / IA ────────────────────────────────────────────────
     if (ia != nullptr) {
         // Modo IA: la IA mueve a P2 y decide si disparar
         bool dispara = ia->Update(dt, Disparos_1);
-        if (cooldown2 <= 0.0f) {
-            if (dispara) {
-                auto nuevos2 = P2.Shoot();
-                Disparos_2.insert(Disparos_2.end(), nuevos2.begin(), nuevos2.end());
-                P2.PlayAttackSound();
-                cooldown2 = P2.get_Cooldown();
-            }
-        } else {
-            cooldown2 -= dt;
+
+        if (dispara) {
+            auto nuevos2 = P2.Shoot();
+            Disparos_2.insert(Disparos_2.end(), nuevos2.begin(), nuevos2.end());
+            P2.PlayAttackSound();
         }
+
     }
     else {
         // Modo 2 jugadores: P2 usa teclado (flechas + Ctrl derecho)
         P2.Update(dt);
-        if (cooldown2 <= 0.0f) {
-            if (IsKeyPressed(KEY_RIGHT_CONTROL)) {
-                auto nuevos2 = P2.Shoot();
-                Disparos_2.insert(Disparos_2.end(), nuevos2.begin(), nuevos2.end());
-                P2.PlayAttackSound();
-                cooldown2 = P2.get_Cooldown();
-            }
-        } else {
-            cooldown2 -= dt;
+
+        if (IsKeyPressed(KEY_RIGHT_CONTROL)) {
+            auto nuevos2 = P2.Shoot();
+            Disparos_2.insert(Disparos_2.end(), nuevos2.begin(), nuevos2.end());
+            P2.PlayAttackSound();
         }
+
     }
 
     // ── Actualizar posicion de disparos y desactivar los que salen ───
