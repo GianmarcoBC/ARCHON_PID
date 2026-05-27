@@ -1,5 +1,6 @@
 #pragma once
 #include "Screen.h"
+#include "SaveData.h"  
 
 // Pantallas legacy que siguen funcionando sin herencia
 class Screens {
@@ -78,7 +79,6 @@ class CargarPartidaScreen : public Screen {
         bool sel, float t);
     std::array<SaveData, 5> slots{};
     int seccionActiva = 0; // 0=partidas menú, 1=slots combate  
-    SaveData slotPendiente{};
 public:
     void Draw(GameState& gs)        override;
     void HandleInput(GameState& gs) override;

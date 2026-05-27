@@ -1,4 +1,5 @@
 #include "SaveSystem.h"
+#include "GameState.h"
 
 // Reescribe el fichero entero con las partidas que quedan en memoria.
 void SaveSystem::reescribir(const GameState& gs)

@@ -1,5 +1,5 @@
 #pragma once
-#include "GameState.h"
+#include "SaveData.h"
 #include <fstream>
 #include <sstream>
 #include <ctime>
@@ -7,19 +7,7 @@
 #include <cstdio>
 #include <cstring>
 #include <array>
-
-
-inline constexpr const char* SAVE_FILE = "savegame.txt";
-
-struct SaveData {
-    int   slot = 0;
-    std::string nombreP1, nombreP2;
-    float vidaP1 = 0.f, posP1x = 0.f, posP1y = 0.f;
-    float vidaP2 = 0.f, posP2x = 0.f, posP2y = 0.f;
-    bool  modoIA = false;
-    int   dificultad = 1;
-    bool  valida = false;
-};
+struct GameState;
 
 // Sistema de guardado/carga de partidas en fichero de texto plano.
 // Cada partida ocupa un bloque de líneas con clave=valor.
@@ -27,13 +15,20 @@ struct SaveData {
 // del compilador ni del sistema operativo.
 
 class SaveSystem {
+
+	friend class CuchauCombateScreen;
+	friend class CargarPartidaScreen;
+
+    inline static SaveData pendiente{};
+
     // Reescribe el fichero entero con las partidas que quedan en memoria.
     static void reescribir(const GameState& gs);
 
     static std::vector<SaveData> CargarTodosCombate();
 
-    inline static SaveData pendiente{};
 public:
+
+
     // Guarda la partida actual al final del fichero. Devuelve true si va bien.
     static bool guardar(const GameState& gs, const std::string& nombrePartida);
 
