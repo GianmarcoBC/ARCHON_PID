@@ -29,8 +29,8 @@ class Tablero
     ColorCasilla colorCasilla[9][9];
     int Ciclo{};
     bool avance{false};
-    bool hechizosOscuridad[7]{false};
-    bool hechizosLuz[7]{ false };
+    //bool hechizosOscuridad[7]{false};
+    //bool hechizosLuz[7]{ false };
     ModoJuego modoJuegoactual{ ModoJuego::NORMAL };
     Magia magiaTablero;
 
@@ -49,7 +49,7 @@ public:
     void reset_seleccion(); //Resetea los valores de sila_seleccionada y columna_seleccionada a -1
     void moverPieza();
     void casillasPosibles(Personaje* p);
-    void DrawCasillas( int fila, int columna);
+    //void DrawCasillas( int fila, int columna);
     void DrawCasillas();
     void set_MovimientosPosibles(bool set, int fila, int columna){ movimientosPosibles[fila][columna] = set; };
     bool get_MovimientosPosibles(int fila, int columna) { return movimientosPosibles[fila][columna]; };

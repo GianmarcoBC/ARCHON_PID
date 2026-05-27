@@ -14,6 +14,7 @@ void Tablero::LogicaTablero() {
 
     if (get_modoJuegoActual() == ModoJuego::NORMAL) {
         personaje_usando_magia = nullptr;
+        casillasPosibles(personaje_seleccionado);
         moverPieza();
         detectaGanador();
 
@@ -264,8 +265,8 @@ void Tablero::Draw() {
         }
     }
 
-    if(modoJuegoactual==ModoJuego::NORMAL) casillasPosibles(personaje_seleccionado);
-    if (modoJuegoactual == ModoJuego::TELEPORT) DrawCasillas();
+   
+    DrawCasillas();
 
     if (modoJuegoactual == ModoJuego::REVIVE) {
 
@@ -463,11 +464,11 @@ void Tablero::casillasPosibles(Personaje* p) {
                 for (int fila = (p->get_fila() - static_cast<int>(p->get_rangoTablero())); fila <= (p->get_fila() + static_cast<int>(p->get_rangoTablero())); fila++) {
                     for (int columna = (p->get_columna() - static_cast<int>(p->get_rangoTablero())); columna <= (p->get_columna() + static_cast<int>(p->get_rangoTablero())); columna++) {
 
-                        if (cuadricula[fila][columna] == nullptr && fila >= 0 && columna >= 0 && fila <= 8 && columna <= 8)  DrawCasillas(fila, columna);
+                        if (cuadricula[fila][columna] == nullptr && fila >= 0 && columna >= 0 && fila <= 8 && columna <= 8) set_MovimientosPosibles(true, fila, columna);
 
                         else if (cuadricula[fila][columna] != nullptr && fila >= 0 && columna >= 0 && fila <= 8 && columna <= 8) {
 
-                            if (cuadricula[fila][columna]->get_equipo() != p->get_equipo()) DrawCasillas(fila, columna);
+                            if (cuadricula[fila][columna]->get_equipo() != p->get_equipo()) set_MovimientosPosibles(true, fila, columna);
 
                         }
 
@@ -485,12 +486,12 @@ void Tablero::casillasPosibles(Personaje* p) {
                         if (cuadricula[fila - 1][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo()) break;
                     }
 
-                    if (cuadricula[fila][personaje_seleccionado->get_columna()] == nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0 && fila <= 8 && personaje_seleccionado->get_columna() <= 8)  DrawCasillas(fila, personaje_seleccionado->get_columna());
+                    if (cuadricula[fila][personaje_seleccionado->get_columna()] == nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0 && fila <= 8 && personaje_seleccionado->get_columna() <= 8)   set_MovimientosPosibles(true,fila, personaje_seleccionado->get_columna());
 
                     else if (cuadricula[fila][personaje_seleccionado->get_columna()] != nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0 && fila <= 8 && personaje_seleccionado->get_columna() <= 8) {
 
                         if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() == p->get_equipo() && fila != personaje_seleccionado->get_fila()) break;
-                        if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo()) DrawCasillas(fila, personaje_seleccionado->get_columna());
+                        if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo())  set_MovimientosPosibles(true,fila, personaje_seleccionado->get_columna());
 
                     }
 
@@ -505,12 +506,12 @@ void Tablero::casillasPosibles(Personaje* p) {
                         if (cuadricula[fila + 1][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo()) break;
                     }
 
-                    if (cuadricula[fila][personaje_seleccionado->get_columna()] == nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0 && fila <= 8 && personaje_seleccionado->get_columna() <= 8)  DrawCasillas(fila, personaje_seleccionado->get_columna());
+                    if (cuadricula[fila][personaje_seleccionado->get_columna()] == nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0 && fila <= 8 && personaje_seleccionado->get_columna() <= 8)   set_MovimientosPosibles(true,fila, personaje_seleccionado->get_columna());
 
                     else if (cuadricula[fila][personaje_seleccionado->get_columna()] != nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0 && fila <= 8 && personaje_seleccionado->get_columna() <= 8) {
 
                         if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() == p->get_equipo() && fila != personaje_seleccionado->get_fila()) break;
-                        if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo()) DrawCasillas(fila, personaje_seleccionado->get_columna());
+                        if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo())  set_MovimientosPosibles(true,fila, personaje_seleccionado->get_columna());
 
                     }
                     if (fila == 0)break;
@@ -524,12 +525,12 @@ void Tablero::casillasPosibles(Personaje* p) {
                         if (cuadricula[personaje_seleccionado->get_fila()][columna - 1]->get_equipo() != p->get_equipo()) break;
                     }
 
-                    if (cuadricula[personaje_seleccionado->get_fila()][columna] == nullptr && personaje_seleccionado->get_fila() >= 0 && columna >= 0)  DrawCasillas(personaje_seleccionado->get_fila(), columna);
+                    if (cuadricula[personaje_seleccionado->get_fila()][columna] == nullptr && personaje_seleccionado->get_fila() >= 0 && columna >= 0)  set_MovimientosPosibles(true,personaje_seleccionado->get_fila(), columna);
 
                     else if (cuadricula[personaje_seleccionado->get_fila()][columna] != nullptr && personaje_seleccionado->get_fila() >= 0 && columna >= 0 && personaje_seleccionado->get_fila() <= 8 && columna <= 80) {
 
                         if (cuadricula[personaje_seleccionado->get_fila()][columna]->get_equipo() == p->get_equipo() && columna != personaje_seleccionado->get_columna()) break;
-                        if (cuadricula[personaje_seleccionado->get_fila()][columna]->get_equipo() != p->get_equipo()) DrawCasillas(personaje_seleccionado->get_fila(), columna);
+                        if (cuadricula[personaje_seleccionado->get_fila()][columna]->get_equipo() != p->get_equipo())  set_MovimientosPosibles(true,personaje_seleccionado->get_fila(), columna);
 
                     }
                     if (columna == 8)break;
@@ -542,12 +543,12 @@ void Tablero::casillasPosibles(Personaje* p) {
                         if (cuadricula[personaje_seleccionado->get_fila()][columna + 1]->get_equipo() != p->get_equipo()) break;
                     }
 
-                    if (cuadricula[personaje_seleccionado->get_fila()][columna] == nullptr && personaje_seleccionado->get_fila() >= 0 && columna >= 0 && personaje_seleccionado->get_fila() <= 8 && columna <= 8)  DrawCasillas(personaje_seleccionado->get_fila(), columna);
+                    if (cuadricula[personaje_seleccionado->get_fila()][columna] == nullptr && personaje_seleccionado->get_fila() >= 0 && columna >= 0 && personaje_seleccionado->get_fila() <= 8 && columna <= 8)   set_MovimientosPosibles(true,personaje_seleccionado->get_fila(), columna);
 
                     else if (cuadricula[personaje_seleccionado->get_fila()][columna] != nullptr && personaje_seleccionado->get_fila() >= 0 && columna >= 0 && personaje_seleccionado->get_fila() <= 8 && columna <= 8) {
 
                         if (cuadricula[personaje_seleccionado->get_fila()][columna]->get_equipo() == p->get_equipo() && columna != personaje_seleccionado->get_columna()) break;
-                        if (cuadricula[personaje_seleccionado->get_fila()][columna]->get_equipo() != p->get_equipo()) DrawCasillas(personaje_seleccionado->get_fila(), columna);
+                        if (cuadricula[personaje_seleccionado->get_fila()][columna]->get_equipo() != p->get_equipo())  set_MovimientosPosibles(true,personaje_seleccionado->get_fila(), columna);
 
                     }
 
@@ -559,7 +560,7 @@ void Tablero::casillasPosibles(Personaje* p) {
     }
 }
 
-
+/*
 void Tablero::DrawCasillas(int fila, int columna) {
 
     Color colorCasilla;
@@ -578,7 +579,7 @@ void Tablero::DrawCasillas(int fila, int columna) {
     DrawRectangle(posX, posY, tamanoCasilla, tamanoCasilla, colorCasilla);
 
 }
-
+*/
 void Tablero::DrawCasillas() {
 
     for (int i = 0; i < 9; i++) {
@@ -690,345 +691,6 @@ void Tablero::detectaGanador() {
  }
 
 
-
-/*
-
-void Tablero::Teleport(Personaje* personaje) {
-
-    if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[0] == true) || (personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[0] == true)) {
-
-        std::cout << "El hechizo Teleport ya se ha utilizado" << std::endl;
-        modoJuegoactual = ModoJuego::HECHIZOS;
-
-    }
-
-    moverPieza();
-
-    if (personaje_seleccionado == nullptr)  reset_MovimientosPosibles();
-    
-
-    if (personaje->get_ID() == tipo_pj::MH && turno ==OSCURIDAD ) {
-
-        personaje_seleccionado = nullptr;
-        personaje_usando_magia = nullptr;
-        hechizosLuz[0] = true;
-        modoJuegoactual = ModoJuego::NORMAL;
-
-    }
-
-    if (personaje->get_ID() == tipo_pj::Platero && turno == LUZ) {
-
-        personaje_seleccionado = nullptr;
-        personaje_usando_magia = nullptr;
-        hechizosOscuridad[0] = true;
-        modoJuegoactual = ModoJuego::NORMAL;
-
-    }
-
-    if (personaje->get_ID() == tipo_pj::MH && hechizosLuz[0] == false) {
-
-        if(personaje_seleccionado!=nullptr){
-            if (personaje_seleccionado->get_equipo() == LUZ) {
-
-                for (int i = 0; i < 9; i++) {
-                    for (int j = 0; j < 9; j++) {
-
-                        if (cuadricula[i][j] == nullptr) movimientosPosibles[i][j]=true;
-                    }
-                }
-            }
-        }
-    }
-    
-    if (personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[0] == false) {
-        if (personaje_seleccionado != nullptr) {
-            if (personaje_seleccionado->get_equipo() == OSCURIDAD) {
-                for (int i = 0; i < 9; i++) {
-                    for (int j = 0; j < 9; j++) {
-
-                        if (cuadricula[i][j] == nullptr) movimientosPosibles[i][j] = true;
-                    }
-                }
-            }
-        }
-    }
-
-
-}
-
-void Tablero::Heal(Personaje* personaje) {
- 
-    if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[1] == true) || (personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[1] == true)) {
-
-        std::cout << "El hechizo Heal ya se ha utilizado" << std::endl;
-        modoJuegoactual = ModoJuego::HECHIZOS;
-
-    }
-    
-    seleccionaCasilla();
-
-    if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr && fila_seleccionada != -1 && columna_seleccionada != -1) {
-        personaje_seleccionado = cuadricula[fila_seleccionada][columna_seleccionada];
-        reset_seleccion();
-    }
-
-    if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[1] == false)) {
-
-        if (personaje_seleccionado != nullptr){
-            
-            if (personaje_seleccionado->get_equipo() == LUZ) {
-               
-                personaje_seleccionado->heal();
-                turno = turno == LUZ ? OSCURIDAD : LUZ;
-                personaje_seleccionado = nullptr;
-                personaje_usando_magia = nullptr;
-                hechizosLuz[1] = true;
-                modoJuegoactual = ModoJuego::NORMAL;
-                std::cout << "Personaje curado" << std::endl;
-
-            }
-        }
-
-    }
-
-
-    if ((personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[1] == false)) {
-
-        if (personaje_seleccionado != nullptr) {
-
-            if (personaje_seleccionado->get_equipo() == OSCURIDAD) {
-
-                personaje_seleccionado->heal();
-                turno = turno == LUZ ? OSCURIDAD : LUZ;
-                personaje_seleccionado = nullptr;
-                personaje_usando_magia = nullptr;
-                hechizosOscuridad[1] = true;
-                modoJuegoactual = ModoJuego::NORMAL;
-
-            }
-        }
-    }
-
-
-}
-
-
-void Tablero::Exchange() {
-
-    if ((personaje_usando_magia->get_ID() == tipo_pj::MH && hechizosLuz[3] == true) || (personaje_usando_magia->get_ID() == tipo_pj::Platero && hechizosOscuridad[3] == true)) {
-
-        std::cout << "El hechizo Shift ya se ha utilizado" << std::endl;
-        modoJuegoactual = ModoJuego::HECHIZOS;
-
-    }
-    
-    seleccionaCasilla();
-
-    if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr && fila_seleccionada != -1 && columna_seleccionada != -1 && personaje_auxiliar == nullptr) {
-        personaje_auxiliar = cuadricula[fila_seleccionada][columna_seleccionada];
-        std::cout << "El hechizo Shift ya se ha utilizado" << std::endl;
-        reset_seleccion();  
-    }
-    if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr && fila_seleccionada != -1 && columna_seleccionada != -1 && personaje_auxiliar!=nullptr) {
-        personaje_seleccionado = cuadricula[fila_seleccionada][columna_seleccionada];
-        std::cout << "El hechizo Shift ya se ha utilizado" << std::endl;
-        reset_seleccion();
-    }
-    if (personaje_auxiliar != nullptr && personaje_seleccionado != nullptr) {
-
-        Personaje* auxiliar = personaje_auxiliar;
-        int auxfila, auxcolumna;
-
-        auxfila = personaje_auxiliar->get_fila();
-        auxcolumna = personaje_auxiliar->get_columna();
-       
-        int selfila, selcolumna;
-
-        selfila = personaje_seleccionado->get_fila();
-        selcolumna = personaje_seleccionado->get_columna();
-
-        cuadricula[auxfila][auxcolumna] = personaje_seleccionado;
-        cuadricula[selfila][selcolumna] = auxiliar;
-        cuadricula[auxfila][auxcolumna]->set_fila_columna(auxfila, auxcolumna);
-        cuadricula[selfila][selcolumna]->set_fila_columna(selfila, selcolumna);
-        
-        turno = turno == LUZ ? OSCURIDAD : LUZ;
-        if (personaje_usando_magia->get_ID() == tipo_pj::MH) hechizosLuz[3] = true;
-        if (personaje_usando_magia->get_ID() == tipo_pj::Platero) hechizosOscuridad[3] = true;
-        personaje_seleccionado = nullptr;
-        personaje_auxiliar = nullptr;
-        personaje_usando_magia = nullptr;
-        modoJuegoactual = ModoJuego::NORMAL;
-
-    }
-
-}
-
-
-void Tablero::Imprison(Personaje* personaje) {
-
-    if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[6] == true) || (personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[6] == true)) {
-
-        std::cout << "El hechizo Imprison ya se ha utilizado" << std::endl;
-        modoJuegoactual = ModoJuego::HECHIZOS;
-
-    }
-
-    seleccionaCasilla();
-
-    if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr && fila_seleccionada != -1 && columna_seleccionada != -1 && personaje_auxiliar == nullptr) {
-        personaje_seleccionado = cuadricula[fila_seleccionada][columna_seleccionada];
-        reset_seleccion();
-    }
-
-    if ((personaje->get_ID() == tipo_pj::MH)){
-        if (personaje_seleccionado != nullptr) {
-        
-            if (personaje_seleccionado->get_equipo() != LUZ) {
-                personaje_seleccionado->set_imprison(true);
-
-                turno = turno == LUZ ? OSCURIDAD : LUZ;
-                hechizosLuz[6] = true;
-                personaje_seleccionado = nullptr;
-                personaje_usando_magia = nullptr;
-                modoJuegoactual = ModoJuego::NORMAL;
-            }
-        }
-        
-
-
-    }
-
-    if ((personaje->get_ID() == tipo_pj::Platero)) {
-        if (personaje_seleccionado != nullptr) {
-            
-            if (personaje_seleccionado->get_equipo() != OSCURIDAD) {
-                personaje_seleccionado->set_imprison(true);
-
-                turno = turno == LUZ ? OSCURIDAD : LUZ;
-                hechizosOscuridad[6] = true;
-                personaje_seleccionado = nullptr;
-                personaje_usando_magia = nullptr;
-                modoJuegoactual = ModoJuego::NORMAL;
-            }
-        }
-    }
-}
-
-
-
-
-void Tablero::Revive(Personaje* personaje) {
-    
-    if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[5] == true) || (personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[5] == true)) {
-
-        std::cout << "El hechizo Revive ya se ha utilizado" << std::endl;
-        modoJuegoactual = ModoJuego::HECHIZOS;
-
-    }
-
-    if ((personaje->get_ID() == tipo_pj::MH && cementerio_Luz.size() == 0) || (personaje->get_ID() == tipo_pj::Platero && cementerio_Oscuridad.size() == 0)) {
-
-        std::cout << "No tienes personajes muertos que revivir" << std::endl;
-        modoJuegoactual = ModoJuego::HECHIZOS;
-
-    }
-
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-
-        int mouseX = GetMouseX();
-        int mouseY = GetMouseY();
-        
-        if (personaje_usando_magia->get_equipo() == LUZ) {
-            if (mouseX > 18 && mouseX < 82) {
-
-                for (int i = 0; i < 9; i++) {
-
-                    int posY = 4 + i * tamanoCasilla;
-                    if (mouseY <= (posY + tamanoCasilla) && mouseY > posY) {
-                        if (i < cementerio_Luz.size()) {
-                            personaje_muerto_seleccionado = cementerio_Luz[i];
-                        }
-                    }
-
-                }
-            }
-
-            if (mouseX > 82 && mouseX < 146) {
-
-                for (int i = 10; i < 18; i++) {
-
-                    int posY = 4 + (i - 9) * tamanoCasilla;
-                    if (mouseY <= (posY + tamanoCasilla) && mouseY > posY) {
-                        if (i < cementerio_Luz.size()) {
-                            personaje_muerto_seleccionado = cementerio_Luz[i];
-                        }
-                    }
-
-                }
-            }
-        }
-
-        if (personaje_usando_magia->get_equipo() == OSCURIDAD) {
-            if (mouseX > 818 && mouseX < 882) {
-
-                for (int i = 0; i < 9; i++) {
-
-                    int posY = 4 + i * tamanoCasilla;
-                    if (mouseY <= (posY + tamanoCasilla) && mouseY > posY) {
-                        if (i < cementerio_Oscuridad.size()) {
-                            personaje_muerto_seleccionado = cementerio_Oscuridad[i];
-                        }
-                    }
-
-                }
-            }
-
-            if (mouseX > 882 && mouseX < 946) {
-
-                for (int i = 10; i < 18; i++) {
-
-                    int posY = 4 + (i - 9) * tamanoCasilla;
-                    if (mouseY <= (posY + tamanoCasilla) && mouseY > posY) {
-                        if (i < cementerio_Oscuridad.size()) {
-                            personaje_muerto_seleccionado = cementerio_Oscuridad[i];
-                        }
-                    }
-
-                }
-            }
-        }
-
-
-        if (personaje_muerto_seleccionado != nullptr) {
-
-            seleccionaCasilla();
-            std::cout << fila_seleccionada << " " << columna_seleccionada << std::endl;
-            if (cuadricula[fila_seleccionada][columna_seleccionada] == nullptr && fila_seleccionada != -1 && columna_seleccionada != -1) {
-                
-                cuadricula[fila_seleccionada][columna_seleccionada] = personaje_muerto_seleccionado;
-                cuadricula[fila_seleccionada][columna_seleccionada]->set_fila_columna(fila_seleccionada, columna_seleccionada);
-  
-
-                turno = turno == LUZ ? OSCURIDAD : LUZ;
-                if (personaje_usando_magia->get_ID() == tipo_pj::MH) hechizosLuz[5] = true;
-                if (personaje_usando_magia->get_ID() == tipo_pj::Platero) hechizosOscuridad[5] = true;
-                personaje_seleccionado = nullptr;
-                personaje_muerto_seleccionado = nullptr;
-                personaje_usando_magia = nullptr;
-                modoJuegoactual = ModoJuego::NORMAL;
-            }
-
-            
-        }
-
-    }
-
-}
-
-
-
-*/
 
 
 
@@ -1170,3 +832,346 @@ void Tablero::reset_MovimientosPosibles() {
 
 
 
+
+
+
+
+
+/*
+
+void Tablero::Teleport(Personaje* personaje) {
+
+    if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[0] == true) || (personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[0] == true)) {
+
+        std::cout << "El hechizo Teleport ya se ha utilizado" << std::endl;
+        modoJuegoactual = ModoJuego::HECHIZOS;
+
+    }
+
+    moverPieza();
+
+    if (personaje_seleccionado == nullptr)  reset_MovimientosPosibles();
+
+
+    if (personaje->get_ID() == tipo_pj::MH && turno ==OSCURIDAD ) {
+
+        personaje_seleccionado = nullptr;
+        personaje_usando_magia = nullptr;
+        hechizosLuz[0] = true;
+        modoJuegoactual = ModoJuego::NORMAL;
+
+    }
+
+    if (personaje->get_ID() == tipo_pj::Platero && turno == LUZ) {
+
+        personaje_seleccionado = nullptr;
+        personaje_usando_magia = nullptr;
+        hechizosOscuridad[0] = true;
+        modoJuegoactual = ModoJuego::NORMAL;
+
+    }
+
+    if (personaje->get_ID() == tipo_pj::MH && hechizosLuz[0] == false) {
+
+        if(personaje_seleccionado!=nullptr){
+            if (personaje_seleccionado->get_equipo() == LUZ) {
+
+                for (int i = 0; i < 9; i++) {
+                    for (int j = 0; j < 9; j++) {
+
+                        if (cuadricula[i][j] == nullptr) movimientosPosibles[i][j]=true;
+                    }
+                }
+            }
+        }
+    }
+
+    if (personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[0] == false) {
+        if (personaje_seleccionado != nullptr) {
+            if (personaje_seleccionado->get_equipo() == OSCURIDAD) {
+                for (int i = 0; i < 9; i++) {
+                    for (int j = 0; j < 9; j++) {
+
+                        if (cuadricula[i][j] == nullptr) movimientosPosibles[i][j] = true;
+                    }
+                }
+            }
+        }
+    }
+
+
+}
+
+void Tablero::Heal(Personaje* personaje) {
+
+    if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[1] == true) || (personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[1] == true)) {
+
+        std::cout << "El hechizo Heal ya se ha utilizado" << std::endl;
+        modoJuegoactual = ModoJuego::HECHIZOS;
+
+    }
+
+    seleccionaCasilla();
+
+    if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr && fila_seleccionada != -1 && columna_seleccionada != -1) {
+        personaje_seleccionado = cuadricula[fila_seleccionada][columna_seleccionada];
+        reset_seleccion();
+    }
+
+    if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[1] == false)) {
+
+        if (personaje_seleccionado != nullptr){
+
+            if (personaje_seleccionado->get_equipo() == LUZ) {
+
+                personaje_seleccionado->heal();
+                turno = turno == LUZ ? OSCURIDAD : LUZ;
+                personaje_seleccionado = nullptr;
+                personaje_usando_magia = nullptr;
+                hechizosLuz[1] = true;
+                modoJuegoactual = ModoJuego::NORMAL;
+                std::cout << "Personaje curado" << std::endl;
+
+            }
+        }
+
+    }
+
+
+    if ((personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[1] == false)) {
+
+        if (personaje_seleccionado != nullptr) {
+
+            if (personaje_seleccionado->get_equipo() == OSCURIDAD) {
+
+                personaje_seleccionado->heal();
+                turno = turno == LUZ ? OSCURIDAD : LUZ;
+                personaje_seleccionado = nullptr;
+                personaje_usando_magia = nullptr;
+                hechizosOscuridad[1] = true;
+                modoJuegoactual = ModoJuego::NORMAL;
+
+            }
+        }
+    }
+
+
+}
+
+
+void Tablero::Exchange() {
+
+    if ((personaje_usando_magia->get_ID() == tipo_pj::MH && hechizosLuz[3] == true) || (personaje_usando_magia->get_ID() == tipo_pj::Platero && hechizosOscuridad[3] == true)) {
+
+        std::cout << "El hechizo Shift ya se ha utilizado" << std::endl;
+        modoJuegoactual = ModoJuego::HECHIZOS;
+
+    }
+
+    seleccionaCasilla();
+
+    if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr && fila_seleccionada != -1 && columna_seleccionada != -1 && personaje_auxiliar == nullptr) {
+        personaje_auxiliar = cuadricula[fila_seleccionada][columna_seleccionada];
+        std::cout << "El hechizo Shift ya se ha utilizado" << std::endl;
+        reset_seleccion();
+    }
+    if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr && fila_seleccionada != -1 && columna_seleccionada != -1 && personaje_auxiliar!=nullptr) {
+        personaje_seleccionado = cuadricula[fila_seleccionada][columna_seleccionada];
+        std::cout << "El hechizo Shift ya se ha utilizado" << std::endl;
+        reset_seleccion();
+    }
+    if (personaje_auxiliar != nullptr && personaje_seleccionado != nullptr) {
+
+        Personaje* auxiliar = personaje_auxiliar;
+        int auxfila, auxcolumna;
+
+        auxfila = personaje_auxiliar->get_fila();
+        auxcolumna = personaje_auxiliar->get_columna();
+
+        int selfila, selcolumna;
+
+        selfila = personaje_seleccionado->get_fila();
+        selcolumna = personaje_seleccionado->get_columna();
+
+        cuadricula[auxfila][auxcolumna] = personaje_seleccionado;
+        cuadricula[selfila][selcolumna] = auxiliar;
+        cuadricula[auxfila][auxcolumna]->set_fila_columna(auxfila, auxcolumna);
+        cuadricula[selfila][selcolumna]->set_fila_columna(selfila, selcolumna);
+
+        turno = turno == LUZ ? OSCURIDAD : LUZ;
+        if (personaje_usando_magia->get_ID() == tipo_pj::MH) hechizosLuz[3] = true;
+        if (personaje_usando_magia->get_ID() == tipo_pj::Platero) hechizosOscuridad[3] = true;
+        personaje_seleccionado = nullptr;
+        personaje_auxiliar = nullptr;
+        personaje_usando_magia = nullptr;
+        modoJuegoactual = ModoJuego::NORMAL;
+
+    }
+
+}
+
+
+void Tablero::Imprison(Personaje* personaje) {
+
+    if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[6] == true) || (personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[6] == true)) {
+
+        std::cout << "El hechizo Imprison ya se ha utilizado" << std::endl;
+        modoJuegoactual = ModoJuego::HECHIZOS;
+
+    }
+
+    seleccionaCasilla();
+
+    if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr && fila_seleccionada != -1 && columna_seleccionada != -1 && personaje_auxiliar == nullptr) {
+        personaje_seleccionado = cuadricula[fila_seleccionada][columna_seleccionada];
+        reset_seleccion();
+    }
+
+    if ((personaje->get_ID() == tipo_pj::MH)){
+        if (personaje_seleccionado != nullptr) {
+
+            if (personaje_seleccionado->get_equipo() != LUZ) {
+                personaje_seleccionado->set_imprison(true);
+
+                turno = turno == LUZ ? OSCURIDAD : LUZ;
+                hechizosLuz[6] = true;
+                personaje_seleccionado = nullptr;
+                personaje_usando_magia = nullptr;
+                modoJuegoactual = ModoJuego::NORMAL;
+            }
+        }
+
+
+
+    }
+
+    if ((personaje->get_ID() == tipo_pj::Platero)) {
+        if (personaje_seleccionado != nullptr) {
+
+            if (personaje_seleccionado->get_equipo() != OSCURIDAD) {
+                personaje_seleccionado->set_imprison(true);
+
+                turno = turno == LUZ ? OSCURIDAD : LUZ;
+                hechizosOscuridad[6] = true;
+                personaje_seleccionado = nullptr;
+                personaje_usando_magia = nullptr;
+                modoJuegoactual = ModoJuego::NORMAL;
+            }
+        }
+    }
+}
+
+
+
+
+void Tablero::Revive(Personaje* personaje) {
+
+    if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[5] == true) || (personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[5] == true)) {
+
+        std::cout << "El hechizo Revive ya se ha utilizado" << std::endl;
+        modoJuegoactual = ModoJuego::HECHIZOS;
+
+    }
+
+    if ((personaje->get_ID() == tipo_pj::MH && cementerio_Luz.size() == 0) || (personaje->get_ID() == tipo_pj::Platero && cementerio_Oscuridad.size() == 0)) {
+
+        std::cout << "No tienes personajes muertos que revivir" << std::endl;
+        modoJuegoactual = ModoJuego::HECHIZOS;
+
+    }
+
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+
+        int mouseX = GetMouseX();
+        int mouseY = GetMouseY();
+
+        if (personaje_usando_magia->get_equipo() == LUZ) {
+            if (mouseX > 18 && mouseX < 82) {
+
+                for (int i = 0; i < 9; i++) {
+
+                    int posY = 4 + i * tamanoCasilla;
+                    if (mouseY <= (posY + tamanoCasilla) && mouseY > posY) {
+                        if (i < cementerio_Luz.size()) {
+                            personaje_muerto_seleccionado = cementerio_Luz[i];
+                        }
+                    }
+
+                }
+            }
+
+            if (mouseX > 82 && mouseX < 146) {
+
+                for (int i = 10; i < 18; i++) {
+
+                    int posY = 4 + (i - 9) * tamanoCasilla;
+                    if (mouseY <= (posY + tamanoCasilla) && mouseY > posY) {
+                        if (i < cementerio_Luz.size()) {
+                            personaje_muerto_seleccionado = cementerio_Luz[i];
+                        }
+                    }
+
+                }
+            }
+        }
+
+        if (personaje_usando_magia->get_equipo() == OSCURIDAD) {
+            if (mouseX > 818 && mouseX < 882) {
+
+                for (int i = 0; i < 9; i++) {
+
+                    int posY = 4 + i * tamanoCasilla;
+                    if (mouseY <= (posY + tamanoCasilla) && mouseY > posY) {
+                        if (i < cementerio_Oscuridad.size()) {
+                            personaje_muerto_seleccionado = cementerio_Oscuridad[i];
+                        }
+                    }
+
+                }
+            }
+
+            if (mouseX > 882 && mouseX < 946) {
+
+                for (int i = 10; i < 18; i++) {
+
+                    int posY = 4 + (i - 9) * tamanoCasilla;
+                    if (mouseY <= (posY + tamanoCasilla) && mouseY > posY) {
+                        if (i < cementerio_Oscuridad.size()) {
+                            personaje_muerto_seleccionado = cementerio_Oscuridad[i];
+                        }
+                    }
+
+                }
+            }
+        }
+
+
+        if (personaje_muerto_seleccionado != nullptr) {
+
+            seleccionaCasilla();
+            std::cout << fila_seleccionada << " " << columna_seleccionada << std::endl;
+            if (cuadricula[fila_seleccionada][columna_seleccionada] == nullptr && fila_seleccionada != -1 && columna_seleccionada != -1) {
+
+                cuadricula[fila_seleccionada][columna_seleccionada] = personaje_muerto_seleccionado;
+                cuadricula[fila_seleccionada][columna_seleccionada]->set_fila_columna(fila_seleccionada, columna_seleccionada);
+
+
+                turno = turno == LUZ ? OSCURIDAD : LUZ;
+                if (personaje_usando_magia->get_ID() == tipo_pj::MH) hechizosLuz[5] = true;
+                if (personaje_usando_magia->get_ID() == tipo_pj::Platero) hechizosOscuridad[5] = true;
+                personaje_seleccionado = nullptr;
+                personaje_muerto_seleccionado = nullptr;
+                personaje_usando_magia = nullptr;
+                modoJuegoactual = ModoJuego::NORMAL;
+            }
+
+
+        }
+
+    }
+
+}
+
+
+
+*/
