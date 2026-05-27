@@ -118,7 +118,8 @@ void CuchauCombateScreen::OnEnter(GameState& gs)
     else       menu->Reset();
     if (gs.modoActual == MODO_COMBATE) {
         bool ia = (gs.opcionSelModoSel == 1);
-        menu->SetModo(ia);
+        int bando = (gs.equipoSel1 == 0) ? 0 : 1;  // equipoSel1: 0=claro, 1=oscuro
+        menu->SetModo(ia, bando);
     }
 }
 
@@ -137,6 +138,7 @@ void CuchauCombateScreen::Draw(GameState& gs)
     switch (estado) {
     case 0: // Menu
         if (menu) menu->Draw();
+        if (menu) menu->HandleMouse();
         break;
 
     case 1: // Combate

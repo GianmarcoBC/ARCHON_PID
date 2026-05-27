@@ -1,5 +1,6 @@
 #include "Menu_Combate.h"
 #include <cstdlib>
+#include "rlgl.h"
 
 // ====================================================================
 //  DrawSeleccion — Dibuja el panel de seleccion de un jugador
@@ -19,50 +20,106 @@
 
 void Menu_Combate::DrawSeleccion(int player, int cx, int cy, int sel, bool listo)
 {
-    Color col = colores[player - 1];
-    int marcoW = 280, marcoH = 340;
+    // Determinar bando: en PvP P1=claro, P2=oscuro; en VS_IA P1 usa bandoP1
+    int bando = (modo == DOS_JUGADORES) ? (player - 1) : bandoP1;
 
-    // Marco exterior (verde si esta listo, color del jugador si no)
-    DrawRectangleLines(cx - marcoW / 2, cy - marcoH / 2, marcoW, marcoH,
-        listo ? GREEN : col);
+    // Arrays del bando correspondiente
+    Texture2D** imgs = (bando == 0) ? imagenes_claro : imagenes_oscuro;
+    const Pj_info** pjs = (bando == 0) ? personajes_claro : personajes_oscuro;
 
-    // Sprite grande del personaje seleccionado, escalado para caber en el marco
-    Texture2D* tx = (player == 1) ? imagenes_claro[sel] : imagenes_oscuro[sel];
-    float scale = 220.0f / tx->height;
-    DrawTextureEx(*tx,
-        { (float)(cx - (int)(tx->width * scale) / 2),
-          (float)(cy - (int)(tx->height * scale) / 2 - 20) },
-        0.0f, scale, WHITE);
+    // Colores del bando
+    float br = (bando == 0) ? 0.2f : 0.7f;
+    float bg = (bando == 0) ? 0.5f : 0.1f;
+    float bb = (bando == 0) ? 0.9f : 0.1f;
 
-    // Nombre del personaje seleccionado
-    std::string_view nombre = (player == 1)
-        ? personajes_claro[sel]->nombre
-        : personajes_oscuro[sel]->nombre;   
-    DrawText(nombre.data(), cx - MeasureText(nombre.data(), 22) / 2, cy + marcoH / 2 - 60, 22, col);
+    float x = cx - 150.f, y = cy - 200.f;
+    float w = 300.f, h = 380.f;
 
-    // Fila de miniaturas (iconos pequenos de todos los personajes del equipo)
-    int iconSize = 40;
-    int totalW = NUM_PJS * iconSize + (NUM_PJS - 1) * 8;
-    int startX = cx - totalW / 2;
-    for (int i = 0; i < NUM_PJS; i++) {
-        int ix = startX + i * (iconSize + 8);
-        int iy = cy + marcoH / 2 + 10;
-        bool es = (i == sel);  // Resaltar el seleccionado
-        DrawRectangleLines(ix, iy, iconSize, iconSize, es ? col : DARKGRAY);
-        Texture2D* ic = (player == 1) ? imagenes_claro[i] : imagenes_oscuro[i];
-        float s = (float)iconSize / ic->height;
-        DrawTextureEx(*ic, { (float)ix,(float)iy }, 0.0f, s, es ? WHITE : DARKGRAY);
-    }
+    // Fondo del panel
+    rlBegin(RL_QUADS);
+    rlColor4f(0.02f, 0.03f, 0.06f, 0.92f);
+    rlVertex2f(x, y);   rlVertex2f(x + w, y);
+    rlVertex2f(x + w, y + h); rlVertex2f(x, y + h);
+    rlEnd();
 
-    // Texto "LISTO!" si el jugador confirmo su seleccion
-    if (listo) {
-        const char* r = "LISTO!";
-        DrawText(r, cx - MeasureText(r, 24) / 2, cy - marcoH / 2 - 34, 24, GREEN);
-    }
+    // Borde pulsante (fijo si listo)
+    float al = listo ? 1.f : 0.6f + 0.4f * sinf((float)GetTime() * 2.f);
+    rlSetLineWidth(listo ? 2.5f : 1.5f);
+    rlBegin(RL_LINES);
+    rlColor4f(listo ? 0.1f : br * al,
+        listo ? 0.8f : bg * al,
+        listo ? 0.1f : bb * al, 1.f);
+    rlVertex2f(x, y);   rlVertex2f(x + w, y);
+    rlVertex2f(x + w, y);   rlVertex2f(x + w, y + h);
+    rlVertex2f(x + w, y + h); rlVertex2f(x, y + h);
+    rlVertex2f(x, y + h); rlVertex2f(x, y);
+    rlEnd();
 
     // Etiqueta del jugador
     const char* lbl = (player == 1) ? "JUGADOR 1" : "JUGADOR 2";
-    DrawText(lbl, cx - MeasureText(lbl, 20) / 2, cy - marcoH / 2 - 60, 20, col);
+    DrawText(lbl, cx - MeasureText(lbl, 18) / 2, (int)(y - 26), 18,
+        colores[player - 1]);
+
+    // Sprite grande
+    Texture2D* tx = imgs[sel];
+    float scale = 200.f / tx->height;
+    DrawTextureEx(*tx,
+        { cx - tx->width * scale / 2.f, y + 20.f },
+        0.f, scale, listo ? WHITE : ColorAlpha(WHITE, 0.75f));
+
+    // Nombre del personaje
+    std::string_view nombre = pjs[sel]->nombre;
+    DrawText(nombre.data(),
+        cx - MeasureText(nombre.data(), 20) / 2,
+        (int)(y + h - 90), 20, colores[player - 1]);
+
+    // Fila de miniaturas
+    int iconSize = 34, gap = 6;
+    int totalW = NUM_PJS * (iconSize + gap) - gap;
+    int startX = cx - totalW / 2;
+    for (int i = 0; i < NUM_PJS; i++) {
+        float ix = (float)(startX + i * (iconSize + gap));
+        float iy = y + h - 58.f;
+        bool es = (i == sel);
+
+        // Fondo miniatura
+        rlBegin(RL_QUADS);
+        rlColor4f(es ? br * 0.3f : 0.05f,
+            es ? bg * 0.3f : 0.05f,
+            es ? bb * 0.3f : 0.05f, 0.9f);
+        rlVertex2f(ix, iy);
+        rlVertex2f(ix + iconSize, iy);
+        rlVertex2f(ix + iconSize, iy + iconSize);
+        rlVertex2f(ix, iy + iconSize);
+        rlEnd();
+
+        // Borde miniatura
+        rlSetLineWidth(es ? 2.f : 1.f);
+        rlBegin(RL_LINES);
+        rlColor4f(br * (es ? 1.f : 0.3f),
+            bg * (es ? 1.f : 0.3f),
+            bb * (es ? 1.f : 0.3f), 1.f);
+        rlVertex2f(ix, iy);
+        rlVertex2f(ix + iconSize, iy);
+        rlVertex2f(ix + iconSize, iy);
+        rlVertex2f(ix + iconSize, iy + iconSize);
+        rlVertex2f(ix + iconSize, iy + iconSize);
+        rlVertex2f(ix, iy + iconSize);
+        rlVertex2f(ix, iy + iconSize);
+        rlVertex2f(ix, iy);
+        rlEnd();
+
+        // Sprite miniatura
+        Texture2D* ic = imgs[i];
+        float s = (float)iconSize / ic->height;
+        DrawTextureEx(*ic, { ix, iy }, 0.f, s, es ? WHITE : DARKGRAY);
+    }
+
+    // LISTO
+    if (listo) {
+        const char* r = "LISTO!";
+        DrawText(r, cx - MeasureText(r, 22) / 2, (int)(y - 52), 22, GREEN);
+    }
 }
 
 // ====================================================================
@@ -75,6 +132,10 @@ void Menu_Combate::DrawSeleccion(int player, int cx, int cy, int sel, bool listo
 
 void Menu_Combate::DrawPanelIA(int cx, int cy)
 {
+    int bandoIA = 1 - bandoP1;  // contrario al de P1
+    auto& imgs = (bandoIA == 0) ? imagenes_claro : imagenes_oscuro;
+    auto& pjs = (bandoIA == 0) ? personajes_claro : personajes_oscuro;
+
     int marcoW = 280, marcoH = 340;
     Color col = P1Listo ? RED : DARKGRAY;
     DrawRectangleLines(cx - marcoW / 2, cy - marcoH / 2, marcoW, marcoH, col);
@@ -86,14 +147,14 @@ void Menu_Combate::DrawPanelIA(int cx, int cy)
     }
     else {
         // Mostrar el personaje asignado aleatoriamente a la IA
-        Texture2D* tx = imagenes_oscuro[selP2];
+        Texture2D* tx = imgs[selP2];
         float scale = 220.0f / tx->height;
         DrawTextureEx(*tx,
             { (float)(cx - (int)(tx->width * scale) / 2),
               (float)(cy - (int)(tx->height * scale) / 2 - 20) },
             0.0f, scale, WHITE);
 
-        std::string_view nombre = personajes_oscuro[selP2]->nombre;
+        std::string_view nombre = pjs[selP2]->nombre;
         DrawText(nombre.data(), cx - MeasureText(nombre.data(), 22) / 2, cy + marcoH / 2 - 60, 22, RED);
 
         // Miniaturas del equipo oscuro
@@ -105,8 +166,8 @@ void Menu_Combate::DrawPanelIA(int cx, int cy)
             int iy = cy + marcoH / 2 + 10;
             bool es = (i == selP2);
             DrawRectangleLines(ix, iy, iconSize, iconSize, es ? RED : DARKGRAY);
-            float s = (float)iconSize / imagenes_oscuro[i]->height;
-            DrawTextureEx(*imagenes_oscuro[i], { (float)ix,(float)iy },
+            float s = (float)iconSize / imgs[i]->height;
+            DrawTextureEx(*imgs[i], { (float)ix,(float)iy },
                 0.0f, s, es ? WHITE : DARKGRAY);
         }
     }
@@ -201,7 +262,7 @@ bool Menu_Combate::UpdateVsIA()
         if (IsKeyPressed(KEY_SPACE)) {
             P1Listo = true;
             P2Listo = true;
-            selP2   = rand() % NUM_PJS;  // Personaje aleatorio del equipo oscuro
+            selP2 = rand() % NUM_PJS;  // índice aleatorio del equipo contrario
         }
     }
 
@@ -279,4 +340,95 @@ void Menu_Combate::Draw()
         const char* start = "PULSA ENTER PARA COMBATIR";
         DrawText(start, W / 2 - MeasureText(start, 28) / 2, H - 90, 28, YELLOW);
     }
+}
+
+void Menu_Combate::Reset()
+{
+    modo = DOS_JUGADORES;
+    selP1 = selP2 = 0;
+    P1Listo = P2Listo = false;
+    dificultad = 1;
+    quiereVolver = false;
+}
+
+void Menu_Combate::SetModo(bool ia, int bando)
+{
+    modo = ia ? VS_IA : DOS_JUGADORES;
+    bandoP1 = bando;
+    selP1 = selP2 = 0;
+    P1Listo = P2Listo = false;
+    dificultad = 1;
+    quiereVolver = false;
+}
+
+void Menu_Combate::HandleMouse()
+{
+    if (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) return;
+    int W = GetScreenWidth(), H = GetScreenHeight();
+    float mx = (float)GetMouseX(), my = (float)GetMouseY();
+
+    if (modo == DOS_JUGADORES) {
+        // Panel P1 (izquierda): navegar miniaturas con clic
+        float cx1 = W / 4.f;
+        float panelY = H / 2.f - 200.f;
+        float iconSize = 34, gap = 6;
+        int totalW = NUM_PJS * (iconSize + gap) - gap;
+        float startX = cx1 - totalW / 2.f;
+        float iconRow = panelY + 380.f - 60.f;
+
+        for (int i = 0; i < NUM_PJS; i++) {
+            float ix = startX + i * (iconSize + gap);
+            if (mx > ix && mx<ix + iconSize && my>iconRow && my < iconRow + iconSize) {
+                if (!P1Listo) selP1 = i;
+            }
+        }
+        // Panel P2 (derecha)
+        float cx2 = W * 3 / 4.f;
+        startX = cx2 - totalW / 2.f;
+        for (int i = 0; i < NUM_PJS; i++) {
+            float ix = startX + i * (iconSize + gap);
+            if (mx > ix && mx<ix + iconSize && my>iconRow && my < iconRow + iconSize) {
+                if (!P2Listo) selP2 = i;
+            }
+        }
+        // Confirmar P1 con clic en sprite grande
+        float sprW = 100, sprH = 200;
+        if (!P1Listo && mx > cx1 - sprW && mx<cx1 + sprW && my>H / 2.f - sprH && my < H / 2.f + sprH)
+            P1Listo = true;
+        if (!P2Listo && mx > W * 3 / 4.f - sprW && mx<W * 3 / 4.f + sprW && my>H / 2.f - sprH && my < H / 2.f + sprH)
+            P2Listo = true;
+    }
+    else { // VS_IA
+        float cx1 = W / 4.f;
+        float panelY = H / 2.f - 200.f;
+        float iconSize = 34, gap = 6;
+        int totalW = NUM_PJS * (iconSize + gap) - gap;
+        float startX = cx1 - totalW / 2.f;
+        float iconRow = panelY + 380.f - 60.f;
+
+        for (int i = 0; i < NUM_PJS; i++) {
+            float ix = startX + i * (iconSize + gap);
+            if (mx > ix && mx<ix + iconSize && my>iconRow && my < iconRow + iconSize) {
+                if (!P1Listo) selP1 = i;
+            }
+        }
+        // Botones de dificultad
+        float bW = 100, bH = 28, gapD = 10;
+        float dstartX = W / 2.f - (3 * bW + 2 * gapD) / 2.f;
+        float dY = H * 3 / 4.f - 14.f;
+        for (int i = 0; i < 3; i++) {
+            float bx = dstartX + i * (bW + gapD);
+            if (mx > bx && mx<bx + bW && my>dY && my < dY + bH)
+                dificultad = i;
+        }
+        // Confirmar con clic en sprite grande
+        float sprW = 100, sprH = 200;
+        if (!P1Listo && mx > cx1 - sprW && mx<cx1 + sprW && my>H / 2.f - sprH && my < H / 2.f + sprH) {
+            P1Listo = true;
+            P2Listo = true;
+            selP2 = rand() % NUM_PJS;
+        }
+    }
+
+    // Volver con clic fuera de los paneles no es intuitivo — ESC sigue siendo la salida
 }

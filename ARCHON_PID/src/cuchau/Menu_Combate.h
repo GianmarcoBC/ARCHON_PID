@@ -58,6 +58,7 @@ class Menu_Combate
 
     // Dificultad de la IA (solo en modo VS_IA): 0=Facil, 1=Normal, 2=Dificil
     int  dificultad = 1;
+    int bandoP1 = 0;  // 0 = claro, 1 = oscuro
 
     // Flag: ESC pressed from character selection
     bool quiereVolver = false;
@@ -108,31 +109,23 @@ public:
     void Draw();
 
     // Getters para obtener los personajes seleccionados
-    const Pj_info& GetSelP1()      const { return *personajes_claro[selP1]; }
-    const Pj_info& GetSelP2()      const { return *personajes_oscuro[selP2]; }
+    const Pj_info& GetSelP1()      const { return bandoP1 == 0 ? *personajes_claro[selP1] : *personajes_oscuro[selP1]; }
+    const Pj_info& GetSelP2()      const { return bandoP1 == 0 ? *personajes_oscuro[selP2] : *personajes_claro[selP2]; }
     bool           EsModoIA()      const { return modo == VS_IA; }
     int            GetDificultad() const { return dificultad; }
+    int            GetBandoP1()    const { return bandoP1; }
+
 
     // Reinicia el menu al estado inicial (se llama al volver del combate)
-    void Reset() {
-        modo = DOS_JUGADORES;
-        selP1 = selP2 = 0;
-        P1Listo = P2Listo = false;
-        dificultad = 1;
-        quiereVolver = false;
-    }
+    void Reset();
 
     // Set mode directly, skipping the mode selection screen
-    void SetModo(bool ia) {
-        modo = ia ? VS_IA : DOS_JUGADORES;
-        selP1 = selP2 = 0;
-        P1Listo = P2Listo = false;
-        dificultad = 1;
-        quiereVolver = false;
-    }
+    void SetModo(bool ia, int bando = 0);
 
     // True when ESC was pressed from character selection — caller should go back
     bool QuiereVolver() const { return quiereVolver; }
+
+    void HandleMouse();
 
     // Destructor: libera todas las texturas de los personajes y el fondo
     ~Menu_Combate() {
