@@ -439,3 +439,164 @@ void Drawing::dibujarSprite(int idx, float x, float y, float esc, float tiempo) 
     case 3: spriteNigromante(x, y, esc, tiempo); break;
     }
 }
+
+// ============================================================
+// SIMBOLO DE LUZ — Sol radiante dorado
+// ============================================================
+void Drawing::simboloLuz(float x, float y, float esc, float tiempo) {
+    rlPushMatrix();
+    rlTranslatef(x, y, 0);
+    rlScalef(esc, esc, 1);
+
+    // Aura exterior pulsante
+    float al = 0.15f + 0.1f * sinf(tiempo * 0.008f);
+    circulo(0, 0, 45, 24, CFloat(1.f, 0.85f, 0.2f, al));
+
+    // Rayos del sol (rotando lentamente)
+    float rot = tiempo * 0.003f;
+    int nRayos = 12;
+    rlBegin(RL_TRIANGLES);
+    for (int i = 0; i < nRayos; i++) {
+        float a = rot + i * 2.f * M_PI / nRayos;
+        float inner = 22.f, outer = 38.f + sinf(tiempo * 0.01f + i) * 4.f;
+        float hw = 0.18f; // half-width in radians
+        rlColor4f(1.f, 0.8f, 0.1f, 0.7f);
+        rlVertex2f(cosf(a) * outer, sinf(a) * outer);
+        rlColor4f(1.f, 0.7f, 0.0f, 0.9f);
+        rlVertex2f(cosf(a - hw) * inner, sinf(a - hw) * inner);
+        rlVertex2f(cosf(a + hw) * inner, sinf(a + hw) * inner);
+    }
+    rlEnd();
+
+    // Disco central dorado
+    circulo(0, 0, 20, 20, CFloat(1.f, 0.85f, 0.15f));
+    // Brillo interior
+    circulo(0, 2, 14, 16, CFloat(1.f, 0.95f, 0.5f));
+    // Punto de luz
+    circulo(-4, 5, 5, 10, CFloat(1.f, 1.f, 0.8f, 0.6f));
+
+    // Borde del disco
+    circuloLinea(0, 0, 20, 20, CFloat(0.8f, 0.6f, 0.05f));
+
+    rlPopMatrix();
+}
+
+// ============================================================
+// SIMBOLO DE OSCURIDAD — Craneo con aura purpura
+// ============================================================
+void Drawing::simboloOscuridad(float x, float y, float esc, float tiempo) {
+    rlPushMatrix();
+    rlTranslatef(x, y, 0);
+    rlScalef(esc, esc, 1);
+
+    // Aura purpura pulsante
+    float al = 0.12f + 0.08f * sinf(tiempo * 0.009f);
+    circulo(0, 0, 45, 24, CFloat(0.6f, 0.1f, 0.9f, al));
+
+    // Llamas oscuras girando
+    float rot = tiempo * 0.004f;
+    rlBegin(RL_TRIANGLES);
+    for (int i = 0; i < 8; i++) {
+        float a = rot + i * 2.f * M_PI / 8;
+        float outer = 36.f + sinf(tiempo * 0.012f + i * 0.7f) * 5.f;
+        rlColor4f(0.4f, 0.0f, 0.7f, 0.5f);
+        rlVertex2f(cosf(a) * outer, sinf(a) * outer);
+        rlColor4f(0.3f, 0.05f, 0.5f, 0.7f);
+        rlVertex2f(cosf(a - 0.2f) * 20, sinf(a - 0.2f) * 20);
+        rlVertex2f(cosf(a + 0.2f) * 20, sinf(a + 0.2f) * 20);
+    }
+    rlEnd();
+
+    // Craneo — forma del craneo (ovalo superior)
+    circulo(0, 2, 18, 16, CFloat(0.2f, 0.15f, 0.25f));
+    // Mandibula (cuadro inferior)
+    rlBegin(RL_QUADS);
+    rlColor4f(0.18f, 0.13f, 0.22f, 1);
+    rlVertex2f(-12, -2); rlVertex2f(12, -2);
+    rlVertex2f(10, -14); rlVertex2f(-10, -14);
+    rlEnd();
+
+    // Ojos — cuencas vacias con brillo purpura
+    float eyeGlow = 0.6f + 0.4f * sinf(tiempo * 0.015f);
+    circulo(-7, 6, 5, 10, CFloat(0, 0, 0));
+    circulo(7, 6, 5, 10, CFloat(0, 0, 0));
+    circulo(-7, 6, 3, 8, CFloat(0.7f * eyeGlow, 0.1f, 0.9f * eyeGlow, 0.8f));
+    circulo(7, 6, 3, 8, CFloat(0.7f * eyeGlow, 0.1f, 0.9f * eyeGlow, 0.8f));
+
+    // Nariz (triangulo invertido)
+    rlBegin(RL_TRIANGLES);
+    rlColor4f(0.05f, 0.03f, 0.08f, 1);
+    rlVertex2f(-2, 2); rlVertex2f(2, 2); rlVertex2f(0, -3);
+    rlEnd();
+
+    // Dientes
+    rlBegin(RL_QUADS);
+    rlColor4f(0.35f, 0.3f, 0.4f, 1);
+    for (int i = 0; i < 5; i++) {
+        float dx = -9.f + i * 4.5f;
+        rlVertex2f(dx, -4); rlVertex2f(dx + 3, -4);
+        rlVertex2f(dx + 3, -9); rlVertex2f(dx, -9);
+    }
+    rlEnd();
+    // Lineas entre dientes
+    rlSetLineWidth(1);
+    rlBegin(RL_LINES);
+    rlColor4f(0.05f, 0.03f, 0.08f, 1);
+    for (int i = 1; i < 5; i++) {
+        float dx = -9.f + i * 4.5f;
+        rlVertex2f(dx, -4); rlVertex2f(dx, -9);
+    }
+    rlEnd();
+
+    // Borde del craneo
+    circuloLinea(0, 2, 18, 16, CFloat(0.35f, 0.15f, 0.5f));
+
+    rlPopMatrix();
+}
+
+bool Drawing::botonVolver(float x, float y, float tiempo) {
+    // Hit test in virtual 800x600 Y-up coords
+    float mxv = (float)GetMouseX() * 800.f / GetScreenWidth();
+    float myv = 600.f - (float)GetMouseY() * 600.f / GetScreenHeight();
+    // Visible box bounds
+    float bx0 = x - 10, bx1 = x + 65, by0 = y - 12, by1 = y + 14;
+    // Hover/click zone: same centre, 10px bigger on each side
+    float pad = 10.f;
+    bool hover = (mxv > bx0 - pad && mxv < bx1 + pad &&
+                  myv > by0 - pad && myv < by1 + pad);
+
+    float al = hover ? (0.7f + 0.3f * sinf(tiempo * 0.015f)) : 0.45f;
+    Color col = CFloat(0.85f * al, 0.7f * al, 0.15f * al);
+
+    // Arrow shape: ◄—
+    rlSetLineWidth(hover ? 2.5f : 1.5f);
+    rlBegin(RL_LINES);
+    rlColor4ub(col.r, col.g, col.b, col.a);
+    rlVertex2f(x + 2, y); rlVertex2f(x + 18, y);
+    rlVertex2f(x + 2, y); rlVertex2f(x + 10, y + 7);
+    rlVertex2f(x + 2, y); rlVertex2f(x + 10, y - 7);
+    rlEnd();
+
+    if (hover) {
+        rlBegin(RL_TRIANGLES);
+        rlColor4ub(col.r, col.g, col.b, 80);
+        rlVertex2f(x + 2, y);
+        rlVertex2f(x + 10, y + 7);
+        rlVertex2f(x + 10, y - 7);
+        rlEnd();
+    }
+
+    texto12(x + 22, y - 2, "VOLVER", col);
+
+    // Outline box
+    rlSetLineWidth(hover ? 1.5f : 1.f);
+    rlBegin(RL_LINES);
+    rlColor4ub(col.r, col.g, col.b, hover ? (unsigned char)180 : (unsigned char)80);
+    rlVertex2f(bx0, by0); rlVertex2f(bx1, by0);
+    rlVertex2f(bx1, by0); rlVertex2f(bx1, by1);
+    rlVertex2f(bx1, by1); rlVertex2f(bx0, by1);
+    rlVertex2f(bx0, by1); rlVertex2f(bx0, by0);
+    rlEnd();
+
+    return hover;
+}

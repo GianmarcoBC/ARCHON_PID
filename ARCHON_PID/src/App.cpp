@@ -37,6 +37,15 @@ void App::Init() {
     // Cargar partidas guardadas al arrancar
     SaveSystem::cargarTodas(gs);
 
+    // Cargar y reproducir musica del menu
+    musicaGlobal = LoadMusicStream("bin/Resources/AAAudio/Musica/Menugnomo.mp3");
+    musicaGlobal.looping = true;
+    PlayMusicStream(musicaGlobal);
+    SetMusicVolume(musicaGlobal, gs.volumenMusica / 10.0f);
+    musicaGlobalCargada = true;
+    gs.reproduciendo = true;
+    gs.cancionActual = 0;  // Menugnomo es la cancion 0
+
     // Registrar pantallas por estado
     screens[(int)MODO_JUEGO]           = std::make_unique<ModoJuegoScreen>();
     screens[(int)SELECCION_MODO]       = std::make_unique<SeleccionModoScreen>();
@@ -54,6 +63,7 @@ void App::FinalizarTransicion() {
     gs.slashActivo  = false;
     gs.slashX       = -1000.f;
     if (gs.estadoActual != gs.siguienteEstado) {
+        Estado anterior = gs.estadoActual;
         gs.estadoActual = gs.siguienteEstado;
         switch (gs.estadoActual) {
             case MENU:                gs.menuOffset      = 0.f; break;
@@ -68,6 +78,9 @@ void App::FinalizarTransicion() {
             case CARGAR_PARTIDA:      gs.cargaOffset     = 0.f; break;
             default: break;
         }
+        // Pausar musica global al entrar en combate, reanudar al salir
+        if (gs.estadoActual == CUCHAU_COMBATE) PausarMusicaGlobal();
+        if (anterior == CUCHAU_COMBATE && gs.estadoActual != CUCHAU_COMBATE) ReanudarMusicaGlobal();
         if (auto* scr = GetCurrentScreen()) scr->OnEnter(gs);
     }
 }
@@ -123,6 +136,32 @@ void App::Update() {
 
     Particles::update(gs);
 
+    // Actualizar musica global
+    if (musicaGlobalCargada) {
+        UpdateMusicStream(musicaGlobal);
+        SetMusicVolume(musicaGlobal, gs.volumenMusica / 10.0f);
+
+        // Sincronizar progreso real
+        float len = GetMusicTimeLength(musicaGlobal);
+        float played = GetMusicTimePlayed(musicaGlobal);
+        if (len > 0) gs.progresoCancion = played / len;
+
+        // Actualizar duracion real en la cancion actual
+        if (gs.cancionActual >= 0 && gs.cancionActual < (int)gs.canciones.size() && len > 0) {
+            int mins = (int)len / 60;
+            int secs = (int)len % 60;
+            gs.canciones[gs.cancionActual].duracion = std::to_string(mins) + ":" + (secs < 10 ? "0" : "") + std::to_string(secs);
+        }
+
+        // Detectar fin de cancion y avanzar
+        if (gs.reproduciendo && gs.progresoCancion >= 0.99f) {
+            int siguiente = gs.cancionActual;
+            if (gs.aleatorio)     siguiente = rand() % (int)gs.canciones.size();
+            else if (!gs.repetir) siguiente = (gs.cancionActual + 1) % (int)gs.canciones.size();
+            CambiarCancionGlobal(siguiente);
+        }
+    }
+
     // Visualizador del reproductor de música
     for (int i = 0; i < NUM_BARRAS; i++) {
         if (gs.reproduciendo) {
@@ -133,21 +172,13 @@ void App::Update() {
         } else gs.barraTarget[i] = 2.f;
         gs.barrasViz[i] += (gs.barraTarget[i] - gs.barrasViz[i]) * 0.12f;
     }
-    if (gs.reproduciendo && gs.estadoActual == MUSICA) {
-        gs.progresoCancion += gs.velocidadProg;
-        if (gs.progresoCancion >= 1.f) {
-            gs.progresoCancion = 0.f;
-            if (gs.aleatorio)     gs.cancionActual = rand() % (int)gs.canciones.size();
-            else if (!gs.repetir) gs.cancionActual = (gs.cancionActual+1) % (int)gs.canciones.size();
-            gs.cancionHover = gs.cancionActual;
-        }
-    }
 
     // Slash de transición
     if (gs.slashActivo) {
-        gs.slashX += 12;
+        gs.slashX += 30;
         // Switch state at midpoint so the new screen loads while slash exits
         if (gs.slashX >= 0 && gs.estadoActual != gs.siguienteEstado) {
+            Estado anterior = gs.estadoActual;
             gs.estadoActual = gs.siguienteEstado;
             switch (gs.estadoActual) {
                 case MENU:                gs.menuOffset      = -400.f; break;
@@ -162,6 +193,9 @@ void App::Update() {
                 case CARGAR_PARTIDA:      gs.cargaOffset     = -800.f; break;
                 default: break;
             }
+            // Pausar musica global al entrar en combate, reanudar al salir
+            if (gs.estadoActual == CUCHAU_COMBATE) PausarMusicaGlobal();
+            if (anterior == CUCHAU_COMBATE && gs.estadoActual != CUCHAU_COMBATE) ReanudarMusicaGlobal();
             if (auto* scr = GetCurrentScreen()) scr->OnEnter(gs);
         }
         // End animation when slash exits screen
@@ -205,6 +239,7 @@ void App::Draw() {
 }
 
 void App::HandleInput() {
+    animSkippedThisFrame = false;
     if (IsKeyPressed(KEY_F11)) { TogglePantallaCompleta(); return; }
     // P o ESC activa la pausa desde estados de juego activo
     if ((IsKeyPressed(KEY_P) || IsKeyPressed(KEY_ESCAPE)) &&
@@ -212,8 +247,8 @@ void App::HandleInput() {
         IniciarTransicion(PAUSA);
         return;
     }
-    // SPACE, ENTER or ESC skip all transition animations (slash + slide-in offsets)
-    bool skipAnim = IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_ESCAPE);
+    // SPACE, ENTER, ESC or left click skip all transition animations (slash + slide-in offsets)
+    bool skipAnim = IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_ESCAPE) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
     if (skipAnim && (gs.slashActivo || gs.menuOffset < 0 || gs.encicloOffset < 0 ||
         gs.opcionesOffset < 0 || gs.musicaOffset < 0 || gs.modoJuegoOffset < 0 ||
         gs.selModoOffset < 0 || gs.configJCOffset < 0 || gs.selEquipoOffset < 0 ||
@@ -223,8 +258,11 @@ void App::HandleInput() {
         gs.modoJuegoOffset = gs.selModoOffset = gs.configJCOffset = 0.f;
         gs.selEquipoOffset = gs.configDifiOffset = gs.cargaOffset = 0.f;
         gs.pausaOffset = 0.f;
-        // SPACE only skips; ENTER/ESC fall through to act on the now-visible screen
-        if (IsKeyPressed(KEY_SPACE)) return;
+        // SPACE and mouse click only skip; ENTER/ESC fall through to act on the now-visible screen
+        if (IsKeyPressed(KEY_SPACE) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+            animSkippedThisFrame = true;
+            return;
+        }
     }
     if (gs.slashActivo) return;
 
@@ -234,79 +272,25 @@ void App::HandleInput() {
     }
 
     // --- Input legacy para pantallas que no usan herencia ---
-    if (gs.estadoActual == MENU) {
-        if (IsKeyPressed(KEY_W)||IsKeyPressed(KEY_UP)) {
-            if (--gs.opcionMenuSel < 0) gs.opcionMenuSel = (int)gs.opcionesMenu.size()-1;
-        }
-        if (IsKeyPressed(KEY_S)||IsKeyPressed(KEY_DOWN)) {
-            if (++gs.opcionMenuSel >= (int)gs.opcionesMenu.size()) gs.opcionMenuSel = 0;
-        }
-        if (IsKeyPressed(KEY_ENTER)) {
-            if (gs.opcionMenuSel == 0) IniciarTransicion(MODO_JUEGO);
-            if (gs.opcionMenuSel == 1) IniciarTransicion(CARGAR_PARTIDA);
-            if (gs.opcionMenuSel == 2) IniciarTransicion(OPCIONES);
-            if (gs.opcionMenuSel == 3) IniciarTransicion(ENCICLOPEDIA);
-            if (gs.opcionMenuSel == 4) CloseWindow();
-        }
-    }
-    else if (gs.estadoActual == OPCIONES) {
-        if (IsKeyPressed(KEY_W)||IsKeyPressed(KEY_UP)) {
-            if (--gs.opcionOpcionesSel < 0) gs.opcionOpcionesSel = (int)gs.controlesOpciones.size()-1;
-        }
-        if (IsKeyPressed(KEY_S)||IsKeyPressed(KEY_DOWN)) {
-            if (++gs.opcionOpcionesSel >= (int)gs.controlesOpciones.size()) gs.opcionOpcionesSel = 0;
-        }
-        if (IsKeyPressed(KEY_A)||IsKeyPressed(KEY_LEFT)) {
-            auto& op = gs.controlesOpciones[gs.opcionOpcionesSel];
-            int ant = op.valor;
-            op.valor = std::max(op.minV, op.valor-1);
-            if (gs.opcionOpcionesSel == 2 && op.valor != ant) TogglePantallaCompleta();
-        }
-        if (IsKeyPressed(KEY_D)||IsKeyPressed(KEY_RIGHT)) {
-            auto& op = gs.controlesOpciones[gs.opcionOpcionesSel];
-            int ant = op.valor;
-            op.valor = std::min(op.maxV, op.valor+1);
-            if (gs.opcionOpcionesSel == 2 && op.valor != ant) TogglePantallaCompleta();
-        }
-        if (IsKeyPressed(KEY_ENTER)) IniciarTransicion(MUSICA);
+    // Keyboard navigation removed — mouse handles selection and clicks.
+    // Only ESC to go back is kept.
+    if (gs.estadoActual == OPCIONES) {
         if (IsKeyPressed(KEY_ESCAPE)) IniciarTransicion(MENU);
     }
     else if (gs.estadoActual == MUSICA) {
-        if (IsKeyPressed(KEY_W)||IsKeyPressed(KEY_UP)) {
-            if (--gs.cancionHover < 0) gs.cancionHover = (int)gs.canciones.size()-1;
-            gs.cancionActual = gs.cancionHover; gs.progresoCancion = 0; gs.reproduciendo = true;
-        }
-        if (IsKeyPressed(KEY_S)||IsKeyPressed(KEY_DOWN)) {
-            if (++gs.cancionHover >= (int)gs.canciones.size()) gs.cancionHover = 0;
-            gs.cancionActual = gs.cancionHover; gs.progresoCancion = 0; gs.reproduciendo = true;
-        }
-        if (IsKeyPressed(KEY_SPACE)) gs.reproduciendo = !gs.reproduciendo;
-        if (IsKeyPressed(KEY_R))     gs.repetir       = !gs.repetir;
-        if (IsKeyPressed(KEY_X))     gs.aleatorio     = !gs.aleatorio;
-        if (IsKeyPressed(KEY_A)||IsKeyPressed(KEY_LEFT)) {
-            gs.volumenMusica = std::max(0, gs.volumenMusica-1);
-            gs.controlesOpciones[0].valor = gs.volumenMusica;
-        }
-        if (IsKeyPressed(KEY_D)||IsKeyPressed(KEY_RIGHT)) {
-            gs.volumenMusica = std::min(10, gs.volumenMusica+1);
-            gs.controlesOpciones[0].valor = gs.volumenMusica;
-        }
-        if (IsKeyPressed(KEY_ESCAPE)) IniciarTransicion(OPCIONES);
+        if (IsKeyPressed(KEY_ESCAPE)) IniciarTransicion(MENU);
     }
     else if (gs.estadoActual == ENCICLOPEDIA) {
-        if (IsKeyPressed(KEY_A)||IsKeyPressed(KEY_LEFT)) {
-            if (--gs.paginaLibro < 0) gs.paginaLibro = gs.TOTAL_PAGINAS-1;
-        }
-        if (IsKeyPressed(KEY_D)||IsKeyPressed(KEY_RIGHT)) {
-            if (++gs.paginaLibro >= gs.TOTAL_PAGINAS) gs.paginaLibro = 0;
-        }
         if (IsKeyPressed(KEY_ESCAPE)) IniciarTransicion(MENU);
     }
 }
 
 void App::HandleMouse() {
-    if (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) return;
     if (gs.slashActivo) return;
+    // If a click just skipped the animation this frame, don't act on it
+    if (animSkippedThisFrame) return;
+
+    bool clicked = IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
 
     if (auto* scr = GetCurrentScreen()) {
         scr->HandleMouse(gs);
@@ -318,57 +302,136 @@ void App::HandleMouse() {
 
     if (gs.estadoActual == MENU) {
         for (int i = 0; i < (int)gs.opcionesMenu.size(); i++) {
-            float oy = 350.f - i*70.f;
+            float oy = 370.f - i*60.f;
             if (mxv>250 && mxv<640 && myv>oy-25 && myv<oy+25) {
                 gs.opcionMenuSel = i;
-                if (i==0) IniciarTransicion(MODO_JUEGO);
-                if (i==1) IniciarTransicion(CARGAR_PARTIDA);
-                if (i==2) IniciarTransicion(OPCIONES);
-                if (i==3) IniciarTransicion(ENCICLOPEDIA);
-                if (i==4) CloseWindow();
+                if (clicked) {
+                    if (i==0) IniciarTransicion(MODO_JUEGO);
+                    if (i==1) IniciarTransicion(CARGAR_PARTIDA);
+                    if (i==2) IniciarTransicion(OPCIONES);
+                    if (i==3) IniciarTransicion(MUSICA);
+                    if (i==4) IniciarTransicion(ENCICLOPEDIA);
+                    if (i==5) CloseWindow();
+                }
             }
         }
     }
     else if (gs.estadoActual == OPCIONES) {
-        if (mxv>115 && mxv<685 && myv>448 && myv<484) { IniciarTransicion(MUSICA); return; }
+        // Hover on options
         for (int i = 0; i < (int)gs.controlesOpciones.size(); i++) {
             float y = 435.f - i*46.f;
-            if (mxv>320 && mxv<620 && myv>y-4 && myv<y+14) {
+            if (mxv>115 && mxv<685 && myv>y-24 && myv<y+16) {
                 gs.opcionOpcionesSel = i;
-                auto& op = gs.controlesOpciones[i];
-                int ant = op.valor;
-                float t2 = (mxv-320.f)/300.f;
-                op.valor = std::max(op.minV, std::min(op.maxV, (int)(t2*(op.maxV-op.minV)+op.minV)));
-                if (i==2 && op.valor!=ant) TogglePantallaCompleta();
+            }
+        }
+        if (clicked) {
+            // Back button
+            if (mxv>40 && mxv<135 && myv>543 && myv<589) { IniciarTransicion(MENU); return; }
+            for (int i = 0; i < (int)gs.controlesOpciones.size(); i++) {
+                float y = 435.f - i*46.f;
+                if (mxv>320 && mxv<620 && myv>y-4 && myv<y+14) {
+                    gs.opcionOpcionesSel = i;
+                    auto& op = gs.controlesOpciones[i];
+                    int ant = op.valor;
+                    float t2 = (mxv-320.f)/300.f;
+                    op.valor = std::max(op.minV, std::min(op.maxV, (int)(t2*(op.maxV-op.minV)+op.minV)));
+                    if (i==0) gs.volumenMusica = op.valor;
+                    if (i==2 && op.valor!=ant) TogglePantallaCompleta();
+                }
             }
         }
     }
     else if (gs.estadoActual == MUSICA) {
+        // Hover on song list
         float lX=370, lY=475;
         for (int i = 0; i < (int)gs.canciones.size(); i++) {
             float fy = lY - 30.f - i*30.f;
             if (mxv>lX && mxv<lX+365 && myv>fy-8 && myv<fy+14) {
-                gs.cancionActual = i; gs.cancionHover = i;
-                gs.progresoCancion = 0; gs.reproduciendo = true;
+                gs.cancionHover = i;
             }
         }
-        if (mxv>60&&mxv<350&&myv>196&&myv<204)
-            gs.progresoCancion = std::max(0.f,std::min(1.f,(mxv-60.f)/290.f));
-        float cX=200, cY=165, dx, dy;
-        dx=mxv-cX;    dy=myv-cY; if(dx*dx+dy*dy<484) gs.reproduciendo=!gs.reproduciendo;
-        dx=mxv-(cX-84);dy=myv-cY; if(dx*dx+dy*dy<256){if(--gs.cancionActual<0)gs.cancionActual=(int)gs.canciones.size()-1;gs.cancionHover=gs.cancionActual;gs.progresoCancion=0;}
-        dx=mxv-(cX+84);dy=myv-cY; if(dx*dx+dy*dy<256){if(++gs.cancionActual>=(int)gs.canciones.size())gs.cancionActual=0;gs.cancionHover=gs.cancionActual;gs.progresoCancion=0;}
-        dx=mxv-(cX-118);dy=myv-cY; if(dx*dx+dy*dy<144) gs.repetir=!gs.repetir;
-        dx=mxv-(cX+118);dy=myv-cY; if(dx*dx+dy*dy<144) gs.aleatorio=!gs.aleatorio;
-        if(mxv>88&&mxv<268&&myv>122&&myv<140){
-            gs.volumenMusica=std::max(0,std::min(10,(int)((mxv-88.f)/180.f*10.f)));
-            gs.controlesOpciones[0].valor=gs.volumenMusica;
+        if (clicked) {
+            // Back button
+            if (mxv>40 && mxv<135 && myv>543 && myv<589) { IniciarTransicion(MENU); return; }
+            // Song list click
+            for (int i = 0; i < (int)gs.canciones.size(); i++) {
+                float fy = lY - 30.f - i*30.f;
+                if (mxv>lX && mxv<lX+365 && myv>fy-8 && myv<fy+14) {
+                    CambiarCancionGlobal(i);
+                }
+            }
+            // Seek bar
+            if (mxv>60&&mxv<350&&myv>196&&myv<204) {
+                float pos = std::max(0.f,std::min(1.f,(mxv-60.f)/290.f));
+                if (musicaGlobalCargada) {
+                    float len = GetMusicTimeLength(musicaGlobal);
+                    SeekMusicStream(musicaGlobal, pos * len);
+                }
+            }
+            float cX=200, cY=165, dx, dy;
+            // Play/Pause (center)
+            dx=mxv-cX; dy=myv-cY;
+            if(dx*dx+dy*dy<484) {
+                gs.reproduciendo=!gs.reproduciendo;
+                if (gs.reproduciendo) ReanudarMusicaGlobal();
+                else PausarMusicaGlobal();
+            }
+            // Backwards (prev track, cX-50)
+            dx=mxv-(cX-50);dy=myv-cY;
+            if(dx*dx+dy*dy<256){
+                int prev = gs.cancionActual - 1;
+                if (prev < 0) prev = (int)gs.canciones.size() - 1;
+                CambiarCancionGlobal(prev);
+            }
+            // Forwards (next track, cX+50)
+            dx=mxv-(cX+50);dy=myv-cY;
+            if(dx*dx+dy*dy<256){
+                int next = (gs.cancionActual + 1) % (int)gs.canciones.size();
+                CambiarCancionGlobal(next);
+            }
+            // Repeat (cX-100)
+            dx=mxv-(cX-100);dy=myv-cY; if(dx*dx+dy*dy<144) gs.repetir=!gs.repetir;
+            // Random (cX+100)
+            dx=mxv-(cX+100);dy=myv-cY; if(dx*dx+dy*dy<144) gs.aleatorio=!gs.aleatorio;
+            if(mxv>88&&mxv<268&&myv>122&&myv<140){
+                gs.volumenMusica=std::max(0,std::min(10,(int)((mxv-88.f)/180.f*10.f)));
+                gs.controlesOpciones[0].valor=gs.volumenMusica;
+            }
         }
     }
     else if (gs.estadoActual == ENCICLOPEDIA) {
-        if (mxv<300) { if(--gs.paginaLibro<0) gs.paginaLibro=gs.TOTAL_PAGINAS-1; }
-        if (mxv>500) { if(++gs.paginaLibro>=gs.TOTAL_PAGINAS) gs.paginaLibro=0; }
+        if (clicked) {
+            // Back button
+            if (mxv>40 && mxv<135 && myv>543 && myv<589) { IniciarTransicion(MENU); return; }
+            if (mxv<300) { if(--gs.paginaLibro<0) gs.paginaLibro=gs.TOTAL_PAGINAS-1; }
+            if (mxv>500) { if(++gs.paginaLibro>=gs.TOTAL_PAGINAS) gs.paginaLibro=0; }
+        }
     }
+}
+
+void App::CambiarCancionGlobal(int idx) {
+    if (idx < 0 || idx >= (int)gs.canciones.size()) return;
+    if (musicaGlobalCargada) {
+        StopMusicStream(musicaGlobal);
+        UnloadMusicStream(musicaGlobal);
+    }
+    musicaGlobal = LoadMusicStream(gs.canciones[idx].archivo.c_str());
+    musicaGlobal.looping = true;
+    PlayMusicStream(musicaGlobal);
+    SetMusicVolume(musicaGlobal, gs.volumenMusica / 10.0f);
+    musicaGlobalCargada = true;
+    gs.cancionActual = idx;
+    gs.cancionHover = idx;
+    gs.progresoCancion = 0;
+    gs.reproduciendo = true;
+}
+
+void App::PausarMusicaGlobal() {
+    if (musicaGlobalCargada) PauseMusicStream(musicaGlobal);
+}
+
+void App::ReanudarMusicaGlobal() {
+    if (musicaGlobalCargada) ResumeMusicStream(musicaGlobal);
 }
 
 void App::Run() {
@@ -379,6 +442,7 @@ void App::Run() {
         Update();
         Draw();
     }
+    if (musicaGlobalCargada) UnloadMusicStream(musicaGlobal);
     CloseAudioDevice();
     CloseWindow();
 }

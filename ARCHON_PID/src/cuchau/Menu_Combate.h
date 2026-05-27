@@ -9,22 +9,18 @@
 //
 //  Flujo del menu:
 //    1. DOS_JUGADORES  — Cada jugador elige su personaje con controles separados
-//       VS_IA          — P1 elige personaje + dificultad, P2 es aleatorio
+//       VS_IA          — P1 elige personaje, P2 es aleatorio del equipo contrario
 //    2. Cuando ambos confirman, Update() devuelve true para iniciar el combate
-//    El modo (PvP/IA) se establece externamente via SetModo() desde ARCHON.
+//    El modo (PvP/IA) y bandos se establecen externamente via SetModo().
 //
 //  Controles:
-//    Modo: W/S o Flechas para navegar, ENTER para confirmar
 //    2P:   P1 usa A/D + Espacio, P2 usa Flechas + Ctrl derecho
-//    IA:   A/D para personaje, Flechas para dificultad, Espacio para confirmar
+//    IA:   A/D para personaje, Espacio para confirmar
 //    ESC:  Volver a seleccion de modo
 // ============================================================================
 
 class Menu_Combate
 {
-    // --- Texturas del menu ---
-    Texture2D Fondo_Menu = LoadTexture("bin/Resources/AAGraficos/the-dark-background-minimalism-tmnt-teenage-mutant-ninja-turtles-wallpaper-preview.png");
-
     // Texturas de los 8 personajes del equipo claro (se usan como miniaturas e iconos)
     Texture2D ImgMH          = LoadTexture(MH.Sprites[0].data());
     Texture2D ImgPhoenix     = LoadTexture(Phoenix.Sprites[0].data());
@@ -51,14 +47,17 @@ class Menu_Combate
     enum Modo { DOS_JUGADORES, VS_IA };
     Modo modo = DOS_JUGADORES;     // Pantalla actual del menu
     // Seleccion de personaje (indice 0..7 dentro de su equipo)
-    int  selP1 = 0;                // Seleccion actual del jugador 1 (equipo claro)
-    int  selP2 = 0;                // Seleccion actual del jugador 2 (equipo oscuro)
+    int  selP1 = 0;                // Seleccion actual del jugador 1
+    int  selP2 = 0;                // Seleccion actual del jugador 2
     bool P1Listo = false;          // P1 confirmo su seleccion
     bool P2Listo = false;          // P2 confirmo su seleccion
+    bool p1WasReady = false;       // P1 was ready before this frame's HandleMouse
+    bool p2WasReady = false;       // P2 was ready before this frame's HandleMouse
 
-    // Dificultad de la IA (solo en modo VS_IA): 0=Facil, 1=Normal, 2=Dificil
+    // Dificultad de la IA (0=Facil, 1=Normal, 2=Dificil, 3=Maestro)
     int  dificultad = 1;
     int bandoP1 = 0;  // 0 = claro, 1 = oscuro
+    int bandoP2 = 1;  // 0 = claro, 1 = oscuro
 
     // Flag: ESC pressed from character selection
     bool quiereVolver = false;
@@ -66,9 +65,9 @@ class Menu_Combate
     // Colores para cada jugador
     Color colores[2] = { SKYBLUE, RED };
 
-    // Textos y colores de dificultad
+    // Textos y colores de dificultad (3 niveles)
     const char* nombresDif[3] = { "PLATERO", "MH", "SANSEGUNDO" };
-    Color       coloresDif[3] = { GREEN,   YELLOW,    RED };
+    Color       coloresDif[3] = { GREEN, YELLOW, RED };
 
     // Arrays de punteros a los datos y texturas de cada equipo
     const Pj_info* personajes_claro[NUM_PJS]  = { &MH, &Phoenix, &Golem, &Djinni,
@@ -89,9 +88,6 @@ class Menu_Combate
     // Dibuja el panel del enemigo IA (??? hasta que P1 confirme, luego muestra el personaje aleatorio)
     void DrawPanelIA(int cx, int cy);
 
-    // Dibuja el selector de dificultad (3 botones: FACIL, NORMAL, DIFICIL)
-    void DrawDificultad(int cx, int cy);
-
     // --- Metodos privados de logica ---
 
     // Procesa input en modo 2 jugadores. Devuelve true si ambos estan listos y se pulsa ENTER.
@@ -110,7 +106,7 @@ public:
 
     // Getters para obtener los personajes seleccionados
     const Pj_info& GetSelP1()      const { return bandoP1 == 0 ? *personajes_claro[selP1] : *personajes_oscuro[selP1]; }
-    const Pj_info& GetSelP2()      const { return bandoP1 == 0 ? *personajes_oscuro[selP2] : *personajes_claro[selP2]; }
+    const Pj_info& GetSelP2()      const { return bandoP2 == 0 ? *personajes_claro[selP2] : *personajes_oscuro[selP2]; }
     bool           EsModoIA()      const { return modo == VS_IA; }
     int            GetDificultad() const { return dificultad; }
     int            GetBandoP1()    const { return bandoP1; }
@@ -120,16 +116,15 @@ public:
     void Reset();
 
     // Set mode directly, skipping the mode selection screen
-    void SetModo(bool ia, int bando = 0);
+    void SetModo(bool ia, int bando1 = 0, int bando2 = 1, int difi = 1);
 
     // True when ESC was pressed from character selection — caller should go back
     bool QuiereVolver() const { return quiereVolver; }
 
     void HandleMouse();
 
-    // Destructor: libera todas las texturas de los personajes y el fondo
+    // Destructor: libera todas las texturas de los personajes
     ~Menu_Combate() {
-        UnloadTexture(Fondo_Menu);
         UnloadTexture(ImgMH);        UnloadTexture(ImgPhoenix);
         UnloadTexture(ImgGolem);     UnloadTexture(ImgDjinni);
         UnloadTexture(ImgUnicorn);   UnloadTexture(ImgValkyrie);

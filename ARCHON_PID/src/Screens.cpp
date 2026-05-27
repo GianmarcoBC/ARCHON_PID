@@ -50,7 +50,7 @@ void Screens::menuPrincipal(GameState& gs) {
     Drawing::antorcha(700, 300, t);
 
     for (int i = 0; i < (int)gs.opcionesMenu.size(); i++) {
-        float y = 350 - i * 70.0f;
+        float y = 370 - i * 60.0f;
         float offX = std::min(gs.menuOffset + i * 20.0f, 0.0f);
         bool sel = (i == gs.opcionMenuSel);
         rlPushMatrix(); rlTranslatef(offX, 0, 0);
@@ -79,11 +79,12 @@ void Screens::menuPrincipal(GameState& gs) {
         if (i == 0) Drawing::iconoEspada(300, y, ic);
         if (i == 1) Drawing::iconoLibro(300, y, ic);     // Cargar Partida
         if (i == 2) Drawing::iconoOpciones(300, y, ic);  // Opciones
-        if (i == 3) Drawing::iconoLibro(300, y, ic);     // Enciclopedia
-        if (i == 4) Drawing::iconoEspada(300, y, ic);    // Salir
+        if (i == 3) Drawing::iconoNota(300, y, ic);      // Sala de Rolitas
+        if (i == 4) Drawing::iconoLibro(300, y, ic);     // Enciclopedia
+        if (i == 5) Drawing::iconoEspada(300, y, ic);    // Salir
         rlPopMatrix();
     }
-    Drawing::instrucciones(260, 50, "W/S: Navegar    ENTER: Confirmar", t);
+    Drawing::instrucciones(260, 50, "Click: Seleccionar", t);
 }
 
 void Screens::menuOpciones(GameState& gs) {
@@ -125,25 +126,6 @@ void Screens::menuOpciones(GameState& gs) {
     rlVertex2f(120 + ox, 492); rlVertex2f(680 + ox, 492);
     rlEnd();
 
-    // Music button
-    float btnY = 468;
-    float btnPulse = 0.12f + 0.06f * sinf(t * 0.012f);
-    rlBegin(RL_QUADS);
-    rlColor4f(0.15f, 0.05f, 0.3f, btnPulse);
-    rlVertex2f(115 + ox, btnY + 16); rlVertex2f(685 + ox, btnY + 16);
-    rlVertex2f(685 + ox, btnY - 20); rlVertex2f(115 + ox, btnY - 20);
-    rlEnd();
-    rlBegin(RL_LINES);
-    rlColor4f(0.6f, 0.3f, 0.9f, 1); rlSetLineWidth(1.5f);
-    rlVertex2f(115 + ox, btnY + 16); rlVertex2f(685 + ox, btnY + 16);
-    rlVertex2f(685 + ox, btnY + 16); rlVertex2f(685 + ox, btnY - 20);
-    rlVertex2f(685 + ox, btnY - 20); rlVertex2f(115 + ox, btnY - 20);
-    rlVertex2f(115 + ox, btnY - 20); rlVertex2f(115 + ox, btnY + 16);
-    rlEnd();
-    Drawing::iconoNota(140 + ox, btnY + 2, CFloat(0.8f, 0.6f, 1.0f));
-    Drawing::texto18(160 + ox, btnY, "AJUSTES DE MUSICA", CFloat(0.8f, 0.6f, 1.0f));
-    Drawing::texto12(590 + ox, btnY, "ENTER", CFloat(0.55f, 0.35f, 0.8f));
-
     // Options list
     const float startY = 435, stepY = 46;
     for (int i = 0; i < (int)gs.controlesOpciones.size(); i++) {
@@ -176,7 +158,8 @@ void Screens::menuOpciones(GameState& gs) {
         Drawing::barraSlider(320 + ox, y + 4, 300, op.valor, op.maxV, op.esBool);
         if (sel) Drawing::cursorAnimado(118 + ox, y + 4, t);
     }
-    Drawing::instrucciones(148 + ox, 163, "W/S: Navegar    A/D: Cambiar valor    ENTER: Musica    ESC: Volver", t);
+    Drawing::instrucciones(148 + ox, 163, "Click: Seleccionar y cambiar valor    ESC: Volver", t);
+    Drawing::botonVolver(60 + ox, 565, t);
 }
 
 void Screens::menuMusica(GameState& gs) {
@@ -263,30 +246,35 @@ void Screens::menuMusica(GameState& gs) {
     rlVertex2f(progX + progFill, progY + 3); rlVertex2f(progX, progY + 3);
     rlEnd();
     Drawing::circulo(progX + progFill, progY, 5, 10, WHITE);
-    Drawing::texto12(progX, progY - 15, "0:00", CFloat(0.5f, 0.45f, 0.6f));
+    // Tiempo transcurrido calculado a partir del progreso y duracion
+    {
+        // Parsear duracion total
+        int totalSecs = 0;
+        size_t colonPos = cact.duracion.find(':');
+        if (colonPos != std::string::npos) {
+            totalSecs = std::stoi(cact.duracion.substr(0, colonPos)) * 60
+                      + std::stoi(cact.duracion.substr(colonPos + 1));
+        }
+        int elapsed = (int)(gs.progresoCancion * totalSecs);
+        int em = elapsed / 60, es = elapsed % 60;
+        std::string elapsedStr = std::to_string(em) + ":" + (es < 10 ? "0" : "") + std::to_string(es);
+        Drawing::texto12(progX, progY - 15, elapsedStr, CFloat(0.5f, 0.45f, 0.6f));
+    }
     Drawing::texto12(progX + progW - 25, progY - 15, cact.duracion, CFloat(0.5f, 0.45f, 0.6f));
 
-    // Transport controls
-    float ctrlY = 165, ctrlCX = 200 + ox, sp = 42;
+    // Transport controls — Backwards | Play/Pause | Forwards
+    float ctrlY = 165, ctrlCX = 200 + ox, sp = 50;
 
-    // Prev track
-    Drawing::botonControl(ctrlCX - sp * 2, ctrlY, 16, false, 0.6f, 0.5f, 0.8f);
-    rlBegin(RL_TRIANGLES);
-    rlColor4f(0.7f, 0.6f, 0.9f, 1);
-    rlVertex2f(ctrlCX - sp * 2 - 6, ctrlY);
-    rlVertex2f(ctrlCX - sp * 2 + 5, ctrlY + 7);
-    rlVertex2f(ctrlCX - sp * 2 + 5, ctrlY - 7);
-    rlEnd();
-
-    // Rewind
+    // Backwards (prev track) — left-pointing triangle
     Drawing::botonControl(ctrlCX - sp, ctrlY, 16, false, 0.6f, 0.5f, 0.8f);
     rlBegin(RL_TRIANGLES);
     rlColor4f(0.7f, 0.6f, 0.9f, 1);
-    rlVertex2f(ctrlCX - sp + 2, ctrlY); rlVertex2f(ctrlCX - sp - 6, ctrlY + 6); rlVertex2f(ctrlCX - sp - 6, ctrlY - 6);
-    rlVertex2f(ctrlCX - sp + 8, ctrlY); rlVertex2f(ctrlCX - sp, ctrlY + 6); rlVertex2f(ctrlCX - sp, ctrlY - 6);
+    rlVertex2f(ctrlCX - sp - 7, ctrlY);
+    rlVertex2f(ctrlCX - sp + 6, ctrlY + 8);
+    rlVertex2f(ctrlCX - sp + 6, ctrlY - 8);
     rlEnd();
 
-    // Play/Pause
+    // Play/Pause — center
     Drawing::botonControl(ctrlCX, ctrlY, 22, true, cact.r, cact.g, cact.b);
     if (gs.reproduciendo) {
         rlBegin(RL_QUADS);
@@ -303,31 +291,23 @@ void Screens::menuMusica(GameState& gs) {
         rlEnd();
     }
 
-    // Forward
+    // Forwards (next track) — right-pointing triangle
     Drawing::botonControl(ctrlCX + sp, ctrlY, 16, false, 0.6f, 0.5f, 0.8f);
     rlBegin(RL_TRIANGLES);
     rlColor4f(0.7f, 0.6f, 0.9f, 1);
-    rlVertex2f(ctrlCX + sp - 2, ctrlY); rlVertex2f(ctrlCX + sp + 6, ctrlY + 6); rlVertex2f(ctrlCX + sp + 6, ctrlY - 6);
-    rlVertex2f(ctrlCX + sp - 8, ctrlY); rlVertex2f(ctrlCX + sp, ctrlY + 6); rlVertex2f(ctrlCX + sp, ctrlY - 6);
-    rlEnd();
-
-    // Next track
-    Drawing::botonControl(ctrlCX + sp * 2, ctrlY, 16, false, 0.6f, 0.5f, 0.8f);
-    rlBegin(RL_TRIANGLES);
-    rlColor4f(0.7f, 0.6f, 0.9f, 1);
-    rlVertex2f(ctrlCX + sp * 2 + 6, ctrlY);
-    rlVertex2f(ctrlCX + sp * 2 - 5, ctrlY + 7);
-    rlVertex2f(ctrlCX + sp * 2 - 5, ctrlY - 7);
+    rlVertex2f(ctrlCX + sp + 7, ctrlY);
+    rlVertex2f(ctrlCX + sp - 6, ctrlY + 8);
+    rlVertex2f(ctrlCX + sp - 6, ctrlY - 8);
     rlEnd();
 
     // Repeat button
-    float repX = ctrlCX - sp * 3 + 8, repY = ctrlY;
+    float repX = ctrlCX - sp * 2, repY = ctrlY;
     Drawing::botonControl(repX, repY, 12, gs.repetir, 0.5f, 0.5f, 0.9f);
     Drawing::circuloLinea(repX, repY, 7, 20, CFloat(gs.repetir ? 0.8f : 0.45f, gs.repetir ? 0.8f : 0.45f, 1.0f));
     Drawing::texto12(repX - 8, repY - 20, "REP", CFloat(0.5f, 0.45f, 0.65f));
 
     // Random button
-    float rndX = ctrlCX + sp * 3 - 8, rndY = ctrlY;
+    float rndX = ctrlCX + sp * 2, rndY = ctrlY;
     Drawing::botonControl(rndX, rndY, 12, gs.aleatorio, 0.5f, 0.9f, 0.5f);
     rlBegin(RL_LINES);
     rlColor4f(0.45f, gs.aleatorio ? 0.9f : 0.45f, 0.45f, 1);
@@ -415,7 +395,8 @@ void Screens::menuMusica(GameState& gs) {
     }
     Drawing::texto12(vizX + 3, vizY + 2, "ESPECTRO", CFloat(0.3f, 0.2f, 0.5f));
 
-    Drawing::instrucciones(200 + ox, 120, "W/S: Cancion    ESPACIO: Play/Pause    R: Repetir    X: Aleatorio    A/D: Vol    ESC: Volver", t);
+    Drawing::instrucciones(200 + ox, 120, "Click: Seleccionar    ESC: Volver", t);
+    Drawing::botonVolver(60 + ox, 565, t);
 }
 
 void Screens::enciclopedia(GameState& gs) {
@@ -550,7 +531,8 @@ void Screens::enciclopedia(GameState& gs) {
     Drawing::texto24(-75, -8, "ENCICLOPEDIA", CFloat(0.75f, 0.6f, 0.15f));
     rlPopMatrix();
 
-    Drawing::instrucciones(245 + ox, 50, "A/D o clic: Cambiar pagina    ESC: Volver", t);
+    Drawing::instrucciones(245 + ox, 50, "Click: Cambiar pagina    ESC: Volver", t);
+    Drawing::botonVolver(60 + ox, 565, t);
 }
 
 void Screens::espadaSlash(GameState& gs) {

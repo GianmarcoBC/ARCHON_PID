@@ -45,6 +45,9 @@ public:
     // Vuelve a la musica del menu (se llama al salir del combate)
     void ResetToMenu();
 
+    // Detiene toda la musica de combate sin reproducir nada nuevo
+    void Stop();
+
     // Destructor: libera todos los streams de musica
     ~Rolitas() {
         UnloadMusicStream(musica_menu);

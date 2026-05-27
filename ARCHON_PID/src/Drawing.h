@@ -29,4 +29,8 @@ public:
     static void spriteOrco(float x, float y, float esc, float tiempo);
     static void spriteNigromante(float x, float y, float esc, float tiempo);
     static void dibujarSprite(int idx, float x, float y, float esc, float tiempo);
+    static void simboloLuz(float x, float y, float esc, float tiempo);
+    static void simboloOscuridad(float x, float y, float esc, float tiempo);
+    // Back arrow button — draws arrow + "VOLVER" label, returns true if mouse is hovering over it
+    static bool botonVolver(float x, float y, float tiempo);
 };

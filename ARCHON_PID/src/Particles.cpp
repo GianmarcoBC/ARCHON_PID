@@ -53,9 +53,23 @@ void Particles::init(GameState& gs) {
 }
 
 void Particles::update(GameState& gs) {
+    // Mouse position in virtual 800x600 Y-up coords
+    float mxv = (float)GetMouseX() * 800.f / GetScreenWidth();
+    float myv = 600.f - (float)GetMouseY() * 600.f / GetScreenHeight();
+
     for (auto& p : gs.particulas) {
         p.angulo += p.velocidadAngular;
         if (p.angulo > 2 * M_PI) p.angulo -= 2.0f * M_PI;
+        // Push stars away from mouse
+        float px = p.x + cosf(p.angulo) * p.radio;
+        float py = p.y + sinf(p.angulo) * p.radio;
+        float dx = px - mxv, dy = py - myv;
+        float dist2 = dx*dx + dy*dy;
+        if (dist2 < 3600.f && dist2 > 1.f) { // radius ~60px
+            float f = 0.8f / sqrtf(dist2);
+            p.x += dx * f;
+            p.y += dy * f;
+        }
     }
 
     if (gs.controlesOpciones[3].valor) {
@@ -67,6 +81,10 @@ void Particles::update(GameState& gs) {
             }
             p.y += p.vy * 0.8f;
             p.x += sinf(gs.tiempo * 0.01f + p.x * 0.05f) * 0.3f;
+            // Mouse repels fire particles
+            float dx = p.x - mxv, dy = p.y - myv;
+            float d2 = dx*dx + dy*dy;
+            if (d2 < 2500.f && d2 > 1.f) { float f = 0.5f/sqrtf(d2); p.x += dx*f; p.y += dy*f; }
         }
         for (auto& p : gs.particulasTeatro) {
             p.vida += 0.4f; p.x += p.vx; p.y += p.vy;
@@ -76,6 +94,10 @@ void Particles::update(GameState& gs) {
                 p.vy = ((rand() % 100) - 50) * 0.005f - 0.05f;
                 p.vida = 0; p.vidaMax = 150.0f + rand() % 150;
             }
+            // Mouse attracts theater sparks slightly
+            float dx = mxv - p.x, dy = myv - p.y;
+            float d2 = dx*dx + dy*dy;
+            if (d2 < 4900.f && d2 > 1.f) { float f = 0.15f/sqrtf(d2); p.vx += dx*f*0.01f; p.vy += dy*f*0.01f; }
         }
         for (auto& p : gs.particulasPolvo) {
             p.vida += 0.3f;
@@ -87,6 +109,10 @@ void Particles::update(GameState& gs) {
                 p.vy = 0.03f + rand() % 100 * 0.001f;
                 p.vida = 0; p.vidaMax = 120.0f + rand() % 200;
             }
+            // Mouse swirls dust
+            float dx = p.x - mxv, dy = p.y - myv;
+            float d2 = dx*dx + dy*dy;
+            if (d2 < 3600.f && d2 > 1.f) { float f = 0.3f/sqrtf(d2); p.vx += dy*f*0.01f; p.vy -= dx*f*0.01f; }
         }
         for (auto& p : gs.particulasNotas) {
             p.vida += 0.3f; p.x += p.vx; p.y += p.vy;

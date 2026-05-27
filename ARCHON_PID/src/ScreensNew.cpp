@@ -196,29 +196,27 @@ void ModoJuegoScreen::Draw(GameState& gs) {
         }
         rlPopMatrix();
     }
-    Drawing::instrucciones(235+ox,50,"W/S: Seleccionar    ENTER: Confirmar    ESC: Volver",t);
+    Drawing::instrucciones(235+ox,50,"Click: Seleccionar    ESC: Volver",t);
+    Drawing::botonVolver(60+ox, 565, t);
 }
 
 void ModoJuegoScreen::HandleInput(GameState& gs) {
-    if(IsKeyPressed(KEY_W)||IsKeyPressed(KEY_UP))
-        { if(--gs.opcionModoSel<0) gs.opcionModoSel=1; }
-    if(IsKeyPressed(KEY_S)||IsKeyPressed(KEY_DOWN))
-        { if(++gs.opcionModoSel>1) gs.opcionModoSel=0; }
-    if(IsKeyPressed(KEY_ENTER)) {
-        gs.modoActual = (gs.opcionModoSel==0) ? MODO_COMBATE : MODO_COMPLETO;
-        transicion(gs, SELECCION_MODO);
-    }
     if(IsKeyPressed(KEY_ESCAPE)) transicion(gs, MENU);
 }
 
 void ModoJuegoScreen::HandleMouse(GameState& gs) {
     float mxv=(float)GetMouseX()*800.f/GetScreenWidth(), myv=600.f-(float)GetMouseY()*600.f/GetScreenHeight();
+    bool clicked=IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+    // Back button
+    if(clicked && mxv>40&&mxv<135&&myv>543&&myv<589){ transicion(gs,MENU); return; }
     for(int i=0;i<2;i++){
         float oy=430-i*100.f;
         if(mxv>145&&mxv<695&&myv>oy-38&&myv<oy+38){
             gs.opcionModoSel=i;
-            gs.modoActual=(i==0)?MODO_COMBATE:MODO_COMPLETO;
-            transicion(gs,SELECCION_MODO);
+            if(clicked){
+                gs.modoActual=(i==0)?MODO_COMBATE:MODO_COMPLETO;
+                transicion(gs,SELECCION_MODO);
+            }
         }
     }
 }
@@ -279,31 +277,26 @@ void SeleccionModoScreen::Draw(GameState& gs) {
         }
         rlPopMatrix();
     }
-    Drawing::instrucciones(235+ox,50,"W/S: Seleccionar    ENTER: Confirmar    ESC: Volver",t);
+    Drawing::instrucciones(235+ox,50,"Click: Seleccionar    ESC: Volver",t);
+    Drawing::botonVolver(60+ox, 565, t);
 }
 
 void SeleccionModoScreen::HandleInput(GameState& gs) {
-    if(IsKeyPressed(KEY_W)||IsKeyPressed(KEY_UP))
-        { if(--gs.opcionSelModoSel<0) gs.opcionSelModoSel=1; }
-    if(IsKeyPressed(KEY_S)||IsKeyPressed(KEY_DOWN))
-        { if(++gs.opcionSelModoSel>1) gs.opcionSelModoSel=0; }
-    if(IsKeyPressed(KEY_ENTER)){
-        if(gs.modoActual==MODO_COMPLETO)
-            transicion(gs, CONFIG_JUEGO_COMPLETO);
-        else
-            transicion(gs, CUCHAU_COMBATE);
-    }
     if(IsKeyPressed(KEY_ESCAPE)) transicion(gs, MODO_JUEGO);
 }
 
 void SeleccionModoScreen::HandleMouse(GameState& gs) {
     float mxv=(float)GetMouseX()*800.f/GetScreenWidth(),myv=600.f-(float)GetMouseY()*600.f/GetScreenHeight();
+    bool clicked=IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+    if(clicked && mxv>40&&mxv<135&&myv>543&&myv<589){ transicion(gs,MODO_JUEGO); return; }
     for(int i=0;i<2;i++){
         float oy=390-i*110.f;
         if(mxv>145&&mxv<695&&myv>oy-35&&myv<oy+35){
             gs.opcionSelModoSel=i;
-            if(gs.modoActual==MODO_COMPLETO) transicion(gs,CONFIG_JUEGO_COMPLETO);
-            else transicion(gs,CUCHAU_COMBATE);
+            if(clicked){
+                if(gs.modoActual==MODO_COMPLETO) transicion(gs,CONFIG_JUEGO_COMPLETO);
+                else transicion(gs,SELECCION_EQUIPO);
+            }
         }
     }
 }
@@ -375,10 +368,10 @@ void ConfigJuegoCompletoScreen::drawPanelDificultad(GameState& gs, float ox) {
         Drawing::texto12(panX+20,panY+panH/2,"Solo para modo IA.",CFloat(0.4f,0.35f,0.3f));
         return;
     }
-    float cols[4][3]={{0.3f,0.8f,0.3f},{0.8f,0.8f,0.2f},{0.9f,0.4f,0.1f},{0.9f,0.1f,0.2f}};
-    const char* noms[4]={"FACIL","NORMAL","DIFICIL","MAESTRO"};
-    for(int i=0;i<4;i++){
-        float by=panY+panH-72-i*62.f;
+    float cols[3][3]={{0.3f,0.8f,0.3f},{0.8f,0.8f,0.2f},{0.9f,0.2f,0.15f}};
+    const char* noms[3]={"PLATERO","MH","SANSEGUNDO"};
+    for(int i=0;i<3;i++){
+        float by=panY+panH-72-i*82.f;
         bool sel=(i==gs.opcionDifiSel),foco=(gs.configJCFoco==1);
         rlBegin(RL_QUADS);
         rlColor4f(cols[i][0]*(sel?0.18f:0.06f),
@@ -422,41 +415,30 @@ void ConfigJuegoCompletoScreen::Draw(GameState& gs) {
     Drawing::texto12(300+ox,120, focoTxt, CFloat(0.7f,0.6f,0.2f));
     // Botón confirmar
     drawPanel(280+ox,58,240,36, 0.7f,0.1f,0.05f, 0.12f,0.04f,0.02f);
-    Drawing::texto18(295+ox,64,"CONFIRMAR  [ENTER]", CFloat(1,0.9f,0.5f));
-    Drawing::instrucciones(100+ox,40,"A/D: Panel    W/S: Seleccionar    ENTER: Confirmar    ESC: Volver",t);
+    Drawing::texto18(295+ox,64,"CONFIRMAR", CFloat(1,0.9f,0.5f));
+    Drawing::instrucciones(100+ox,40,"Click: Seleccionar    ESC: Volver",t);
+    Drawing::botonVolver(60+ox, 565, t);
 }
 
 void ConfigJuegoCompletoScreen::HandleInput(GameState& gs) {
-    bool esIA=(gs.opcionSelModoSel==1);
-    if(IsKeyPressed(KEY_A)||IsKeyPressed(KEY_LEFT))  { if(esIA) gs.configJCFoco=0; }
-    if(IsKeyPressed(KEY_D)||IsKeyPressed(KEY_RIGHT)) { if(esIA) gs.configJCFoco=1; }
-    if(IsKeyPressed(KEY_W)||IsKeyPressed(KEY_UP)){
-        if(gs.configJCFoco==0){ if(--gs.opcionBandoSel<0) gs.opcionBandoSel=2; }
-        else if(esIA){ if(--gs.opcionDifiSel<0) gs.opcionDifiSel=3; }
-    }
-    if(IsKeyPressed(KEY_S)||IsKeyPressed(KEY_DOWN)){
-        if(gs.configJCFoco==0){ if(++gs.opcionBandoSel>2) gs.opcionBandoSel=0; }
-        else if(esIA){ if(++gs.opcionDifiSel>3) gs.opcionDifiSel=0; }
-    }
-    if(IsKeyPressed(KEY_ENTER)){
-        gs.bandoSel=(Bando)(gs.opcionBandoSel+1);
-        gs.dificultadSel=(Dificultad)gs.opcionDifiSel;
-        transicion(gs, gs.opcionSelModoSel==0?JUGAR_PVP:JUGAR_IA);
-    }
     if(IsKeyPressed(KEY_ESCAPE)) transicion(gs,SELECCION_MODO);
 }
 
 void ConfigJuegoCompletoScreen::HandleMouse(GameState& gs) {
     float mxv=(float)GetMouseX()*800.f/GetScreenWidth(),myv=600.f-(float)GetMouseY()*600.f/GetScreenHeight(),ox=gs.configJCOffset;
+    bool clicked=IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+    if(clicked && mxv>40&&mxv<135&&myv>543&&myv<589){ transicion(gs,SELECCION_MODO); return; }
+    // Hover: update focus and selection
     if(mxv>60+ox&&mxv<360+ox&&myv>110&&myv<440){
         gs.configJCFoco=0;
         for(int i=0;i<3;i++){float by=440-80-i*82.f;if(myv>by-28&&myv<by+28) gs.opcionBandoSel=i;}
     }
     if(mxv>440+ox&&mxv<740+ox&&myv>110&&myv<440){
         gs.configJCFoco=1;
-        for(int i=0;i<4;i++){float by=440-72-i*62.f;if(myv>by-20&&myv<by+20) gs.opcionDifiSel=i;}
+        for(int i=0;i<3;i++){float by=440-72-i*82.f;if(myv>by-20&&myv<by+20) gs.opcionDifiSel=i;}
     }
-    if(mxv>280+ox&&mxv<520+ox&&myv>58&&myv<94){
+    // Click: confirm button
+    if(clicked && mxv>280+ox&&mxv<520+ox&&myv>58&&myv<94){
         gs.bandoSel=(Bando)(gs.opcionBandoSel+1);
         gs.dificultadSel=(Dificultad)gs.opcionDifiSel;
         transicion(gs,gs.opcionSelModoSel==0?JUGAR_PVP:JUGAR_IA);
@@ -498,10 +480,11 @@ void SeleccionEquipoScreen::drawTarjetaEquipo(GameState& gs, int idx,
         0.05f+eq.colorR*0.04f, 0.04f+eq.colorG*0.03f, 0.04f+eq.colorB*0.05f,
         0.92f);
 
-    // Los dos sprites del equipo flotando
+    // Simbolo del equipo (sol para Luz, craneo para Oscuridad)
     float fl = activo ? sinf(t*0.012f)*5 : 0;
-    Drawing::dibujarSprite(eq.sprite1, cx-30, cy+20+fl,   0.9f, t);
-    Drawing::dibujarSprite(eq.sprite2, cx+30, cy+20+fl*0.8f, 0.9f, t);
+    float sEsc = activo ? 1.2f + sinf(t*0.008f)*0.08f : 0.9f;
+    if(idx==0) Drawing::simboloLuz(cx, cy+20+fl, sEsc, t);
+    else       Drawing::simboloOscuridad(cx, cy+20+fl, sEsc, t);
 
     // Nombre del equipo
     Drawing::texto18(cx-(float)MeasureText(eq.nombre.c_str(),18)/2.f,
@@ -557,59 +540,55 @@ void SeleccionEquipoScreen::Draw(GameState& gs) {
 
     // Botón de avance
     bool esPvP=(gs.opcionSelModoSel==0);
-    std::string btnTxt = (esP1&&esPvP) ? "SIGUIENTE  [ENTER]" : "LUCHAR  [ENTER]";
+    std::string btnTxt = (esP1&&esPvP) ? "SIGUIENTE" : "LUCHAR";
     drawPanel(275+ox,56,250,36, 0.7f,0.1f,0.05f, 0.12f,0.04f,0.02f);
     Drawing::texto18(290+ox,62, btnTxt, CFloat(1,0.9f,0.5f));
 
     Drawing::instrucciones(125+ox,40,
-        "A/D: Elegir equipo    ENTER: Confirmar    ESC: Volver", t);
+        "Click: Elegir equipo    ESC: Volver", t);
+    Drawing::botonVolver(60+ox, 565, t);
 }
 
 void SeleccionEquipoScreen::HandleInput(GameState& gs) {
-    bool esPvP=(gs.opcionSelModoSel==0);
-    // A/D cambia el equipo del jugador que está eligiendo
-    auto moverSel = [&](int dir){
-        if(gs.seleccionandoJ1){
-            gs.equipoSel1=(gs.equipoSel1+dir+2)%2;
-        } else {
-            gs.equipoSel2=(gs.equipoSel2+dir+2)%2;
-        }
-    };
-    if(IsKeyPressed(KEY_A)||IsKeyPressed(KEY_LEFT))  moverSel(-1);
-    if(IsKeyPressed(KEY_D)||IsKeyPressed(KEY_RIGHT)) moverSel(1);
-
-    if(IsKeyPressed(KEY_ENTER)){
-        if(gs.seleccionandoJ1 && esPvP){
-            gs.seleccionandoJ1=false;  // ahora elige J2
-        } else {
-            if(gs.opcionSelModoSel==0) transicion(gs,JUGAR_PVP);
-            else                        transicion(gs,CONFIG_DIFICULTAD);
-        }
-    }
     if(IsKeyPressed(KEY_ESCAPE)){
-        if(!gs.seleccionandoJ1) gs.seleccionandoJ1=true;  // J1 vuelve a elegir
+        if(!gs.seleccionandoJ1) gs.seleccionandoJ1=true;
         else transicion(gs,SELECCION_MODO);
     }
 }
 
 void SeleccionEquipoScreen::HandleMouse(GameState& gs) {
-    if(!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) return;
     float mxv=(float)GetMouseX()*800.f/GetScreenWidth(),myv=600.f-(float)GetMouseY()*600.f/GetScreenHeight(),ox=gs.selEquipoOffset;
+    bool clicked=IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+    if(clicked && mxv>40&&mxv<135&&myv>543&&myv<589){
+        if(!gs.seleccionandoJ1) gs.seleccionandoJ1=true;
+        else transicion(gs,SELECCION_MODO);
+        return;
+    }
     float cx1=220+ox, cx2=580+ox, cy=285, hw=92, hh=135;
-    // Clic en tarjeta izquierda (equipo 0)
+    // Hover: highlight team card under mouse
     if(mxv>cx1-hw&&mxv<cx1+hw&&myv>cy-hh&&myv<cy+hh){
         if(gs.seleccionandoJ1) gs.equipoSel1=0; else gs.equipoSel2=0;
     }
-    // Clic en tarjeta derecha (equipo 1)
     if(mxv>cx2-hw&&mxv<cx2+hw&&myv>cy-hh&&myv<cy+hh){
         if(gs.seleccionandoJ1) gs.equipoSel1=1; else gs.equipoSel2=1;
     }
-    // Botón confirmar
-    if(mxv>275+ox&&mxv<525+ox&&myv>56&&myv<92){
+    if(!clicked) return;
+    // Click on a card or button: select + confirm
+    auto confirmar = [&](){
         bool esPvP=(gs.opcionSelModoSel==0);
-        if(gs.seleccionandoJ1&&esPvP){ gs.seleccionandoJ1=false; }
-        else{ if(gs.opcionSelModoSel==0) transicion(gs,JUGAR_PVP); else transicion(gs,CONFIG_DIFICULTAD); }
-    }
+        if(gs.seleccionandoJ1&&esPvP){ gs.seleccionandoJ1=false; return; }
+        if(!esPvP) gs.equipoSel2 = 1 - gs.equipoSel1;
+        if(gs.modoActual==MODO_COMBATE){
+            if(esPvP) transicion(gs,CUCHAU_COMBATE);
+            else transicion(gs,CONFIG_DIFICULTAD);
+        } else {
+            if(esPvP) transicion(gs,JUGAR_PVP);
+            else transicion(gs,CONFIG_DIFICULTAD);
+        }
+    };
+    if(mxv>cx1-hw&&mxv<cx1+hw&&myv>cy-hh&&myv<cy+hh) confirmar();
+    if(mxv>cx2-hw&&mxv<cx2+hw&&myv>cy-hh&&myv<cy+hh) confirmar();
+    if(mxv>275+ox&&mxv<525+ox&&myv>56&&myv<92) confirmar();
 }
 
 // ============================================================
@@ -636,14 +615,13 @@ void ConfigDificultadScreen::Draw(GameState& gs) {
         Drawing::texto12(390+ox,452,"IA: "+e2.nombre,         CFloat(0.5f,0.6f,1.f));
     }
 
-    float cols[4][3]={{0.3f,0.8f,0.3f},{0.8f,0.8f,0.2f},{0.9f,0.4f,0.1f},{0.9f,0.1f,0.2f}};
-    const char* noms[4]={"FACIL","NORMAL","DIFICIL","MAESTRO"};
-    const char* descs[4]={"Comete errores con frecuencia.",
-                           "Un reto equilibrado.",
-                           "Planifica con antelacion.",
-                           "Sin misericordia. Solo para expertos."};
-    for(int i=0;i<4;i++){
-        float y=430-i*70.f;
+    float cols[3][3]={{0.3f,0.8f,0.3f},{0.8f,0.8f,0.2f},{0.9f,0.2f,0.15f}};
+    const char* noms[3]={"PLATERO","MH","SANSEGUNDO"};
+    const char* descs[3]={"IA facil. Comete errores con frecuencia.",
+                           "IA defensiva. Un reto equilibrado.",
+                           "IA agresiva. Sin misericordia."};
+    for(int i=0;i<3;i++){
+        float y=410-i*85.f;
         bool sel=(i==gs.opcionDifiCombateSel);
         rlBegin(RL_QUADS);
         rlColor4f(cols[i][0]*(sel?0.18f:0.06f),
@@ -673,31 +651,37 @@ void ConfigDificultadScreen::Draw(GameState& gs) {
         if(sel) Drawing::texto12(270+ox,y-20,descs[i],CFloat(0.8f,0.8f,0.85f));
     }
     drawPanel(280+ox,141,240,36, 0.7f,0.1f,0.05f, 0.12f,0.04f,0.02f);
-    Drawing::texto18(295+ox,147,"LUCHAR  [ENTER]",CFloat(1,0.9f,0.5f));
-    Drawing::instrucciones(175+ox,50,"W/S: Dificultad    ENTER: Comenzar    ESC: Volver",t);
+    Drawing::texto18(295+ox,147,"LUCHAR",CFloat(1,0.9f,0.5f));
+    Drawing::instrucciones(175+ox,50,"Click: Dificultad    ESC: Volver",t);
+    Drawing::botonVolver(60+ox, 565, t);
 }
 
 void ConfigDificultadScreen::HandleInput(GameState& gs) {
-    if(IsKeyPressed(KEY_W)||IsKeyPressed(KEY_UP))
-        { if(--gs.opcionDifiCombateSel<0) gs.opcionDifiCombateSel=3; }
-    if(IsKeyPressed(KEY_S)||IsKeyPressed(KEY_DOWN))
-        { if(++gs.opcionDifiCombateSel>3) gs.opcionDifiCombateSel=0; }
-    if(IsKeyPressed(KEY_ENTER)){
-        gs.dificultadSel=(Dificultad)gs.opcionDifiCombateSel;
-        transicion(gs,JUGAR_IA);
-    }
     if(IsKeyPressed(KEY_ESCAPE)) transicion(gs,SELECCION_EQUIPO);
 }
 
 void ConfigDificultadScreen::HandleMouse(GameState& gs) {
     float mxv=(float)GetMouseX()*800.f/GetScreenWidth(),myv=600.f-(float)GetMouseY()*600.f/GetScreenHeight(),ox=gs.configDifiOffset;
-    for(int i=0;i<4;i++){
-        float y=430-i*70.f;
-        if(mxv>170+ox&&mxv<630+ox&&myv>y-24&&myv<y+24) gs.opcionDifiCombateSel=i;
+    bool clicked=IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+    if(clicked && mxv>40&&mxv<135&&myv>543&&myv<589){ transicion(gs,SELECCION_EQUIPO); return; }
+    // Hover: highlight difficulty
+    for(int i=0;i<3;i++){
+        float y=410-i*85.f;
+        if(mxv>170+ox&&mxv<630+ox&&myv>y-24&&myv<y+24){
+            gs.opcionDifiCombateSel=i;
+            // Click on a difficulty row: select + confirm
+            if(clicked){
+                gs.dificultadSel=(Dificultad)i;
+                if(gs.modoActual==MODO_COMBATE) transicion(gs,CUCHAU_COMBATE);
+                else transicion(gs,JUGAR_IA);
+            }
+        }
     }
-    if(mxv>280+ox&&mxv<520+ox&&myv>141&&myv<177){
+    // Click: confirm button
+    if(clicked && mxv>280+ox&&mxv<520+ox&&myv>141&&myv<177){
         gs.dificultadSel=(Dificultad)gs.opcionDifiCombateSel;
-        transicion(gs,JUGAR_IA);
+        if(gs.modoActual==MODO_COMBATE) transicion(gs,CUCHAU_COMBATE);
+        else transicion(gs,JUGAR_IA);
     }
 }
 
@@ -837,61 +821,27 @@ void CargarPartidaScreen::Draw(GameState& gs) {
 
     // Botones inferiores según sección activa
     drawPanel(65 + ox, 96, 180, 28, 0.7f, 0.1f, 0.05f, 0.12f, 0.04f, 0.02f);
-    Drawing::texto12(77 + ox, 103, "CARGAR  [ENTER]", CFloat(1, 0.9f, 0.5f));
+    Drawing::texto12(77 + ox, 103, "CARGAR", CFloat(1, 0.9f, 0.5f));
     drawPanel(555 + ox, 96, 160, 28, 0.35f, 0.1f, 0.1f, 0.1f, 0.04f, 0.04f);
-    Drawing::texto12(565 + ox, 103, "BORRAR  [SUPR]", CFloat(0.85f, 0.5f, 0.5f));
+    Drawing::texto12(565 + ox, 103, "BORRAR", CFloat(0.85f, 0.5f, 0.5f));
 
     Drawing::instrucciones(100 + ox, 58,
-        "W/S: Navegar    TAB: Cambiar seccion    ENTER: Cargar    DEL: Borrar    ESC: Volver", t);
+        "Click: Seleccionar    ESC: Volver", t);
+    Drawing::botonVolver(60+ox, 565, t);
 }
 
 void CargarPartidaScreen::HandleInput(GameState& gs) {
-    if (IsKeyPressed(KEY_TAB))
-        seccionActiva = 1 - seccionActiva;
-
-    if (seccionActiva == 0) {
-        int n = (int)gs.partidas.size();
-        if (n > 0) {
-            if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP))
-                gs.opcionCargaSel = (gs.opcionCargaSel - 1 + n) % n;
-            if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN))
-                gs.opcionCargaSel = (gs.opcionCargaSel + 1) % n;
-            if (IsKeyPressed(KEY_ENTER)) {
-                SaveSystem::restaurar(gs, gs.opcionCargaSel);
-                transicion(gs, gs.modoActual == MODO_COMBATE ? CUCHAU_COMBATE : SELECCION_MODO);
-            }
-            if (IsKeyPressed(KEY_DELETE)) {
-                SaveSystem::borrar(gs, gs.opcionCargaSel);
-                if (gs.opcionCargaSel >= n - 1)
-                    gs.opcionCargaSel = std::max(0, n - 2);
-            }
-        }
-    }
-    else {
-        if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP))
-            gs.opcionSlotSel = (gs.opcionSlotSel - 1 + 5) % 5;
-        if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN))
-            gs.opcionSlotSel = (gs.opcionSlotSel + 1) % 5;
-        if (IsKeyPressed(KEY_ENTER) && slots[gs.opcionSlotSel].valida) {
-            SaveSystem::pendiente = slots[gs.opcionSlotSel];
-            transicion(gs, CUCHAU_COMBATE);
-        }
-        if (IsKeyPressed(KEY_DELETE) && slots[gs.opcionSlotSel].valida) {
-            SaveSystem::BorrarCombate(gs.opcionSlotSel);
-            slots = SaveSystem::ObtenerSlots();
-        }
-    }
-
     if (IsKeyPressed(KEY_ESCAPE)) transicion(gs, MENU);
 }
 
 void CargarPartidaScreen::HandleMouse(GameState& gs) {
-    if (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) return;
     float mxv = (float)GetMouseX() * 800.f / GetScreenWidth();
     float myv = 600.f - (float)GetMouseY() * 600.f / GetScreenHeight();
     float ox = gs.cargaOffset;
+    bool clicked = IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+    if(clicked && mxv>40&&mxv<135&&myv>543&&myv<589){ transicion(gs,MENU); return; }
 
-    // Columna izquierda — partidas
+    // Hover: highlight items under mouse
     float startY = 472, step = 84;
     for (int i = 0;i < (int)gs.partidas.size();i++) {
         float y = startY - i * step;
@@ -900,7 +850,6 @@ void CargarPartidaScreen::HandleMouse(GameState& gs) {
             seccionActiva = 0; gs.opcionCargaSel = i;
         }
     }
-    // Columna derecha — slots
     float stepS = 76;
     for (int i = 0;i < 5;i++) {
         float y = startY - i * stepS;
@@ -909,7 +858,9 @@ void CargarPartidaScreen::HandleMouse(GameState& gs) {
             seccionActiva = 1; gs.opcionSlotSel = i;
         }
     }
-    // Botón cargar
+
+    if (!clicked) return;
+    // Click: buttons
     if (mxv > 65 + ox && mxv < 245 + ox && myv > 96 && myv < 124){
         if (seccionActiva == 0 && !gs.partidas.empty()) {
             SaveSystem::restaurar(gs, gs.opcionCargaSel);
@@ -920,7 +871,6 @@ void CargarPartidaScreen::HandleMouse(GameState& gs) {
             transicion(gs, CUCHAU_COMBATE);
         }
     }
-    // Botón borrar
     if (mxv > 555 + ox && mxv < 715 + ox && myv > 96 && myv < 124){
         if (seccionActiva == 0 && !gs.partidas.empty()) {
             SaveSystem::borrar(gs, gs.opcionCargaSel);
@@ -1020,50 +970,40 @@ void PausaScreen::Draw(GameState& gs) {
                 Drawing::iconoEspada(panX+70,y,CFloat(0.6f,0.6f,0.6f));
         }
     }
-    Drawing::instrucciones(230,panY-18,"W/S: Navegar    ENTER: Confirmar    ESC: Continuar",t);
+    Drawing::instrucciones(230,panY-18,"Click: Seleccionar    ESC: Continuar",t);
+    Drawing::botonVolver(60, 565, t);
 }
 
 void PausaScreen::HandleInput(GameState& gs) {
-    if(IsKeyPressed(KEY_W)||IsKeyPressed(KEY_UP))
-        { if(--gs.opcionPausaSel<0) gs.opcionPausaSel=(int)gs.opcionesPausa.size()-1; }
-    if(IsKeyPressed(KEY_S)||IsKeyPressed(KEY_DOWN))
-        { if(++gs.opcionPausaSel>=(int)gs.opcionesPausa.size()) gs.opcionPausaSel=0; }
-
-    if(IsKeyPressed(KEY_ENTER)){
-        const std::string& opt=gs.opcionesPausa[gs.opcionPausaSel];
-        if(opt=="CONTINUAR"){
-            // Volver al estado de juego sin slash
-            gs.estadoActual=gs.estadoAnterior;
-        }
-        else if(opt=="GUARDAR PARTIDA"){
-            // Guardar con nombre automático basado en la fecha
-            if(SaveSystem::guardar(gs, gs.nombreGuardado)){
-                SaveSystem::cargarTodas(gs);  // refrescar la lista en memoria
-                gs.guardadoOk    = true;
-                gs.guardadoTimer = 2.f;
-            }
-        }
-        else if(opt=="OPCIONES"){
-            gs.estadoActual=gs.estadoAnterior;
-            transicion(gs,OPCIONES);
-        }
-        else if(opt=="MENU PRINCIPAL"){
-            transicion(gs,MENU);
-        }
-    }
     // ESC = continuar
     if(IsKeyPressed(KEY_ESCAPE)) gs.estadoActual=gs.estadoAnterior;
 }
 
 void PausaScreen::HandleMouse(GameState& gs) {
-    if(!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) return;
     float mxv=(float)GetMouseX()*800.f/GetScreenWidth(), myv=600.f-(float)GetMouseY()*600.f/GetScreenHeight();
+    bool clicked=IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+    // Back button = continuar
+    if(clicked && mxv>40&&mxv<135&&myv>543&&myv<589){ gs.estadoActual=gs.estadoAnterior; return; }
     float oy=gs.pausaOffset, panY=110-oy, panH=360;
     for(int i=0;i<(int)gs.opcionesPausa.size();i++){
         float y=panY+panH-96-i*68.f;
         if(mxv>210&&mxv<590&&myv>y-22&&myv<y+22){
             gs.opcionPausaSel=i;
-            // Doble clic o simplemente mover el foco; el ENTER lo ejecuta
+            if(clicked){
+                const std::string& opt=gs.opcionesPausa[i];
+                if(opt=="CONTINUAR") gs.estadoActual=gs.estadoAnterior;
+                else if(opt=="GUARDAR PARTIDA"){
+                    if(SaveSystem::guardar(gs, gs.nombreGuardado)){
+                        SaveSystem::cargarTodas(gs);
+                        gs.guardadoOk=true; gs.guardadoTimer=2.f;
+                    }
+                }
+                else if(opt=="OPCIONES"){
+                    gs.estadoActual=gs.estadoAnterior;
+                    transicion(gs,OPCIONES);
+                }
+                else if(opt=="MENU PRINCIPAL") transicion(gs,MENU);
+            }
         }
     }
 }

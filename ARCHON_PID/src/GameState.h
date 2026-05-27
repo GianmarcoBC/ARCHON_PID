@@ -29,7 +29,7 @@ enum Estado {
 
 enum ModoJuego  { MODO_NINGUNO, MODO_COMBATE, MODO_COMPLETO };
 enum Bando      { BANDO_NINGUNO, BANDO_LUZ, BANDO_OSCURIDAD, BANDO_RANDOM };
-enum Dificultad { DIFI_FACIL, DIFI_NORMAL, DIFI_DIFICIL, DIFI_MAESTRO };
+enum Dificultad { DIFI_FACIL, DIFI_NORMAL, DIFI_DIFICIL };
 
 // Datos de un equipo (Luz / Oscuridad) para la pantalla de selección
 struct DatosEquipo {
@@ -53,7 +53,7 @@ struct PartidaGuardada {
 };
 
 struct OpcionControl { std::string nombre; int valor, minV, maxV; bool esBool; };
-struct Cancion        { std::string titulo, artista, duracion, contexto; float r,g,b; };
+struct Cancion        { std::string titulo, artista, duracion, contexto, archivo; float r,g,b; };
 struct DatosTropa {
     std::string nombre, bando, stat1, stat2, stat3;
     std::vector<std::string> descripcion;
@@ -100,7 +100,7 @@ struct GameState {
 
     // Menú principal — 4 opciones
     std::vector<std::string> opcionesMenu = {
-        "JUGAR", "CARGAR PARTIDA", "OPCIONES", "ENCICLOPEDIA", "SALIR"
+        "JUGAR", "CARGAR PARTIDA", "OPCIONES", "SALA DE ROLITAS", "ENCICLOPEDIA", "SALIR"
     };
     int opcionMenuSel = 0;
 
@@ -256,13 +256,16 @@ struct GameState {
             {"Idioma",              0, 0,  1, true },
         };
         canciones = {
-            {"Skill issue bro",     "Archon OST","4:12","Menu Principal",    0.6f,0.5f,0.9f},
-            {"Espabila Julian",     "Archon OST","3:47","Batalla PvP",       0.9f,0.2f,0.2f},
-            {"March of the Fallen", "Archon OST","5:03","Batalla vs IA",     0.3f,0.7f,0.4f},
-            {"Sacred Grounds",      "Archon OST","2:58","Victoria Luz",      0.9f,0.85f,0.3f},
-            {"The Abyss Calls",     "Archon OST","4:31","Victoria Oscuridad",0.5f,0.1f,0.8f},
-            {"Eternal Siege",       "Archon OST","6:15","Modo Clasico",      0.8f,0.4f,0.1f},
-            {"Lament of the Knight","Archon OST","3:22","Derrota",           0.4f,0.4f,0.6f},
+            {"Skill Issue Bro",          "Archon OST","---","Menu Principal",     "bin/Resources/AAAudio/Musica/Menugnomo.mp3",           0.6f,0.5f,0.9f},
+            {"Espabila Julian",          "Archon OST","---","Batalla Epica",      "bin/Resources/AAAudio/Musica/ageofwar.mp3",            0.9f,0.2f,0.2f},
+            {"The Peak",                 "Archon OST","---","Duelo Estrategico",  "bin/Resources/AAAudio/Musica/blackjack.mp3",           0.3f,0.7f,0.4f},
+            {"No Cap On God Bro",        "Archon OST","---","Creditos",           "bin/Resources/AAAudio/Musica/credits.mp3",             0.9f,0.85f,0.3f},
+            {"Bombardilo Coccodrillo",   "Archon OST","---","Victoria",           "bin/Resources/AAAudio/Musica/ifrith.mp3",              0.5f,0.1f,0.8f},
+            {"TIA Portal Contraataca",   "Archon OST","---","Tablero Inicio",     "bin/Resources/AAAudio/Musica/MusciaTablero Inicio.mp3",0.8f,0.4f,0.1f},
+            {"Oh Mi Dios",               "Archon OST","---","Tablero Final",      "bin/Resources/AAAudio/Musica/slimshady.mp3",           0.4f,0.4f,0.6f},
+            {"Santa Vaca",               "Archon OST","---","Batalla PvP",        "bin/Resources/AAAudio/Musica/MusicaBatalla1V1.mp3",    0.7f,0.3f,0.3f},
+            {"Clase Padre",              "Archon OST","---","MH vs Platero",      "bin/Resources/AAAudio/Musica/MusicaMagoMago.mp3",      0.4f,0.6f,0.9f},
+            {"Esto es Cine Senores",     "Archon OST","---","Peon vs Mago",       "bin/Resources/AAAudio/Musica/MusicaPeonMago.mp3",      0.6f,0.8f,0.4f},
         };
         for (int i = 0; i < NUM_BARRAS; i++) {
             barrasViz[i]   = 2.f + rand() % 8;

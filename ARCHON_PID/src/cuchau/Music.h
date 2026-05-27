@@ -9,7 +9,7 @@
 // ============================================================================
 
 // Musica del menu principal
-inline std::string_view MusicaMenu = "bin/Resources/AAAudio/Musica/slimshady.mp3";
+inline std::string_view MusicaMenu = "bin/Resources/AAAudio/Musica/Menugnomo.mp3";
 
 // Musica generica de batalla (1 vs 1 normal)
 inline std::string_view MusicaBatalla1V1 = "bin/Resources/AAAudio/Musica/MusicaBatalla1V1.mp3";

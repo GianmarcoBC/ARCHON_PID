@@ -64,3 +64,8 @@ void Rolitas::ResetToMenu()
     estado = EstadoMusica::Menu;
     PlayMusicStream(musica_menu);
 }
+
+void Rolitas::Stop()
+{
+    StopMusicStream(GetActual());
+}

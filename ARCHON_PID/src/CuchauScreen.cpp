@@ -1,32 +1,44 @@
 #include "CuchauScreen.h"
 
 int CuchauCombateScreen::UpdatePausa(float dt) {
+    int W = GetScreenWidth(), H = GetScreenHeight();
+    float mx = (float)GetMouseX(), my = (float)GetMouseY();
+    bool clicked = IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+    int panelW = 380, panelH = 310;
+    int px = W / 2 - panelW / 2;
+    int py = H / 2 - panelH / 2;
+
     // — Submenú de slots —
     if (pausa_submenu == 1 || pausa_submenu == 2) {
-        if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN))
-            pausa_slotCursor = (pausa_slotCursor + 1) % 5;
-        if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP))
-            pausa_slotCursor = (pausa_slotCursor - 1 + 5) % 5;
-        if (IsKeyPressed(KEY_ESCAPE)) { pausa_submenu = 0; return -1; }
-        if (IsKeyPressed(KEY_ENTER)) {
-            int accion = (pausa_submenu == 1) ? 1 : 2;
-            pausa_submenu = 0;
-            return accion; // devuelve 1=guardar o 2=cargar con pausa_slotCursor ya fijado
+        // Hover + click on slots
+        for (int i = 0; i < 5; i++) {
+            int bY = py + 70 + i * 44;
+            if (mx > px + 20 && mx < px + panelW - 20 && my > bY - 4 && my < bY + 30) {
+                pausa_slotCursor = i;
+                if (clicked) {
+                    int accion = (pausa_submenu == 1) ? 1 : 2;
+                    pausa_submenu = 0;
+                    return accion;
+                }
+            }
         }
+        if (IsKeyPressed(KEY_ESCAPE)) { pausa_submenu = 0; return -1; }
         return -1;
     }
 
-    // — Menú principal de pausa —
-    if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN))
-        pausa_cursor = (pausa_cursor + 1) % 4;
-    if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP))
-        pausa_cursor = (pausa_cursor - 1 + 4) % 4;
-    if (IsKeyPressed(KEY_ESCAPE)) return 0;
-    if (IsKeyPressed(KEY_ENTER)) {
-        if (pausa_cursor == 1) { pausa_submenu = 1; pausa_slotCursor = 0; return -1; } // Guardar → submenú
-        if (pausa_cursor == 2) { pausa_submenu = 2; pausa_slotCursor = 0; return -1; } // Cargar → submenú
-        return pausa_cursor; // 0=continuar, 3=volver menú
+    // — Menú principal de pausa — hover + click
+    for (int i = 0; i < 4; i++) {
+        int bY = py + 88 + i * 52;
+        if (mx > px + 20 && mx < px + panelW - 20 && my > bY - 4 && my < bY + 34) {
+            pausa_cursor = i;
+            if (clicked) {
+                if (pausa_cursor == 1) { pausa_submenu = 1; pausa_slotCursor = 0; return -1; }
+                if (pausa_cursor == 2) { pausa_submenu = 2; pausa_slotCursor = 0; return -1; }
+                return pausa_cursor;
+            }
+        }
     }
+    if (IsKeyPressed(KEY_ESCAPE)) return 0;
     return -1;
 }
 
@@ -92,8 +104,8 @@ void CuchauCombateScreen::DrawPausa()
             pausa_guardadoOK ? GREEN : RED);
     }
 
-    DrawText("W/S = navegar    ENTER = confirmar    ESC = continuar",
-        W / 2 - MeasureText("W/S = navegar    ENTER = confirmar    ESC = continuar", 14) / 2,
+    DrawText("Click = seleccionar    ESC = continuar",
+        W / 2 - MeasureText("Click = seleccionar    ESC = continuar", 14) / 2,
         H - 28, 14, DARKGRAY);
 }
 
@@ -118,8 +130,10 @@ void CuchauCombateScreen::OnEnter(GameState& gs)
     else       menu->Reset();
     if (gs.modoActual == MODO_COMBATE) {
         bool ia = (gs.opcionSelModoSel == 1);
-        int bando = (gs.equipoSel1 == 0) ? 0 : 1;  // equipoSel1: 0=claro, 1=oscuro
-        menu->SetModo(ia, bando);
+        int bando1 = gs.equipoSel1;  // 0=claro, 1=oscuro
+        int bando2 = gs.equipoSel2;
+        int difi = ia ? (int)gs.dificultadSel : 1;
+        menu->SetModo(ia, bando1, bando2, difi);
     }
 }
 
@@ -138,7 +152,6 @@ void CuchauCombateScreen::Draw(GameState& gs)
     switch (estado) {
     case 0: // Menu
         if (menu) menu->Draw();
-        if (menu) menu->HandleMouse();
         break;
 
     case 1: // Combate
@@ -177,6 +190,8 @@ void CuchauCombateScreen::Update(GameState& gs)
             menu = std::make_unique<Menu_Combate>();
             rolitas = std::make_unique<Rolitas>();
         }
+
+        if (menu) menu->HandleMouse();
 
         // ESC from character selection → back to ARCHON SELECCION_MODO
         if (menu->QuiereVolver()) {
@@ -221,8 +236,8 @@ void CuchauCombateScreen::Update(GameState& gs)
 
         if (pausa_timerMsg > 0.f) pausa_timerMsg -= dt;
 
-        // Victoria: ENTER vuelve al menu principal
-        if (combate->IsGameOver() && IsKeyPressed(KEY_ENTER)) {
+        // Victoria: ENTER o click vuelve al menu principal
+        if (combate->IsGameOver() && (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT))) {
             volverARCHON(gs, MENU);
             return;
         }
@@ -286,7 +301,7 @@ void CuchauCombateScreen::volverARCHON(GameState& gs, Estado destino)
     delete combate;
     combate = nullptr;
     if (menu) menu->Reset();
-    if (rolitas) rolitas->ResetToMenu();
+    if (rolitas) rolitas->Stop();
     estado = 0;
     gs.estadoAnterior = gs.estadoActual;
     gs.slashActivo = true;
