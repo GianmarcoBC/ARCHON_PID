@@ -209,13 +209,15 @@ void App::Update() {
 }
 
 void App::Draw() {
+    TraceLog(LOG_INFO, ">>> BeginDrawing");
     BeginDrawing();
     ClearBackground(BLACK);
 
     // Cuchau sets its own projection — skip ARCHON's 800x600 ortho
-    if (gs.estadoActual != CUCHAU_COMBATE)
+    if (gs.estadoActual != CUCHAU_COMBATE) {
         Drawing::setupProjection();
-
+    }
+    TraceLog(LOG_INFO, ">>> Dibujando estado %d", gs.estadoActual);
     switch (gs.estadoActual) {
         case MENU:         Screens::menuPrincipal(gs); break;
         case OPCIONES:     Screens::menuOpciones(gs);  break;
@@ -539,9 +541,9 @@ void App::Run() {
         Draw();
     }
 
-	screens.clear();  // Asegura destrucción de pantallas antes de cerrar audio y ventana
+//	screens.clear();  // Asegura destrucción de pantallas antes de cerrar audio y ventana
 
     if (musicaGlobalCargada) UnloadMusicStream(musicaGlobal);
     CloseAudioDevice();
-    CloseWindow();
+    //CloseWindow();
 }
