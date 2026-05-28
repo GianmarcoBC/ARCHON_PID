@@ -539,6 +539,8 @@ void App::Run() {
         Draw();
     }
 
+	screens.clear();  // Asegura destrucción de pantallas antes de cerrar audio y ventana
+
     if (musicaGlobalCargada) UnloadMusicStream(musicaGlobal);
     CloseAudioDevice();
     CloseWindow();
