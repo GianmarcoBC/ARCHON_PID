@@ -84,7 +84,7 @@ void Screens::menuPrincipal(GameState& gs) {
         if (i == 5) Drawing::iconoEspada(300, y, ic);    // Salir
         rlPopMatrix();
     }
-    Drawing::instrucciones(260, 50, "Click: Seleccionar", t);
+    Drawing::instrucciones(220, 50, "W/S: Navegar    ENTER: Confirmar    Raton: Seleccionar", t);
 }
 
 void Screens::menuOpciones(GameState& gs) {
@@ -147,18 +147,18 @@ void Screens::menuOpciones(GameState& gs) {
             rlVertex2f(115 + ox, y - 24); rlVertex2f(115 + ox, y + 16);
             rlEnd();
         }
-        Color tc = sel ? CFloat(1.0f, 0.9f, 0.5f) : CFloat(0.65f, 0.55f, 0.35f);
+        Color tc = sel ? CFloat(1.0f, 0.9f, 0.5f) : CFloat(0.82f, 0.72f, 0.52f);
         Drawing::texto18(130 + ox, y, op.nombre, tc);
 
         std::string valStr;
         if (op.esBool) valStr = (op.nombre == "Idioma") ? (op.valor == 0 ? "ES" : "EN") : (op.valor ? "ON" : "OFF");
         else valStr = std::to_string(op.valor);
-        Color vc = sel ? CFloat(1, 1, 0.4f) : CFloat(0.6f, 0.5f, 0.3f);
+        Color vc = sel ? CFloat(1, 1, 0.4f) : CFloat(0.85f, 0.75f, 0.45f);
         Drawing::texto18(638 + ox, y, valStr, vc);
         Drawing::barraSlider(320 + ox, y + 4, 300, op.valor, op.maxV, op.esBool);
         if (sel) Drawing::cursorAnimado(118 + ox, y + 4, t);
     }
-    Drawing::instrucciones(148 + ox, 163, "Click: Seleccionar y cambiar valor    ESC: Volver", t);
+    Drawing::instrucciones(148 + ox, 163, "W/S: Navegar    A/D: Cambiar valor    ESC: Volver", t);
     Drawing::botonVolver(60 + ox, 565, t);
 }
 
@@ -265,18 +265,32 @@ void Screens::menuMusica(GameState& gs) {
     // Transport controls — Backwards | Play/Pause | Forwards
     float ctrlY = 165, ctrlCX = 200 + ox, sp = 50;
 
-    // Backwards (prev track) — left-pointing triangle
-    Drawing::botonControl(ctrlCX - sp, ctrlY, 16, false, 0.6f, 0.5f, 0.8f);
-    rlBegin(RL_TRIANGLES);
-    rlColor4f(0.7f, 0.6f, 0.9f, 1);
-    rlVertex2f(ctrlCX - sp - 7, ctrlY);
-    rlVertex2f(ctrlCX - sp + 6, ctrlY + 8);
-    rlVertex2f(ctrlCX - sp + 6, ctrlY - 8);
-    rlEnd();
+    // ── Botón anterior (prev track) ──────────────────────────
+    {
+        float bx = ctrlCX - sp;
+        Drawing::botonControl(bx, ctrlY, 16, false, 0.6f, 0.5f, 0.8f);
+        // Barra vertical izquierda + triángulo apuntando a la izquierda
+        // Se dibuja aquí, fuera de cualquier condicional de reproducción
+        rlDrawRenderBatchActive();   // flush para que el círculo ya esté en GPU
+        rlBegin(RL_QUADS);
+        rlColor4f(0.75f, 0.65f, 0.95f, 1);
+        // Barra vertical
+        rlVertex2f(bx - 9, ctrlY - 8); rlVertex2f(bx - 6, ctrlY - 8);
+        rlVertex2f(bx - 6, ctrlY + 8); rlVertex2f(bx - 9, ctrlY + 8);
+        rlEnd();
+        rlBegin(RL_TRIANGLES);
+        rlColor4f(0.75f, 0.65f, 0.95f, 1);
+        rlVertex2f(bx - 5, ctrlY);
+        rlVertex2f(bx + 7, ctrlY + 9);
+        rlVertex2f(bx + 7, ctrlY - 9);
+        rlEnd();
+    }
 
-    // Play/Pause — center
+    // ── Play/Pause ────────────────────────────────────────────
     Drawing::botonControl(ctrlCX, ctrlY, 22, true, cact.r, cact.g, cact.b);
+    rlDrawRenderBatchActive();   // flush antes de dibujar el icono encima
     if (gs.reproduciendo) {
+        // Dos barras verticales (pausa)
         rlBegin(RL_QUADS);
         rlColor4f(cact.r, cact.g, cact.b, 1);
         rlVertex2f(ctrlCX - 8, ctrlY - 9); rlVertex2f(ctrlCX - 3, ctrlY - 9);
@@ -285,36 +299,93 @@ void Screens::menuMusica(GameState& gs) {
         rlVertex2f(ctrlCX + 8, ctrlY + 9); rlVertex2f(ctrlCX + 3, ctrlY + 9);
         rlEnd();
     } else {
+        // Triángulo play
         rlBegin(RL_TRIANGLES);
         rlColor4f(cact.r, cact.g, cact.b, 1);
-        rlVertex2f(ctrlCX - 6, ctrlY - 10); rlVertex2f(ctrlCX - 6, ctrlY + 10); rlVertex2f(ctrlCX + 10, ctrlY);
+        rlVertex2f(ctrlCX - 6, ctrlY - 10);
+        rlVertex2f(ctrlCX - 6, ctrlY + 10);
+        rlVertex2f(ctrlCX + 10, ctrlY);
         rlEnd();
     }
 
-    // Forwards (next track) — right-pointing triangle
-    Drawing::botonControl(ctrlCX + sp, ctrlY, 16, false, 0.6f, 0.5f, 0.8f);
-    rlBegin(RL_TRIANGLES);
-    rlColor4f(0.7f, 0.6f, 0.9f, 1);
-    rlVertex2f(ctrlCX + sp + 7, ctrlY);
-    rlVertex2f(ctrlCX + sp - 6, ctrlY + 8);
-    rlVertex2f(ctrlCX + sp - 6, ctrlY - 8);
-    rlEnd();
+    // ── Botón siguiente (next track) ─────────────────────────
+    {
+        float bx = ctrlCX + sp;
+        Drawing::botonControl(bx, ctrlY, 16, false, 0.6f, 0.5f, 0.8f);
+        rlDrawRenderBatchActive();
+        rlBegin(RL_TRIANGLES);
+        rlColor4f(0.75f, 0.65f, 0.95f, 1);
+        rlVertex2f(bx + 5, ctrlY);
+        rlVertex2f(bx - 7, ctrlY + 9);
+        rlVertex2f(bx - 7, ctrlY - 9);
+        rlEnd();
+        // Barra vertical derecha
+        rlBegin(RL_QUADS);
+        rlColor4f(0.75f, 0.65f, 0.95f, 1);
+        rlVertex2f(bx + 6, ctrlY - 8); rlVertex2f(bx + 9, ctrlY - 8);
+        rlVertex2f(bx + 9, ctrlY + 8); rlVertex2f(bx + 6, ctrlY + 8);
+        rlEnd();
+    }
 
-    // Repeat button
+    // Repeat button — flecha de bucle (arco + punta)
     float repX = ctrlCX - sp * 2, repY = ctrlY;
     Drawing::botonControl(repX, repY, 12, gs.repetir, 0.5f, 0.5f, 0.9f);
-    Drawing::circuloLinea(repX, repY, 7, 20, CFloat(gs.repetir ? 0.8f : 0.45f, gs.repetir ? 0.8f : 0.45f, 1.0f));
-    Drawing::texto12(repX - 8, repY - 20, "REP", CFloat(0.5f, 0.45f, 0.65f));
+    {
+        float al = gs.repetir ? 1.0f : 0.6f;
+        Color rc = CFloat(al * 0.75f, al * 0.75f, al);
+        // Arco superior (semicírculo de ~200°)
+        rlSetLineWidth(1.8f);
+        rlBegin(RL_LINES);
+        rlColor4f(rc.r/255.f, rc.g/255.f, rc.b/255.f, 1);
+        int arcSegs = 14;
+        float arcR = 6.0f;
+        for (int s = 0; s < arcSegs; s++) {
+            float a1 = (float)s     / arcSegs * 1.75f * M_PI - 0.1f * M_PI;
+            float a2 = (float)(s+1) / arcSegs * 1.75f * M_PI - 0.1f * M_PI;
+            rlVertex2f(repX + cosf(a1) * arcR, repY + sinf(a1) * arcR);
+            rlVertex2f(repX + cosf(a2) * arcR, repY + sinf(a2) * arcR);
+        }
+        rlEnd();
+        // Punta de flecha en el extremo derecho del arco
+        float tipA = 1.75f * M_PI - 0.1f * M_PI;
+        float tx = repX + cosf(tipA) * arcR, ty = repY + sinf(tipA) * arcR;
+        rlBegin(RL_TRIANGLES);
+        rlColor4f(rc.r/255.f, rc.g/255.f, rc.b/255.f, 1);
+        rlVertex2f(tx + 3.5f, ty);
+        rlVertex2f(tx - 1.5f, ty + 3.0f);
+        rlVertex2f(tx - 1.5f, ty - 3.0f);
+        rlEnd();
+    }
+    Drawing::texto12(repX - 8, repY - 20, "REP", CFloat(0.6f, 0.55f, 0.85f));
 
-    // Random button
+    // Random button — dos flechas cruzadas (shuffle)
     float rndX = ctrlCX + sp * 2, rndY = ctrlY;
     Drawing::botonControl(rndX, rndY, 12, gs.aleatorio, 0.5f, 0.9f, 0.5f);
-    rlBegin(RL_LINES);
-    rlColor4f(0.45f, gs.aleatorio ? 0.9f : 0.45f, 0.45f, 1);
-    rlVertex2f(rndX - 6, rndY - 4); rlVertex2f(rndX + 6, rndY + 4);
-    rlVertex2f(rndX - 6, rndY + 4); rlVertex2f(rndX + 6, rndY - 4);
-    rlEnd();
-    Drawing::texto12(rndX - 8, rndY - 20, "RND", CFloat(0.4f, 0.55f, 0.4f));
+    {
+        float al = gs.aleatorio ? 1.0f : 0.6f;
+        Color gc = CFloat(al * 0.5f, al, al * 0.5f);
+        rlSetLineWidth(1.8f);
+        rlBegin(RL_LINES);
+        rlColor4f(gc.r/255.f, gc.g/255.f, gc.b/255.f, 1);
+        // Flecha diagonal ↗ (izquierda-abajo → derecha-arriba)
+        rlVertex2f(rndX - 6, rndY - 5); rlVertex2f(rndX + 4, rndY + 4);
+        // Flecha diagonal ↘ (izquierda-arriba → derecha-abajo)
+        rlVertex2f(rndX - 6, rndY + 5); rlVertex2f(rndX + 4, rndY - 4);
+        rlEnd();
+        // Puntas de flecha en los extremos derechos
+        rlBegin(RL_TRIANGLES);
+        rlColor4f(gc.r/255.f, gc.g/255.f, gc.b/255.f, 1);
+        // Punta arriba-derecha
+        rlVertex2f(rndX + 6, rndY + 5);
+        rlVertex2f(rndX + 2, rndY + 5);
+        rlVertex2f(rndX + 6, rndY + 1);
+        // Punta abajo-derecha
+        rlVertex2f(rndX + 6, rndY - 5);
+        rlVertex2f(rndX + 2, rndY - 5);
+        rlVertex2f(rndX + 6, rndY - 1);
+        rlEnd();
+    }
+    Drawing::texto12(rndX - 8, rndY - 20, "RND", CFloat(0.45f, 0.75f, 0.45f));
 
     // Volume
     Drawing::texto12(60 + ox, 142, "VOL", CFloat(0.45f, 0.35f, 0.6f));
@@ -395,7 +466,7 @@ void Screens::menuMusica(GameState& gs) {
     }
     Drawing::texto12(vizX + 3, vizY + 2, "ESPECTRO", CFloat(0.3f, 0.2f, 0.5f));
 
-    Drawing::instrucciones(200 + ox, 120, "Click: Seleccionar    ESC: Volver", t);
+    Drawing::instrucciones(155 + ox, 120, "W/S: Cancion    ESPACIO: Play/Pause    A/D: Vol    R: Rep    ESC: Volver", t);
     Drawing::botonVolver(60 + ox, 565, t);
 }
 
@@ -446,7 +517,7 @@ void Screens::enciclopedia(GameState& gs) {
     }
     rlEnd();
 
-    Drawing::texto18(130 + ox, 510, "CODEX ARCHON", CFloat(0.2f, 0.1f, 0.02f));
+    Drawing::texto18(130 + ox, 510, "CODEX ARCHON", CFloat(0.08f, 0.04f, 0.01f));
 
     // Troop sprite — texture fitted into a fixed box with floating animation
     cargarEncicloSprites();
@@ -455,11 +526,15 @@ void Screens::enciclopedia(GameState& gs) {
 
     DatosTropa& tropa = gs.tropas[gs.paginaLibro];
     bool esLuz = (tropa.bando == "Fuerzas de Luz");
-    Drawing::texto12(115 + ox, 248, tropa.bando, CFloat(esLuz ? 0.7f : 0.5f, esLuz ? 0.55f : 0.1f, esLuz ? 0.1f : 0.4f));
-    Drawing::texto12(115 + ox, 225, tropa.stat1, CFloat(0.25f, 0.15f, 0.03f));
-    Drawing::texto12(115 + ox, 207, tropa.stat2, CFloat(0.25f, 0.15f, 0.03f));
-    Drawing::texto12(115 + ox, 189, tropa.stat3, CFloat(0.25f, 0.15f, 0.03f));
-    Drawing::texto12(220 + ox, 92, std::to_string(gs.paginaLibro * 2 + 1), CFloat(0.35f, 0.22f, 0.04f));
+    // Bando con color saturado que contraste bien sobre pergamino claro
+    Color cBando = esLuz ? CFloat(0.55f, 0.3f, 0.02f) : CFloat(0.45f, 0.05f, 0.35f);
+    Drawing::texto12(115 + ox, 248, tropa.bando, cBando);
+    // Stats en tinta oscura legible
+    Drawing::texto12(115 + ox, 225, tropa.stat1, CFloat(0.1f, 0.06f, 0.02f));
+    Drawing::texto12(115 + ox, 207, tropa.stat2, CFloat(0.1f, 0.06f, 0.02f));
+    Drawing::texto12(115 + ox, 189, tropa.stat3, CFloat(0.1f, 0.06f, 0.02f));
+    // Número de página con tinta sepia legible
+    Drawing::texto12(220 + ox, 92, std::to_string(gs.paginaLibro * 2 + 1), CFloat(0.22f, 0.12f, 0.02f));
 
     // Right page
     rlBegin(RL_QUADS);
@@ -475,11 +550,13 @@ void Screens::enciclopedia(GameState& gs) {
     }
     rlEnd();
 
-    Drawing::texto24(430 + ox, 505, tropa.nombre, CFloat(0.15f, 0.15f, 0.55f));
+    // Nombre en tinta oscura bien legible, con pequeña sombra
+    Drawing::texto24(432 + ox, 503, tropa.nombre, CFloat(0.55f, 0.35f, 0.08f));  // sombra sepia
+    Drawing::texto24(430 + ox, 505, tropa.nombre, CFloat(0.05f, 0.02f, 0.01f));  // tinta casi negra
     for (int i = 0; i < (int)tropa.descripcion.size(); i++)
-        Drawing::texto12(430 + ox, 470 - i * 22.0f, tropa.descripcion[i], CFloat(0.12f, 0.12f, 0.45f));
+        Drawing::texto12(430 + ox, 470 - i * 22.0f, tropa.descripcion[i], CFloat(0.08f, 0.04f, 0.01f));
 
-    // Faction emblem
+    // Emblema de facción
     float selX = 565 + ox, selY = 280;
     Drawing::circuloLinea(selX, selY, 45, 24, CFloat(0.5f, 0.35f, 0.07f));
     Drawing::circuloLinea(selX, selY, 38, 24, CFloat(0.5f, 0.35f, 0.07f));
@@ -507,7 +584,7 @@ void Screens::enciclopedia(GameState& gs) {
         rlEnd();
     }
 
-    Drawing::texto12(555 + ox, 92, std::to_string(gs.paginaLibro * 2 + 2), CFloat(0.35f, 0.22f, 0.04f));
+    Drawing::texto12(555 + ox, 92, std::to_string(gs.paginaLibro * 2 + 2), CFloat(0.22f, 0.12f, 0.02f));
 
     // Page turn arrows
     float alf = 0.5f + 0.5f * sinf(t * 0.015f);
@@ -531,7 +608,7 @@ void Screens::enciclopedia(GameState& gs) {
     Drawing::texto24(-75, -8, "ENCICLOPEDIA", CFloat(0.75f, 0.6f, 0.15f));
     rlPopMatrix();
 
-    Drawing::instrucciones(245 + ox, 50, "Click: Cambiar pagina    ESC: Volver", t);
+    Drawing::instrucciones(210 + ox, 50, "A/D: Cambiar pagina    ESC: Volver", t);
     Drawing::botonVolver(60 + ox, 565, t);
 }
 

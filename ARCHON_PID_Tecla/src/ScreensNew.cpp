@@ -361,11 +361,11 @@ void ConfigJuegoCompletoScreen::drawPanelDificultad(GameState& gs, float ox) {
     float br=esIA?0.3f:0.2f, bg=esIA?0.5f:0.2f, bb=esIA?0.8f:0.2f;
     drawPanel(panX,panY,panW,panH, br,bg,bb, 0.04f,0.04f,0.07f);
     Drawing::texto18(panX+20, panY+panH-25, "DIFICULTAD IA",
-        esIA?CFloat(0.5f,0.7f,1.f):CFloat(0.35f,0.35f,0.4f));
+        esIA?CFloat(0.5f,0.7f,1.f):CFloat(0.55f,0.55f,0.6f));
     drawSeparador(panX+10,panY+panH-38,panX+panW-10, br,bg,bb);
 
     if(!esIA){
-        Drawing::texto12(panX+20,panY+panH/2,"Solo para modo IA.",CFloat(0.4f,0.35f,0.3f));
+        Drawing::texto12(panX+20,panY+panH/2,"Solo para modo IA.",CFloat(0.6f,0.55f,0.5f));
         return;
     }
     float cols[3][3]={{0.3f,0.8f,0.3f},{0.8f,0.8f,0.2f},{0.9f,0.2f,0.15f}};
@@ -722,7 +722,7 @@ void CargarPartidaScreen::drawTarjetaPartida(const PartidaGuardada& p,
         sel?CFloat(1,0.9f,0.5f):CFloat(0.75f,0.7f,0.55f));
     Drawing::texto12(x+12,y+h-40,p.modo+" | "+p.bando+" | Turno "+std::to_string(p.turno),
         CFloat(0.6f,0.55f,0.4f));
-    Drawing::texto12(x+12,y+h-52,p.fecha,CFloat(0.45f,0.4f,0.3f));
+    Drawing::texto12(x+12,y+h-52,p.fecha,CFloat(0.65f,0.6f,0.5f));
 
     // Barra de progreso
     float bw=w-160;
@@ -762,7 +762,7 @@ void CargarPartidaScreen::drawTarjetaSlot(const SaveData& s,
 
     std::string label = "SLOT " + std::to_string(s.slot + 1);
     if (!s.valida) {
-        Drawing::texto12(x + 10, y + h / 2 - 6, label + "  —  vacio", CFloat(0.3f, 0.3f, 0.35f));
+        Drawing::texto12(x + 10, y + h / 2 - 6, label + "  —  vacio", CFloat(0.55f, 0.5f, 0.6f));
         return;
     }
     Drawing::texto18(x + 10, y + h - 22,
@@ -793,11 +793,11 @@ void CargarPartidaScreen::Draw(GameState& gs) {
     rlEnd();
 
     // — Columna izquierda: partidas del menú —
-    Color colIzq = (seccionActiva == 0) ? CFloat(1, 0.9f, 0.5f) : CFloat(0.5f, 0.45f, 0.3f);
+    Color colIzq = (seccionActiva == 0) ? CFloat(1, 0.9f, 0.5f) : CFloat(0.65f, 0.6f, 0.45f);
     Drawing::texto12(90 + ox, 490, "PARTIDAS", colIzq);
 
     if (gs.partidas.empty()) {
-        Drawing::texto12(70 + ox, 280, "No hay partidas guardadas.", CFloat(0.4f, 0.35f, 0.25f));
+        Drawing::texto12(70 + ox, 280, "No hay partidas guardadas.", CFloat(0.65f, 0.6f, 0.5f));
     }
     else {
         float startY = 472, step = 84;
@@ -809,7 +809,7 @@ void CargarPartidaScreen::Draw(GameState& gs) {
     }
 
     // — Columna derecha: slots de combate —
-    Color colDer = (seccionActiva == 1) ? CFloat(0.5f, 0.8f, 1.f) : CFloat(0.25f, 0.4f, 0.5f);
+    Color colDer = (seccionActiva == 1) ? CFloat(0.5f, 0.8f, 1.f) : CFloat(0.4f, 0.6f, 0.7f);
     Drawing::texto12(420 + ox, 490, "COMBATES", colDer);
 
     float startY = 472, step = 76;

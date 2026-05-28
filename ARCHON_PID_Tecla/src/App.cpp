@@ -271,16 +271,94 @@ void App::HandleInput() {
         return;
     }
 
-    // --- Input legacy para pantallas que no usan herencia ---
-    // Keyboard navigation removed — mouse handles selection and clicks.
-    // Only ESC to go back is kept.
-    if (gs.estadoActual == OPCIONES) {
+    // --- Navegación por teclado para pantallas legacy ---
+
+    if (gs.estadoActual == MENU) {
+        if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP)) {
+            if (--gs.opcionMenuSel < 0)
+                gs.opcionMenuSel = (int)gs.opcionesMenu.size() - 1;
+        }
+        if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN)) {
+            if (++gs.opcionMenuSel >= (int)gs.opcionesMenu.size())
+                gs.opcionMenuSel = 0;
+        }
+        if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_KP_ENTER)) {
+            if (gs.opcionMenuSel == 0) IniciarTransicion(MODO_JUEGO);
+            if (gs.opcionMenuSel == 1) IniciarTransicion(CARGAR_PARTIDA);
+            if (gs.opcionMenuSel == 2) IniciarTransicion(OPCIONES);
+            if (gs.opcionMenuSel == 3) IniciarTransicion(MUSICA);
+            if (gs.opcionMenuSel == 4) IniciarTransicion(ENCICLOPEDIA);
+            if (gs.opcionMenuSel == 5) CloseWindow();
+        }
+    }
+    else if (gs.estadoActual == OPCIONES) {
+        if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP)) {
+            if (--gs.opcionOpcionesSel < 0)
+                gs.opcionOpcionesSel = (int)gs.controlesOpciones.size() - 1;
+        }
+        if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN)) {
+            if (++gs.opcionOpcionesSel >= (int)gs.controlesOpciones.size())
+                gs.opcionOpcionesSel = 0;
+        }
+        if (IsKeyPressed(KEY_A) || IsKeyPressed(KEY_LEFT)) {
+            auto& op = gs.controlesOpciones[gs.opcionOpcionesSel];
+            int ant  = op.valor;
+            op.valor = std::max(op.minV, op.valor - 1);
+            // Efectos inmediatos
+            if (gs.opcionOpcionesSel == 0) {
+                gs.volumenMusica = op.valor;
+                if (musicaGlobalCargada) SetMusicVolume(musicaGlobal, gs.volumenMusica / 10.f);
+            }
+            if (gs.opcionOpcionesSel == 2 && op.valor != ant) TogglePantallaCompleta();
+        }
+        if (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT)) {
+            auto& op = gs.controlesOpciones[gs.opcionOpcionesSel];
+            int ant  = op.valor;
+            op.valor = std::min(op.maxV, op.valor + 1);
+            if (gs.opcionOpcionesSel == 0) {
+                gs.volumenMusica = op.valor;
+                if (musicaGlobalCargada) SetMusicVolume(musicaGlobal, gs.volumenMusica / 10.f);
+            }
+            if (gs.opcionOpcionesSel == 2 && op.valor != ant) TogglePantallaCompleta();
+        }
         if (IsKeyPressed(KEY_ESCAPE)) IniciarTransicion(MENU);
     }
     else if (gs.estadoActual == MUSICA) {
+        if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP)) {
+            int prev = gs.cancionActual - 1;
+            if (prev < 0) prev = (int)gs.canciones.size() - 1;
+            CambiarCancionGlobal(prev);
+        }
+        if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN)) {
+            int next = (gs.cancionActual + 1) % (int)gs.canciones.size();
+            CambiarCancionGlobal(next);
+        }
+        if (IsKeyPressed(KEY_SPACE)) {
+            gs.reproduciendo = !gs.reproduciendo;
+            if (gs.reproduciendo) ReanudarMusicaGlobal();
+            else PausarMusicaGlobal();
+        }
+        if (IsKeyPressed(KEY_R)) gs.repetir  = !gs.repetir;
+        if (IsKeyPressed(KEY_X)) gs.aleatorio = !gs.aleatorio;
+        if (IsKeyPressed(KEY_A) || IsKeyPressed(KEY_LEFT)) {
+            gs.volumenMusica = std::max(0, gs.volumenMusica - 1);
+            gs.controlesOpciones[0].valor = gs.volumenMusica;
+            if (musicaGlobalCargada) SetMusicVolume(musicaGlobal, gs.volumenMusica / 10.f);
+        }
+        if (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT)) {
+            gs.volumenMusica = std::min(10, gs.volumenMusica + 1);
+            gs.controlesOpciones[0].valor = gs.volumenMusica;
+            if (musicaGlobalCargada) SetMusicVolume(musicaGlobal, gs.volumenMusica / 10.f);
+        }
         if (IsKeyPressed(KEY_ESCAPE)) IniciarTransicion(MENU);
     }
     else if (gs.estadoActual == ENCICLOPEDIA) {
+        if (IsKeyPressed(KEY_A) || IsKeyPressed(KEY_LEFT)) {
+            if (--gs.paginaLibro < 0) gs.paginaLibro = gs.TOTAL_PAGINAS - 1;
+        }
+        if (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT)) {
+            if (++gs.paginaLibro >= gs.TOTAL_PAGINAS) gs.paginaLibro = 0;
+        }
         if (IsKeyPressed(KEY_ESCAPE)) IniciarTransicion(MENU);
     }
 }
@@ -317,26 +395,30 @@ void App::HandleMouse() {
         }
     }
     else if (gs.estadoActual == OPCIONES) {
-        // Hover on options
+        // Hover
         for (int i = 0; i < (int)gs.controlesOpciones.size(); i++) {
-            float y = 435.f - i*46.f;
-            if (mxv>115 && mxv<685 && myv>y-24 && myv<y+16) {
+            float y = 435.f - i * 46.f;
+            if (mxv > 115 && mxv < 685 && myv > y - 24 && myv < y + 16)
                 gs.opcionOpcionesSel = i;
-            }
         }
         if (clicked) {
-            // Back button
-            if (mxv>40 && mxv<135 && myv>543 && myv<589) { IniciarTransicion(MENU); return; }
+            if (mxv > 40 && mxv < 135 && myv > 543 && myv < 589) { IniciarTransicion(MENU); return; }
             for (int i = 0; i < (int)gs.controlesOpciones.size(); i++) {
-                float y = 435.f - i*46.f;
-                if (mxv>320 && mxv<620 && myv>y-4 && myv<y+14) {
+                float y = 435.f - i * 46.f;
+                if (mxv > 320 && mxv < 620 && myv > y - 4 && myv < y + 14) {
                     gs.opcionOpcionesSel = i;
                     auto& op = gs.controlesOpciones[i];
                     int ant = op.valor;
-                    float t2 = (mxv-320.f)/300.f;
-                    op.valor = std::max(op.minV, std::min(op.maxV, (int)(t2*(op.maxV-op.minV)+op.minV)));
-                    if (i==0) gs.volumenMusica = op.valor;
-                    if (i==2 && op.valor!=ant) TogglePantallaCompleta();
+                    float t2 = (mxv - 320.f) / 300.f;
+                    op.valor = std::max(op.minV, std::min(op.maxV,
+                        (int)(t2 * (op.maxV - op.minV) + op.minV)));
+                    // Aplicar efectos inmediatos al cambiar con el ratón
+                    if (i == 0) {
+                        gs.volumenMusica = op.valor;
+                        if (musicaGlobalCargada)
+                            SetMusicVolume(musicaGlobal, gs.volumenMusica / 10.f);
+                    }
+                    if (i == 2 && op.valor != ant) TogglePantallaCompleta();
                 }
             }
         }
