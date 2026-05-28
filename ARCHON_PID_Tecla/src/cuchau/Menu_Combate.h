@@ -22,24 +22,24 @@
 class Menu_Combate
 {
     // Texturas de los 8 personajes del equipo claro (se usan como miniaturas e iconos)
-    Texture2D ImgMH          = LoadTexture(MH.Sprites[0].data());
-    Texture2D ImgPhoenix     = LoadTexture(Phoenix.Sprites[0].data());
-    Texture2D ImgGolem       = LoadTexture(Golem.Sprites[0].data());
-    Texture2D ImgDjinni      = LoadTexture(Djinni.Sprites[0].data());
-    Texture2D ImgUnicorn     = LoadTexture(Unicorn.Sprites[0].data());
-    Texture2D ImgValkyrie    = LoadTexture(Valkyrie.Sprites[0].data());
-    Texture2D ImgArcher      = LoadTexture(Archer.Sprites[0].data());
-    Texture2D ImgKnight      = LoadTexture(Knight.Sprites[0].data());
+    Texture2D ImgMH          = LoadTexture(MH.Sprites_STILL[0].data());
+    Texture2D ImgPhoenix     = LoadTexture(Phoenix.Sprites_STILL[0].data());
+    Texture2D ImgGolem       = LoadTexture(Golem.Sprites_STILL[0].data());
+    Texture2D ImgDjinni      = LoadTexture(Djinni.Sprites_STILL[0].data());
+    Texture2D ImgUnicorn     = LoadTexture(Unicorn.Sprites_STILL[0].data());
+    Texture2D ImgValkyrie    = LoadTexture(Valkyrie.Sprites_STILL[0].data());
+    Texture2D ImgArcher      = LoadTexture(Archer.Sprites_STILL[0].data());
+    Texture2D ImgKnight      = LoadTexture(Knight.Sprites_STILL[0].data());
 
     // Texturas de los 8 personajes del equipo oscuro
-    Texture2D ImgPlatero     = LoadTexture(Platero.Sprites[0].data());
-    Texture2D ImgShapeShifter= LoadTexture(ShapeShifter.Sprites[0].data());
-    Texture2D ImgTroll       = LoadTexture(Troll.Sprites[0].data());
-    Texture2D ImgDragon      = LoadTexture(Dragon.Sprites[0].data());
-    Texture2D ImgBasilisk    = LoadTexture(Basilisk.Sprites[0].data());
-    Texture2D ImgBanshee     = LoadTexture(Banshee.Sprites[0].data());
-    Texture2D ImgManticore   = LoadTexture(Manticore.Sprites[0].data());
-    Texture2D ImgGoblin      = LoadTexture(Goblin.Sprites[0].data());
+    Texture2D ImgPlatero     = LoadTexture(Platero.Sprites_STILL[0].data());
+    Texture2D ImgShapeShifter= LoadTexture(ShapeShifter.Sprites_STILL[0].data());
+    Texture2D ImgTroll       = LoadTexture(Troll.Sprites_STILL[0].data());
+    Texture2D ImgDragon      = LoadTexture(Dragon.Sprites_STILL[0].data());
+    Texture2D ImgBasilisk    = LoadTexture(Basilisk.Sprites_STILL[0].data());
+    Texture2D ImgBanshee     = LoadTexture(Banshee.Sprites_STILL[0].data());
+    Texture2D ImgManticore   = LoadTexture(Manticore.Sprites_STILL[0].data());
+    Texture2D ImgGoblin      = LoadTexture(Goblin.Sprites_STILL[0].data());
 
     static const int NUM_PJS = 8;  // Personajes por equipo
 

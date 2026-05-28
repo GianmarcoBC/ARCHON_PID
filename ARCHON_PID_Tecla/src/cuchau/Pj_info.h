@@ -50,8 +50,12 @@ enum class TipoAtaque
 struct Pj_info
 {
     std::string_view nombre;             // Nombre mostrado en el HUD y menu
-    std::vector<std::string_view> Sprites;           // Sprite frame para la animación
-    std::vector<std::string_view> Sprites_shadow;           // Sprite frame para la animación de la sombra
+    std::vector<std::string_view> Sprites_MOV;           // Sprite frame para la animación de movimiento
+    std::vector<std::string_view> Sprites_MOV_shadow;           // Sprite frame para la animación de movimiento de la sombra
+    std::vector<std::string_view> Sprites_STILL;           // Sprite frame para la animación de movimiento
+    std::vector<std::string_view> Sprites_STILL_shadow;           // Sprite frame para la animación de movimiento de la sombra
+    std::vector<std::string_view> Sprites_ATK;           // Sprite frame para la animación de movimiento
+    std::vector<std::string_view> Sprites_ATK_shadow;           // Sprite frame para la animación de movimiento de la sombra
     std::string_view Ataque;             // Sprite del proyectil que lanza
     std::string_view Efecto_ataque;      // Archivo de sonido al disparar
     float vel;                      // Velocidad de movimiento
@@ -59,8 +63,6 @@ struct Pj_info
     float fuerza;                   // Dano por impacto
     float cooldown;                 // Tiempo entre disparos (segundos)
     float attack_speed;             // Velocidad del proyectil
-    int   frameCount;               // Numero de frames de animacion
-    float frameSpeed;               // Tiempo por frame de animacion (segundos)
 	float rango_max;                 // Rango maximo del ataque (en unidades del juego, para calcular alcance de proyectiles)
 	TipoAtaque tipoAtaque;          // Tipo de ataque (rango, cuerpo a cuerpo, area)
     bool vuela;                     // TRUE = puede volar, FALSE = terrestre
@@ -74,13 +76,20 @@ struct Pj_info
 inline const Pj_info MH = {
     "MH",
 
-    {"bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png"},
+    {"bin/Resources/MH/SpriteMHMOV_0001.png",
+    "bin/Resources/MH/SpriteMHMOV_0002.png"},
 
-    {"bin/Resources/MH/SpriteMH_shadow.png",
-    "bin/Resources/MH/SpriteMH_shadow.png",
-    "bin/Resources/MH/SpriteMH_shadow.png"},
+    {"bin/Resources/MH/SpriteMHMOV_0001shadow.png",
+    "bin/Resources/MH/SpriteMHMOV_0002shadow.png"},
+
+	{},
+
+	{},
+
+    {},
+
+    {},
+
 
     "bin/Resources/MH/MHATK.png",
     "bin/Resources/MH/RaspberryPIMH.wav",
@@ -89,8 +98,6 @@ inline const Pj_info MH = {
     Fuerza_alta,
     Cooldown_medio,
     AttackSpeed_medio,
-    3,
-    0.1f,
     Rango_inf,
     TipoAtaque::Rango,          // Tipo de ataque
     true // Vuela
@@ -108,6 +115,14 @@ inline const Pj_info Phoenix = {
     "bin/Resources/MH/SpriteMH_shadow.png",
     "bin/Resources/MH/SpriteMH_shadow.png"},
 
+    {},
+
+    {},
+
+    {},
+
+    {},
+
     "bin/Resources/Phoenix/PhoenixATK.png",
     "bin/Resources/Phoenix/PhoenixFX.wav",
     Velocidad_media,
@@ -115,8 +130,6 @@ inline const Pj_info Phoenix = {
     Fuerza_alta,
     Cooldown_alto,
     AttackSpeed_bajo,
-    3,
-    0.1f,
     Rango_medio,
     TipoAtaque::Area,          // Tipo de ataque
     true // Vuela
@@ -134,6 +147,14 @@ inline const Pj_info Golem = {
     "bin/Resources/MH/SpriteMH_shadow.png",
     "bin/Resources/MH/SpriteMH_shadow.png"},
 
+    {},
+
+    {},
+
+    {},
+
+    {},
+
     "bin/Resources/Archer/SpriteFlecha.png",
     "bin/Resources/Golem/GolemFX.wav",
     Velocidad_baja,
@@ -141,8 +162,6 @@ inline const Pj_info Golem = {
     Fuerza_alta,
     Cooldown_alto,
     AttackSpeed_bajo,
-    3,
-    0.1f,
 	Rango_inf,
     TipoAtaque::Rango,          // Tipo de ataque
     false // No vuela
@@ -160,6 +179,14 @@ inline const Pj_info Djinni = {
     "bin/Resources/MH/SpriteMH_0006.png",
     "bin/Resources/MH/SpriteMH_0001.png"},
 
+    {},
+
+    {},
+
+    {},
+
+    {},
+
     "bin/Resources/Djinni/DjinniATK.png",
     "bin/Resources/Djinni/DjinniFX.wav",
     Velocidad_media,
@@ -167,8 +194,6 @@ inline const Pj_info Djinni = {
     Fuerza_media,
     Cooldown_medio,
     AttackSpeed_medio,
-    3,
-    0.1f,
 	Rango_inf,
     TipoAtaque::Rango,          // Tipo de ataque
     true // Vuela
@@ -186,6 +211,14 @@ inline const Pj_info Unicorn = {
     "bin/Resources/MH/SpriteMH_0006.png",
     "bin/Resources/MH/SpriteMH_0001.png"},
 
+    {},
+
+    {},
+
+    {},
+
+    {},
+
     "bin/Resources/Unicorn/UnicornATK.png",
     "bin/Resources/Valkyrie/magicspearfx.wav",
     Velocidad_media,
@@ -193,8 +226,6 @@ inline const Pj_info Unicorn = {
     Fuerza_media,
     Cooldown_bajo,
     AttackSpeed_alto,
-    3,
-    0.1f,
 	Rango_inf,
     TipoAtaque::Rango,          // Tipo de ataque
     false // No vuela
@@ -212,6 +243,14 @@ inline const Pj_info Valkyrie = {
     "bin/Resources/MH/SpriteMH_0006.png",
     "bin/Resources/MH/SpriteMH_0001.png"},
 
+    {},
+
+    {},
+
+    {},
+
+    {},
+
     "bin/Resources/Valkyrie/ValkyrieATK.png",
     "bin/Resources/Valkyrie/ValkyrieFX.wav",
     Velocidad_media,
@@ -219,8 +258,6 @@ inline const Pj_info Valkyrie = {
     Fuerza_media,
     Cooldown_medio,
     AttackSpeed_bajo,
-    3,
-    0.1f,
 	Rango_bajo,
     TipoAtaque::CuerpoACuerpo,          // Tipo de ataque
     true // Vuela
@@ -238,6 +275,14 @@ inline const Pj_info Archer = {
     "bin/Resources/MH/SpriteMH_0006.png",
     "bin/Resources/MH/SpriteMH_0001.png"},
 
+    {},
+
+    {},
+
+    {},
+
+    {},
+
     "bin/Resources/Archer/ArcherATK.png",
     "bin/Resources/Archer/ArcherFX.wav",
     Velocidad_media,
@@ -245,8 +290,6 @@ inline const Pj_info Archer = {
     Fuerza_baja,
     Cooldown_medio,
     AttackSpeed_medio,
-    3,
-    0.1f,
 	Rango_bajo,
     TipoAtaque::Rango,          // Tipo de ataque
     false // No vuela
@@ -264,6 +307,14 @@ inline const Pj_info Knight = {
     "bin/Resources/MH/SpriteMH_0006.png",
     "bin/Resources/MH/SpriteMH_0001.png"},
 
+    {},
+
+    {},
+
+    {},
+
+    {},
+
     "bin/Resources/Knight/KnightATK.png",
     "bin/Resources/Knight/KnightFX.wav",
     Velocidad_media,
@@ -271,8 +322,6 @@ inline const Pj_info Knight = {
     Fuerza_baja,
     Cooldown_nulo,
     AttackSpeed_muyalto,
-    3,
-    0.1f,
     Rango_bajo,
     TipoAtaque::CuerpoACuerpo,          // Tipo de ataque
     false // No vuela
@@ -295,6 +344,14 @@ inline const Pj_info Platero = {
     "bin/Resources/MH/SpriteMH_0006.png",
     "bin/Resources/MH/SpriteMH_0001.png"},
 
+    {},
+
+    {},
+
+    {},
+
+    {},
+
     "bin/Resources/Platero/PlateroATK.png",
     "bin/Resources/Platero/CorrectoPlatero.wav",
     Velocidad_media,
@@ -302,8 +359,6 @@ inline const Pj_info Platero = {
     Fuerza_media,
     Cooldown_medio,
     AttackSpeed_alto,
-    3,
-    0.1f,
 	Rango_inf,
     TipoAtaque::Rango,          // Tipo de ataque
     true // Vuela
@@ -321,6 +376,14 @@ inline const Pj_info ShapeShifter = {
     "bin/Resources/MH/SpriteMH_0006.png",
     "bin/Resources/MH/SpriteMH_0001.png"},
 
+    {},
+
+    {},
+
+    {},
+
+    {},
+
     "bin/Resources/Shapeshifter/ShapeshifterATK.png",
     "bin/Resources/Banshee/scream.wav",
     Velocidad_media,
@@ -328,8 +391,6 @@ inline const Pj_info ShapeShifter = {
     Fuerza_alta,
     Cooldown_medio,
     AttackSpeed_bajo,
-    3,
-    0.1f,
 	Rango_inf,
     TipoAtaque::CuerpoACuerpo,          // Tipo de ataque
     true // Vuela
@@ -347,6 +408,14 @@ inline const Pj_info Troll = {
     "bin/Resources/MH/SpriteMH_0006.png",
     "bin/Resources/MH/SpriteMH_0001.png"},
 
+    {},
+
+    {},
+
+    {},
+
+    {},
+
     "bin/Resources/Archer/SpriteFlecha.png",
     "bin/Resources/Troll/trollFX.wav",
     Velocidad_baja,
@@ -354,8 +423,6 @@ inline const Pj_info Troll = {
     Fuerza_alta,
     Cooldown_alto,
     AttackSpeed_bajo,
-    3,
-    0.1f,
 	Rango_bajo,
     TipoAtaque::CuerpoACuerpo,          // Tipo de ataque
     false // No vuela
@@ -373,6 +440,14 @@ inline const Pj_info Dragon = {
     "bin/Resources/MH/SpriteMH_0006.png",
     "bin/Resources/MH/SpriteMH_0001.png"},
 
+    {},
+
+    {},
+
+    {},
+
+    {},
+
     "bin/Resources/Dragon/DragonATK.png",
     "bin/Resources/Dragon/DragonFX.wav",
     Velocidad_media,
@@ -380,8 +455,6 @@ inline const Pj_info Dragon = {
     Fuerza_muyalta,
     Cooldown_alto,
     AttackSpeed_medio,
-    3,
-    0.1f,
 	Rango_inf,
     TipoAtaque::Rango,          // Tipo de ataque
     true // Vuela
@@ -399,6 +472,14 @@ inline const Pj_info Basilisk = {
     "bin/Resources/MH/SpriteMH_0006.png",
     "bin/Resources/MH/SpriteMH_0001.png"},
 
+    {},
+
+    {},
+
+    {},
+
+    {},
+
     "bin/Resources/Basilisk/BasiliskATK.png",
     "bin/Resources/Basilisk/BasiliskFX.wav",
     Velocidad_media,
@@ -406,8 +487,6 @@ inline const Pj_info Basilisk = {
     Fuerza_alta,
     Cooldown_bajo,
     AttackSpeed_alto,
-    3,
-    0.1f,
 	Rango_inf,
     TipoAtaque::Rango,          // Tipo de ataque
     false // No vuela
@@ -425,6 +504,14 @@ inline const Pj_info Banshee = {
     "bin/Resources/MH/SpriteMH_0006.png",
     "bin/Resources/MH/SpriteMH_0001.png"},
 
+    {},
+
+    {},
+
+    {},
+
+    {},
+
     "bin/Resources/Banshee/BansheeATK.png",
     "bin/Resources/Banshee/BansheeFX.wav",
     Velocidad_media,
@@ -432,8 +519,6 @@ inline const Pj_info Banshee = {
     Fuerza_media,
     Cooldown_alto,
     AttackSpeed_muyalto,
-    3,
-    0.1f,
     Rango_medio,
     TipoAtaque::CuerpoACuerpo,          // Tipo de ataque
     true // Vuela
@@ -451,6 +536,14 @@ inline const Pj_info Manticore = {
     "bin/Resources/MH/SpriteMH_0006.png",
     "bin/Resources/MH/SpriteMH_0001.png"},
 
+    {},
+
+    {},
+
+    {},
+
+    {},
+
     "bin/Resources/Manticore/ManticoreATK.png",
     "bin/Resources/Djinni/vientofeericofx.wav",
     Velocidad_media,
@@ -458,8 +551,6 @@ inline const Pj_info Manticore = {
     Fuerza_baja,
     Cooldown_medio,
     AttackSpeed_bajo,
-    3,
-    0.1f,
 	Rango_inf,
     TipoAtaque::Rango,          // Tipo de ataque
     false // No vuela
@@ -477,6 +568,14 @@ inline const Pj_info Goblin = {
     "bin/Resources/MH/SpriteMH_0006.png",
     "bin/Resources/MH/SpriteMH_0001.png"},
 
+    {},
+
+    {},
+
+    {},
+
+    {},
+
     "bin/Resources/Goblin/GoblinATK.png",
     "bin/Resources/Goblin/GoblinFX.wav",
     Velocidad_media,
@@ -484,8 +583,6 @@ inline const Pj_info Goblin = {
     Fuerza_baja,
     Cooldown_nulo,
     AttackSpeed_muyalto,
-    3,
-    0.1f,
 	Rango_bajo,
     TipoAtaque::CuerpoACuerpo,          // Tipo de ataque
     false // No vuela

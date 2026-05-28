@@ -4,6 +4,12 @@
 #include "Pj_info.h"
 #include "Vec2.h"
 
+// Estados de animacion para elegir el set de frames y sombras a dibujar
+enum class EstadoAnimacion
+{
+	MOV, STILL, ATK
+};
+
 //  Personaje.h — Clase unificada de personaje 3D
 //
 //  Combina la logica de juego de ARCHON (vida, disparo, controles, animacion)
@@ -32,11 +38,26 @@ class Personaje
                                                   // (arena 40u / pantalla ~2000px ≈ 0.02)
 
     // --- Texturas y modelos ---
-    std::vector<Texture2D> Frames{};          // frames de animacion del personaje
+	// ======== MOVIMIENTO ========
+    std::vector<Texture2D> Frames_MOV{};          // frames de animacion del personaje 
 
-    std::vector<Texture2D> Frames_shadow{};   // frames de sombra correspondientes
-    std::vector<Mesh> shadowMesh{};          // Mallas planas para las sombras (una por frame)
-    std::vector<Model> shadow{};              // Modelos de sombra (malla + textura)
+    std::vector<Texture2D> Frames_MOV_shadow{};   // frames de sombra correspondientes
+    std::vector<Mesh> shadowMesh_MOV{};          // Mallas planas para las sombras (una por frame)
+    std::vector<Model> shadow_MOV{};              // Modelos de sombra (malla + textura)
+
+	// ======= QUIETO (separado para poder animar sin moverse) ========
+    std::vector<Texture2D> Frames_STILL{};          // frames de animacion del personaje QUIETO
+
+    std::vector<Texture2D> Frames_STILL_shadow{};   // frames de sombra correspondientes
+    std::vector<Mesh> shadowMesh_STILL{};          // Mallas planas para las sombras (una por frame)
+    std::vector<Model> shadow_STILL{};              // Modelos de sombra (malla + textura)
+
+	// ======= ATAQUE (separado para animar el ataque sin moverse) ========
+	std::vector<Texture2D> Frames_ATK{};          // frames de animacion del personaje ATAQUE
+
+    std::vector<Texture2D> Frames_ATK_shadow{};   // frames de sombra correspondientes
+    std::vector<Mesh> shadowMesh_ATK{};          // Mallas planas para las sombras (una por frame)
+    std::vector<Model> shadow_ATK{};              // Modelos de sombra (malla + textura)
 
     Texture2D Ataque{};             // Textura del proyectil que dispara este personaje
     Sound efecto_ataque{};          // Sonido que se reproduce al disparar
@@ -44,13 +65,17 @@ class Personaje
     // --- Animacion ---
 	int   frameActual = 0; 	 // Frame actual de animacion (index en Frames y shadow)    
     float frameTimer  = 0.0f;       // Acumulador de tiempo para cambiar de frame
-    bool  moviendose{ false };      // true si el personaje se esta moviendo (para animar)
+	float frameSpeed = 0.1f;       // Tiempo por frame de animacion (segundos, tomado de Pj_info)
+    EstadoAnimacion  est{ EstadoAnimacion::STILL };
+
 
     // Clase amiga de interacciones
 	friend class Interacciones;
 
     // Dibuja la sombra del frame actual en la posicion dada
-    void drawshadow(Vector3 shadowpos) const;
+    void drawshadow(Vector3 shadowpos, std::vector<Model> shadowFrames) const;
+
+	void drawAnimation(Camera camera, std::vector<Texture2D> frames) const;
 
 	
 
@@ -70,8 +95,7 @@ public:
     void drawHUD(Camera camera, Color color) const; // Dibuja la barra de vida, el cooldown y el nombre del personaje sobre su cabeza (en coordenadas 2D)
 	void Draw(Camera camera) const;
 
-    // Devuelve la textura del frame actual de animacion
-    Texture2D getCurrentFrame() const { return Frames[frameActual]; }
+
 
     // --- Getters y setters ---
 
@@ -108,10 +132,20 @@ public:
 
     // Libera todas las texturas, modelos y sonidos de GPU/memoria
     ~Personaje() {
-        for (int i = 0; i < Frames.size(); i++) {
-            UnloadModel(shadow[i]);
-            UnloadTexture(Frames_shadow[i]);
-            UnloadTexture(Frames[i]);
+        for (int i = 0; i < Frames_MOV.size(); i++) {
+            UnloadModel(shadow_MOV[i]);
+            UnloadTexture(Frames_MOV_shadow[i]);
+            UnloadTexture(Frames_MOV[i]);
+        }
+        for (int i = 0; i < Frames_STILL.size(); i++) {
+            UnloadModel(shadow_STILL[i]);
+            UnloadTexture(Frames_STILL_shadow[i]);
+            UnloadTexture(Frames_STILL[i]);
+        }
+        for (int i = 0; i < Frames_ATK.size(); i++) {
+            UnloadModel(shadow_ATK[i]);
+            UnloadTexture(Frames_ATK_shadow[i]);
+            UnloadTexture(Frames_ATK[i]);
         }
         UnloadTexture(Ataque);
         UnloadSound(efecto_ataque);

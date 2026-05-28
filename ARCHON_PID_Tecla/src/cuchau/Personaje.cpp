@@ -17,45 +17,98 @@ Personaje::Personaje(Pj_info p, cntrl c, Vector3 po, bool ip):
 	cooldown(0.0f), // Guardar cooldown maximo antes de que se reduzca
 	isPlayer(ip)
 {
-
-    // Cargar los frames de animacion y sombra del personaje
-	for (int i = 0; i < Player.Sprites.size(); i++) {
-		Frames.push_back(LoadTexture(Player.Sprites[i].data()));
-		Frames_shadow.push_back(LoadTexture(Player.Sprites_shadow[i].data()));
+	//======= MOVIMIENTO =======
+    // Cargar los frames de animacion de y sombra del personaje
+	for (int i = 0; i < Player.Sprites_MOV.size(); i++) {
+		Frames_MOV.push_back(LoadTexture(Player.Sprites_MOV[i].data()));
+		Frames_MOV_shadow.push_back(LoadTexture(Player.Sprites_MOV_shadow[i].data()));
 	}
+
+    // Generar modelos planos para las sombras (uno por frame de animacion)
+    // Cada sombra es un plano de charSize x charSize con la textura de sombra
+    for (int i = 0; i < Frames_MOV_shadow.size(); i++) {
+        shadowMesh_MOV.push_back(GenMeshPlane(Size3D, Size3D, 1, 1));
+        shadow_MOV.push_back(LoadModelFromMesh(shadowMesh_MOV[i]));
+        shadow_MOV[i].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = Frames_MOV_shadow[i];
+    }
+
+	//======== QUIETO =======
+    // Cargar los frames de animacion de y sombra del personaje
+    for (int i = 0; i < Player.Sprites_STILL.size(); i++) {
+        Frames_STILL.push_back(LoadTexture(Player.Sprites_STILL[i].data()));
+        Frames_STILL_shadow.push_back(LoadTexture(Player.Sprites_STILL_shadow[i].data()));
+    }
+
+    // Generar modelos planos para las sombras (uno por frame de animacion)
+    // Cada sombra es un plano de charSize x charSize con la textura de sombra
+    for (int i = 0; i < Frames_STILL_shadow.size(); i++) {
+        shadowMesh_STILL.push_back(GenMeshPlane(Size3D, Size3D, 1, 1));
+        shadow_STILL.push_back(LoadModelFromMesh(shadowMesh_STILL[i]));
+        shadow_STILL[i].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = Frames_STILL_shadow[i];
+    }
+
+	//======== ATAQUE =======
+    // Cargar los frames de animacion de movimiento y sombra del personaje
+    for (int i = 0; i < Player.Sprites_ATK.size(); i++) {
+        Frames_ATK.push_back(LoadTexture(Player.Sprites_ATK[i].data()));
+        Frames_ATK_shadow.push_back(LoadTexture(Player.Sprites_ATK_shadow[i].data()));
+    }
+
+    // Generar modelos planos para las sombras (uno por frame de animacion)
+    // Cada sombra es un plano de charSize x charSize con la textura de sombra
+    for (int i = 0; i < Frames_ATK_shadow.size(); i++) {
+        shadowMesh_ATK.push_back(GenMeshPlane(Size3D, Size3D, 1, 1));
+        shadow_ATK.push_back(LoadModelFromMesh(shadowMesh_ATK[i]));
+        shadow_ATK[i].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = Frames_ATK_shadow[i];
+    }
+
 
     // Cargar textura del proyectil y sonido de ataque
     Ataque = LoadTexture(Player.Ataque.data());
     efecto_ataque = LoadSound(Player.Efecto_ataque.data());
 
-    // Generar modelos planos para las sombras (uno por frame de animacion)
-    // Cada sombra es un plano de charSize x charSize con la textura de sombra
-    for (int i = 0; i < Frames_shadow.size(); i++) {
-        shadowMesh.push_back(GenMeshPlane(Size3D, Size3D, 1, 1));
-        shadow.push_back(LoadModelFromMesh(shadowMesh[i]));
-        shadow[i].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = Frames_shadow[i];
-    }
+
 }
 
 void Personaje::Move(Vec2 dir, float dt)
 {
-    moviendose = (dir.x != 0 || dir.y != 0);
     float spd = Player.vel * SPEED_SCALE;  // Velocidad escalada a unidades 3D
 
-    if (moviendose) {
+    switch (est)
+    {   
+    case EstadoAnimacion::MOV:
         pos3d.x += dir.x * spd * dt;
         pos3d.z += dir.y * spd * dt;
         l_dir = dir.unitario();
 
         frameTimer += dt;
-        if (frameTimer >= Player.frameSpeed) {
+        if (frameTimer >= frameSpeed) {
             frameTimer = 0.0f;
-            frameActual = (frameActual + 1) % Frames.size();
+            frameActual = (frameActual + 1) % Frames_MOV.size();
         }
-    }
-    else {
+        break;
+    case EstadoAnimacion::STILL:
+        frameTimer += dt;
+        if (frameTimer >= frameSpeed) {
+            frameTimer = 0.0f;
+            frameActual = (frameActual + 1) % Frames_STILL.size();
+        }
+        break;
+    case EstadoAnimacion::ATK:
+        pos3d.x += dir.x * spd * dt;
+        pos3d.z += dir.y * spd * dt;
+        l_dir = dir.unitario();
+
+        frameTimer += dt;
+        if (frameTimer >= frameSpeed) {
+            frameTimer = 0.0f;
+            frameActual = (frameActual + 1) % Frames_ATK.size();
+        }
+        break;
+    default:
         frameActual = 0;
         frameTimer = 0.0f;
+        break;
     }
 }
 
@@ -79,20 +132,53 @@ void Personaje::Update(float dt)
     if (IsKeyDown(Controles.up))    { dir.y = -1; }
     if (IsKeyDown(Controles.down))  { dir.y = 1; }
 
+	if (dir.x != 0 || dir.y != 0) est = EstadoAnimacion::MOV;
+	else est = EstadoAnimacion::STILL;
+
     Move(dir, dt);
 
 }
 
 void Personaje::Draw(Camera camera) const
 {
-    const Texture2D& texActual = Frames[frameActual]; // Usa el frame actual
+    switch (est) {
+	case EstadoAnimacion::MOV:
+		drawAnimation(camera, Frames_MOV);
+        drawshadow({ pos3d.x, 0.01f, pos3d.z - Size3D / 2 }, shadow_MOV);
+		break;
+	case EstadoAnimacion::STILL:
+		drawAnimation(camera, Frames_STILL);
+		drawshadow({ pos3d.x, 0.01f, pos3d.z - Size3D / 2 }, shadow_STILL);
+		break;
+	case EstadoAnimacion::ATK:
+		drawAnimation(camera, Frames_ATK);
+		drawshadow({ pos3d.x, 0.01f, pos3d.z - Size3D / 2 }, shadow_ATK);
+		break;
+    }
+
+}
+
+//  drawshadow — Dibuja la sombra del personaje en el suelo
+//
+//  Usa BLEND_MULTIPLIED para que la sombra se mezcle con el suelo
+//  oscureciendolo sin taparlo completamente.
+
+void Personaje::drawshadow(Vector3 shadowpos, std::vector<Model> shadowFrames) const
+{
+    BeginBlendMode(BLEND_MULTIPLIED);
+    DrawModel(shadowFrames[frameActual], shadowpos, 1.0f, WHITE);
+    EndBlendMode();
+}
+
+void Personaje::drawAnimation(Camera camera, std::vector<Texture2D> frames) const
+{
+    if (frames.empty()) return; // Sin frames, no dibujar
+    const Texture2D& texActual = frames[frameActual]; // Usa el frame actual
     float w = (float)texActual.width;
     float h = (float)texActual.height;
     float srcW = (l_dir.x < 0) ? -w : w;       // Espejo si va a la izquierda
 
-    drawshadow({ pos3d.x, 0.01f, pos3d.z - Size3D / 2 });
-
-	DrawBillboardPro(
+    DrawBillboardPro(
         camera,
         texActual,
         { 0, 0, srcW, h },
@@ -102,18 +188,6 @@ void Personaje::Draw(Camera camera) const
         { Size3D / 2, Size3D / 2 },
         0.0f,
         WHITE);
-}
-
-//  drawshadow — Dibuja la sombra del personaje en el suelo
-//
-//  Usa BLEND_MULTIPLIED para que la sombra se mezcle con el suelo
-//  oscureciendolo sin taparlo completamente.
-
-void Personaje::drawshadow(Vector3 shadowpos) const
-{
-    BeginBlendMode(BLEND_MULTIPLIED);
-    DrawModel(shadow[frameActual], shadowpos, 1.0f, WHITE);
-    EndBlendMode();
 }
 
 //  drawHUD — Dibuja la barra de vida, el cooldown y el nombre del personaje sobre su cabeza

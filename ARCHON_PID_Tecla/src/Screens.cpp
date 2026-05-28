@@ -17,7 +17,7 @@ static void cargarEncicloSprites() {
         &Platero, &ShapeShifter, &Troll, &Dragon, &Basilisk, &Banshee, &Manticore, &Goblin,
     };
     for (int p = 0; p < 16; p++) {
-        encicloSprites[p] = LoadTexture(pjs[p]->Sprites[0].data());
+        encicloSprites[p] = LoadTexture(pjs[p]->Sprites_STILL[0].data());
     }
     encicloSpritesLoaded = true;
 }
