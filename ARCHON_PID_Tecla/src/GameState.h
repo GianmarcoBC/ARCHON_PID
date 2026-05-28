@@ -81,6 +81,7 @@ struct GameState {
     Estado estadoAnterior  = MENU;  // para volver desde PAUSA
     float  tiempo          = 0.f;
     bool   pantallaCompleta= false;
+    bool   salir = false;
 
     // Offsets de animación de deslizamiento al entrar en cada pantalla
     float menuOffset       = -600.f;

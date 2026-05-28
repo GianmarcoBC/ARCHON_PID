@@ -42,9 +42,9 @@ CombatAI::Accion AI_Defensiva::decide(const std::vector<Disparo>& disparos, floa
     float dmax{ 15.0f };
 
     if (Jugador.GetRangoMax() == Rango_bajo)
-        dmax *= 0.1f; // Si el jugador es de corto alcance, la IA se acerca mas
+        dmax *= 0.2f; // Si el jugador es de corto alcance, la IA se acerca mas
     else if (Jugador.GetRangoMax() == Rango_medio)
-        dmax *= 0.6f; // Para los demas personajes, mantiene la distancia optima con margen
+        dmax *= 0.4f; // Para los demas personajes, mantiene la distancia optima con margen
 
     if (esquiva || demasiado_cerca) {
         estado = Esquivar;

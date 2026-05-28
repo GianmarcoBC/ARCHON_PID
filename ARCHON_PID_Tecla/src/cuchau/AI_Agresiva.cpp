@@ -31,10 +31,10 @@ CombatAI::Accion AI_Agresiva::decide(const std::vector<Disparo>& disparos, float
     float dist = (Jugador.GetPos() - IA.GetPos()).modulo();
     float dmax{5.0f};
 
-	if (Jugador.GetRangoMax() == Rango_bajo)
-		dmax *= 0.2f; // Si el jugador es de corto alcance, la IA se acerca mas
-	else if (Jugador.GetRangoMax() == Rango_medio)
-		dmax *= 0.6f; // Para los demas personajes, mantiene la distancia optima con margen
+    if (Jugador.GetRangoMax() == Rango_bajo)
+        dmax *= 0.8f; // Si el jugador es de corto alcance, la IA se acerca mas
+    else if (Jugador.GetRangoMax() == Rango_medio)
+        dmax *= 0.9f; // Para los demas personajes, mantiene la distancia optima con margen
 
     // Nunca esquiva — solo Acercar o Rodear
     if (dist > dmax)

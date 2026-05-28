@@ -292,7 +292,7 @@ void App::HandleInput() {
             if (gs.opcionMenuSel == 2) IniciarTransicion(OPCIONES);
             if (gs.opcionMenuSel == 3) IniciarTransicion(MUSICA);
             if (gs.opcionMenuSel == 4) IniciarTransicion(ENCICLOPEDIA);
-            if (gs.opcionMenuSel == 5) CloseWindow();
+            if (gs.opcionMenuSel == 5) gs.salir = true;
         }
     }
     else if (gs.estadoActual == OPCIONES) {
@@ -402,7 +402,7 @@ void App::HandleMouse() {
                     if (i==2) IniciarTransicion(OPCIONES);
                     if (i==3) IniciarTransicion(MUSICA);
                     if (i==4) IniciarTransicion(ENCICLOPEDIA);
-                    if (i==5) CloseWindow();
+                    if (i==5) gs.salir = true;
                 }
             }
         }
@@ -534,16 +534,15 @@ void App::ReanudarMusicaGlobal() {
 
 void App::Run() {
     Init();
-    while (!WindowShouldClose()) {
+    while (!WindowShouldClose() && !gs.salir) {
         HandleInput();
         HandleMouse();
         Update();
         Draw();
     }
 
-//	screens.clear();  // Asegura destrucción de pantallas antes de cerrar audio y ventana
 
     if (musicaGlobalCargada) UnloadMusicStream(musicaGlobal);
     CloseAudioDevice();
-    //CloseWindow();
+    CloseWindow();
 }

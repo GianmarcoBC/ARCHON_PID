@@ -301,6 +301,11 @@ void CuchauCombateScreen::Update(GameState& gs)
 
 void CuchauCombateScreen::volverARCHON(GameState& gs, Estado destino)
 {
+    EndDrawing();       // cierra el frame 3D limpiamente
+    BeginDrawing();     // abre uno nuevo en blanco
+    EndDrawing();       // y lo cierra
+
+
     delete combate;
     combate = nullptr;
     if (menu) menu->Reset();
