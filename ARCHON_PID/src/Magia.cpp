@@ -248,12 +248,15 @@ void Magia::Imprison(Personaje* personaje, Tablero& t) {
 
 void Magia::Revive(Personaje* personaje, Tablero& t) {
 
+    
     if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[5] == true) || (personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[5] == true)) {
 
         std::cout << "El hechizo Revive ya se ha utilizado" << std::endl;
         t.modoJuegoactual = ModoJuego::HECHIZOS;
 
     }
+
+    std::cout << t.cementerio_Luz.size() << std::endl;
 
     if ((personaje->get_ID() == tipo_pj::MH && t.cementerio_Luz.size() == 0) || (personaje->get_ID() == tipo_pj::Platero && t.cementerio_Oscuridad.size() == 0)) {
 
@@ -337,6 +340,14 @@ void Magia::Revive(Personaje* personaje, Tablero& t) {
                 t.cuadricula[t.fila_seleccionada][t.columna_seleccionada] = t.personaje_muerto_seleccionado;
                 t.cuadricula[t.fila_seleccionada][t.columna_seleccionada]->set_fila_columna(t.fila_seleccionada, t.columna_seleccionada);
 
+                
+                //Borramos el personaje de la lista
+
+                if (t.personaje_muerto_seleccionado->get_equipo() == LUZ) EliminaMuerto(t.personaje_muerto_seleccionado, t.cementerio_Luz);
+                else  if (t.personaje_muerto_seleccionado->get_equipo() == OSCURIDAD) EliminaMuerto(t.personaje_muerto_seleccionado, t.cementerio_Oscuridad);
+
+
+
 
                 t.turno = t.turno == LUZ ? OSCURIDAD : LUZ;
                 if (personaje->get_ID() == tipo_pj::MH) hechizosLuz[5] = true;
@@ -355,3 +366,17 @@ void Magia::Revive(Personaje* personaje, Tablero& t) {
 
 
 
+void Magia::EliminaMuerto(Personaje* personaje_muerto_seleccionado, std::vector<Personaje*>& Vector) {
+
+  
+    for (int i = 0; i < Vector.size(); i++) {
+
+        if (personaje_muerto_seleccionado == Vector[i]) {
+
+            int index = i;  
+            Vector.erase(Vector.begin() + index);
+            break;       
+        }
+    }
+
+}

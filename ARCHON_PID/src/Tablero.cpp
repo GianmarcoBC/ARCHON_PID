@@ -456,7 +456,9 @@ void Tablero::moverPieza() {
 
 void Tablero::casillasPosibles(Personaje* p) {
 
-    if(p != nullptr){
+    if (p == nullptr) reset_MovimientosPosibles();
+
+    else if(p != nullptr){
 
         if (p->get_imprison() == false) {
 
@@ -682,12 +684,7 @@ void Tablero::detectaGanador() {
 
     }
 
-    
-
-
-
-
-
+ 
  }
 
 
@@ -703,6 +700,7 @@ void Tablero::iniciaEstadoHechizos() {
 
                 modoJuegoactual = ModoJuego::HECHIZOS; 
                 personaje_usando_magia = personaje_seleccionado; 
+                reset_MovimientosPosibles();
             }
         }
     }
@@ -822,7 +820,7 @@ void Tablero::reset_MovimientosPosibles() {
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
 
-            if (cuadricula[i][j] == nullptr) movimientosPosibles[i][j] = false;
+          movimientosPosibles[i][j] = false;
         }
     }
 }

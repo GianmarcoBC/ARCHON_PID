@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Personaje.h"
+#include <vector>
 
 class Tablero;
 
@@ -22,5 +23,6 @@ public:
    void Exchange(Personaje* personaje, Tablero& t);
    void Imprison(Personaje* personaje, Tablero& t);
    void Revive(Personaje* personaje, Tablero& t);
+   void EliminaMuerto(Personaje* personaje_muerto_seleccionado, std::vector<Personaje*>& Vector);
 };
 
