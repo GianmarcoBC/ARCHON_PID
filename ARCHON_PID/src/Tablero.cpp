@@ -176,11 +176,26 @@ void Tablero::Draw() {
             int posX = (int)(GetScreenWidth() / 2 - 4.5 * tamanoCasilla) + columna * tamanoCasilla;
             int posY = (int)(GetScreenHeight() / 2 - 4.5 * tamanoCasilla) + fila * tamanoCasilla;
             DrawRectangle(posX, posY, tamanoCasilla, tamanoCasilla, col);
+
+            // Dibujamos puntos de poder
+           // Lo hacemos atributo? 
+            bool puntoPoder = (fila == 0 && columna == 4) || (fila == 4 && columna == 0) || (fila == 4 && columna == 4) || (fila == 4 && columna == 8) || (fila == 8 && columna == 4);
+
+            if(puntoPoder){
+            int centroX = (int)(GetScreenWidth() / 2 - 4 * tamanoCasilla) + columna * tamanoCasilla;
+            int centroY = (int)(GetScreenHeight() / 2 - 4 * tamanoCasilla) + fila * tamanoCasilla;
+            int radio = 15; // Un círculo pequeñito, como una ficha
+
+            // Lo dibujamos
+            DrawCircle(centroX, centroY, radio, ORANGE);
+            }
+
         }
     }
 
     // 2. Resaltado de movimientos posibles
     DrawCasillas();
+
 
     // 3. Cementerio (solo visible en modo Revive)
     if (modoJuegoactual == ModoJuego::REVIVE) {
@@ -201,7 +216,15 @@ void Tablero::Draw() {
         }
     }
 
-    // 4. Dibujar todas las piezas en el tablero
+    // 4. Resaltar el personaje seleccionado
+    if (personaje_seleccionado != nullptr) {
+        int posX = (int)(GetScreenWidth() / 2 - 4.5 * tamanoCasilla) + personaje_seleccionado->get_columna() * tamanoCasilla;
+        int posY = (int)(GetScreenHeight() / 2 - 4.5 * tamanoCasilla) + personaje_seleccionado->get_fila() * tamanoCasilla;
+        DrawRectangle(posX, posY, tamanoCasilla, tamanoCasilla, YELLOW);
+
+    }
+
+    // 5. Dibujar todas las piezas en el tablero
     for (int fila = 0; fila < casillasxlado; fila++) {
         for (int columna = 0; columna < casillasxlado; columna++) {
             if (cuadricula[fila][columna] != nullptr)
@@ -209,9 +232,13 @@ void Tablero::Draw() {
         }
     }
 
-    // 5. Indicador de turno
+    // 6. Indicador de turno
     const char* turnoTxt = turno == LUZ ? "Turno: LUZ" : "Turno: OSCURIDAD";
     DrawText(turnoTxt, 10, GetScreenHeight() - 20, 16, turno == LUZ ? GOLD : PURPLE);
+
+   
+
+
 }
 
 /*
@@ -275,7 +302,7 @@ void Tablero::moverPieza() {
     iniciaEstadoHechizos();
 
     // Si hay pieza seleccionada y se ha clickeado una casilla destino
-    if (fila_seleccionada != -1 && columna_seleccionada != -1 && personaje_seleccionado != nullptr) {
+    if (fila_seleccionada != -1 && columna_seleccionada != -1 && personaje_seleccionado != nullptr && get_MovimientosPosibles(fila_seleccionada, columna_seleccionada) ==true) {
         if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr) {
             // La casilla destino tiene una pieza -> comprobar si es enemiga
             PiezaTablero* personajeAtacado = cuadricula[fila_seleccionada][columna_seleccionada];
