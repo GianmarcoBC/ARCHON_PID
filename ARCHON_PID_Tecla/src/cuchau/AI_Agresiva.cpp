@@ -29,10 +29,10 @@ CombatAI::Accion AI_Agresiva::decide(const std::vector<Disparo>& disparos, float
     // 'disparos' se recibe por firma comun pero no se usa: esta IA no esquiva
     Vec2  n = (Jugador.GetPos() - IA.GetPos()).unitario();
     float dist = (Jugador.GetPos() - IA.GetPos()).modulo();
-    float dmax{5.0};
+    float dmax{5.0f};
 
 	if (Jugador.GetRangoMax() == Rango_bajo)
-		dmax *= 0.1f; // Si el jugador es de corto alcance, la IA se acerca mas
+		dmax *= 0.2f; // Si el jugador es de corto alcance, la IA se acerca mas
 	else if (Jugador.GetRangoMax() == Rango_medio)
 		dmax *= 0.6f; // Para los demas personajes, mantiene la distancia optima con margen
 
@@ -47,7 +47,7 @@ CombatAI::Accion AI_Agresiva::decide(const std::vector<Disparo>& disparos, float
     if (estado == Acercar) {
         // Linea recta hacia el jugador sin zigzag: maxima velocidad de aproximacion
         // A diferencia de AI_Facil, no sacrifica velocidad por imprevisibilidad
-        dir_mov = n;
+        dir_mov = n.unitario();
     }
     else {
         dir_mov = n.unitario() * -1.0f;

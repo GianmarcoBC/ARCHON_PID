@@ -23,7 +23,7 @@ CombatAI::Accion AI_Facil::decide(const std::vector<Disparo>& disparos, float dt
     // Vector normalizado hacia el jugador y distancia actual
     Vec2  n = (Jugador.GetPos() - IA.GetPos()).unitario();
     float dist = (Jugador.GetPos() - IA.GetPos()).modulo();
-    float dmax{ 10.0 };
+    float dmax{ 10.0f };
 
     if (Jugador.GetRangoMax() == Rango_bajo)
         dmax *= 0.1f; // Si el jugador es de corto alcance, la IA se acerca mas

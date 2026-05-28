@@ -1,7 +1,15 @@
 #include "Drawing.h"
 #include "rlgl.h"
+#include "raylib.h"
 
 void Drawing::setupProjection() {
+    // Defensive check: skip rlgl calls if window/context not ready or screen size is zero.
+    // Calling rlDrawRenderBatchActive() with an uninitialized rlgl can crash (access violation).
+    if (!IsWindowReady() || GetScreenWidth() <= 0 || GetScreenHeight() <= 0) {
+        TraceLog(LOG_WARNING, "Drawing::setupProjection skipped: window/context not ready or zero size");
+        return;
+    }
+
     rlDrawRenderBatchActive();
     rlMatrixMode(RL_PROJECTION);
     rlLoadIdentity();

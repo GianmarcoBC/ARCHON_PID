@@ -30,7 +30,7 @@ inline constexpr float Cooldown_alto = 5.0f, Cooldown_medio = 3.0f, Cooldown_baj
 inline constexpr float AttackSpeed_muyalto = 1000.0f, AttackSpeed_alto = 800.0f, AttackSpeed_medio = 500.0f, AttackSpeed_bajo = 200.0f;
 
 // Rango maximo del ataque (en unidades del juego, para calcular alcance de proyectiles)
-inline constexpr float Rango_inf = 0.0f, Rango_medio = 6.0f, Rango_bajo = 2.0f;
+inline constexpr int Rango_inf = 0, Rango_medio = 6, Rango_bajo = 2;
 
 // --- Estructura de controles del teclado ---
 struct cntrl

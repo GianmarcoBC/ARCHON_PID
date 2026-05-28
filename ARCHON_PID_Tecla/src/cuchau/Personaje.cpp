@@ -95,6 +95,10 @@ void Personaje::Move(Vec2 dir, float dt)
         }
         break;
     case EstadoAnimacion::ATK:
+        pos3d.x += dir.x * spd * dt;
+        pos3d.z += dir.y * spd * dt;
+        l_dir = dir.unitario();
+
         frameTimer += dt;
         if (frameTimer >= frameSpeed) {
             frameTimer = 0.0f;
