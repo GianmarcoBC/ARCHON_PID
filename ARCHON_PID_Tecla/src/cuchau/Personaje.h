@@ -63,7 +63,9 @@ class Personaje
     Sound efecto_ataque{};          // Sonido que se reproduce al disparar
 
     // --- Animacion ---
-	int   frameActual = 0; 	 // Frame actual de animacion (index en Frames y shadow)    
+	int   frameActual_Mov = 0; 	 // Frame actual de animacion (index en Frames y shadow)    
+	int  frameActual_Still = 0; 	 // Frame actual de animacion (index en Frames y shadow)
+	int  frameActual_Atk = 0; 	 // Frame actual de animacion (index en Frames y shadow)
     float frameTimer  = 0.0f;       // Acumulador de tiempo para cambiar de frame
 	float frameSpeed = 0.1f;       // Tiempo por frame de animacion (segundos, tomado de Pj_info)
     EstadoAnimacion  est{ EstadoAnimacion::STILL };
@@ -73,9 +75,9 @@ class Personaje
 	friend class Interacciones;
 
     // Dibuja la sombra del frame actual en la posicion dada
-    void drawshadow(Vector3 shadowpos, std::vector<Model> shadowFrames) const;
+    void drawshadow(Vector3 shadowpos, std::vector<Model> shadowFrames, int frameIndex) const;
 
-	void drawAnimation(Camera camera, std::vector<Texture2D> frames) const;
+	void drawAnimation(Camera camera, std::vector<Texture2D> frames, int frameIndex) const;
 
 	
 

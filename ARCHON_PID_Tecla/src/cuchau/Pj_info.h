@@ -76,20 +76,31 @@ struct Pj_info
 inline const Pj_info MH = {
     "MH",
 
-    {"bin/Resources/MH/SpriteMHMOV_0001.png",
-    "bin/Resources/MH/SpriteMHMOV_0002.png"},
+    {"bin/Resources/MH/SpriteMHMov_0001.png",
+    "bin/Resources/MH/SpriteMHMov_0002.png"},
 
-    {"bin/Resources/MH/SpriteMHMOV_0001shadow.png",
-    "bin/Resources/MH/SpriteMHMOV_0002shadow.png"},
+    {"bin/Resources/MH/SpriteMHMov_0001shadow.png",
+    "bin/Resources/MH/SpriteMHMov_0002shadow.png"},
 
-	{},
+	{"bin/Resources/MH/SpriteMHStill_0001.png", 
+    "bin/Resources/MH/SpriteMHStill_0002.png", 
+    "bin/Resources/MH/SpriteMHStill_0003.png", 
+    "bin/Resources/MH/SpriteMHStill_0004.png",
+    "bin/Resources/MH/SpriteMHStill_0005.png"},
 
-	{},
+    {"bin/Resources/MH/SpriteMHStill_0001shadow.png",
+    "bin/Resources/MH/SpriteMHStill_0002shadow.png",
+    "bin/Resources/MH/SpriteMHStill_0003shadow.png",
+    "bin/Resources/MH/SpriteMHStill_0004shadow.png",
+    "bin/Resources/MH/SpriteMHStill_0005shadow.png"},
 
-    {},
+    {"bin/Resources/MH/SpriteMHATK_0001.png",
+    "bin/Resources/MH/SpriteMHATK_0002.png",
+    "bin/Resources/MH/SpriteMHATK_0003.png"},
 
-    {},
-
+    {"bin/Resources/MH/SpriteMHATK_0001shadow.png",
+    "bin/Resources/MH/SpriteMHATK_0002shadow.png",
+    "bin/Resources/MH/SpriteMHATK_0003shadow.png"},
 
     "bin/Resources/MH/MHATK.png",
     "bin/Resources/MH/RaspberryPIMH.wav",
@@ -107,21 +118,31 @@ inline const Pj_info MH = {
 inline const Pj_info Phoenix = {
     "Phoenix",
 
-    {"bin/Resources/Phoenix/SpritePhoenix.png",
-    "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png"},
+    {"bin/Resources/Phoenix/SpritePhoenixMov_0001.png",
+    "bin/Resources/Phoenix/SpritePhoenixMov_0002.png",
+    "bin/Resources/Phoenix/SpritePhoenixMov_0003.png"},
 
-    {"bin/Resources/MH/SpriteMH_shadow.png",
-    "bin/Resources/MH/SpriteMH_shadow.png",
-    "bin/Resources/MH/SpriteMH_shadow.png"},
+    {"bin/Resources/Phoenix/SpritePhoenixMov_0001shadow.png",
+    "bin/Resources/Phoenix/SpritePhoenixMov_0002shadow.png",
+    "bin/Resources/Phoenix/SpritePhoenixMov_0003shadow.png"},
 
-    {},
+    {"bin/Resources/Phoenix/SpritePhoenixStill_0001.png",
+    "bin/Resources/Phoenix/SpritePhoenixStill_0002.png",
+    "bin/Resources/Phoenix/SpritePhoenixStill_0003.png"},
 
-    {},
+    {"bin/Resources/Phoenix/SpritePhoenixStill_0001shadow.png",
+    "bin/Resources/Phoenix/SpritePhoenixStill_0002shadow.png",
+    "bin/Resources/Phoenix/SpritePhoenixStill_0003shadow.png"},
 
-    {},
+    {"bin/Resources/Phoenix/SpritePhoenixATK_0001.png",
+    "bin/Resources/Phoenix/SpritePhoenixATK_0002.png",
+    "bin/Resources/Phoenix/SpritePhoenixATK_0003.png",
+    "bin/Resources/Phoenix/SpritePhoenixATK_0004.png"},
 
-    {},
+    {"bin/Resources/Phoenix/SpritePhoenixATK_0001shadow.png",
+    "bin/Resources/Phoenix/SpritePhoenixATK_0002shadow.png",
+    "bin/Resources/Phoenix/SpritePhoenixATK_0003shadow.png",
+    "bin/Resources/Phoenix/SpritePhoenixATK_0004shadow.png"},
 
     "bin/Resources/Phoenix/PhoenixATK.png",
     "bin/Resources/Phoenix/PhoenixFX.wav",
@@ -139,23 +160,33 @@ inline const Pj_info Phoenix = {
 inline const Pj_info Golem = {
     "Golem",
 
-    {"bin/Resources/Golem/SpriteGolem.png",
-    "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png"},
+    {"bin/Resources/Golem/SpriteGolemMov_0001.png",
+    "bin/Resources/Golem/SpriteGolemMov_0002.png"},
 
-    {"bin/Resources/MH/SpriteMH_shadow.png",
-    "bin/Resources/MH/SpriteMH_shadow.png",
-    "bin/Resources/MH/SpriteMH_shadow.png"},
+    {"bin/Resources/Golem/SpriteGolemMov_0001shadow.png",
+    "bin/Resources/Golem/SpriteGolemMov_0002shadow.png"},
 
-    {},
+    {"bin/Resources/Golem/SpriteGolemStill_0001.png",
+    "bin/Resources/Golem/SpriteGolemStill_0002.png"},
 
-    {},
+    {"bin/Resources/Golem/SpriteGolemStill_0001shadow.png",
+    "bin/Resources/Golem/SpriteGolemStill_0002shadow.png"},
 
-    {},
+    {"bin/Resources/Golem/SpriteGolemATK_0001.png",
+    "bin/Resources/Golem/SpriteGolemATK_0002.png",
+    "bin/Resources/Golem/SpriteGolemATK_0003.png",
+    "bin/Resources/Golem/SpriteGolemATK_0004.png",
+    "bin/Resources/Golem/SpriteGolemATK_0005.png", 
+    "bin/Resources/Golem/SpriteGolemATK_0006.png"},
 
-    {},
+    {"bin/Resources/Golem/SpriteGolemATK_0001shadow.png",
+    "bin/Resources/Golem/SpriteGolemATK_0002shadow.png",
+    "bin/Resources/Golem/SpriteGolemATK_0003shadow.png",
+    "bin/Resources/Golem/SpriteGolemATK_0004shadow.png",
+    "bin/Resources/Golem/SpriteGolemATK_0005shadow.png",
+    "bin/Resources/Golem/SpriteGolemATK_0006shadow.png"},
 
-    "bin/Resources/Archer/SpriteFlecha.png",
+    "bin/Resources/Golem/GolemATK.png",
     "bin/Resources/Golem/GolemFX.wav",
     Velocidad_baja,
     Vida_alta,
@@ -171,21 +202,31 @@ inline const Pj_info Golem = {
 inline const Pj_info Djinni = {
     "Djinni",
 
-    {"bin/Resources/Djinni/SpiteDjinni.png",
-    "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png"},
+    {"bin/Resources/Djinni/SpriteDjinniMov_0001.png",
+    "bin/Resources/Djinni/SpriteDjinniMov_0002.png",
+    "bin/Resources/Djinni/SpriteDjinniMov_0003.png"},
 
-    {"bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png"},
+    {"bin/Resources/Djinni/SpriteDjinniMov_0001shadow.png",
+    "bin/Resources/Djinni/SpriteDjinniMov_0002shadow.png",
+    "bin/Resources/Djinni/SpriteDjinniMov_0003shadow.png"},
 
-    {},
+    {"bin/Resources/Djinni/SpriteDjinniStill_0001.png",
+    "bin/Resources/Djinni/SpriteDjinniStill_0002.png",
+    "bin/Resources/Djinni/SpriteDjinniStill_0003.png"},
 
-    {},
+    {"bin/Resources/Djinni/SpriteDjinniStill_0001shadow.png",
+    "bin/Resources/Djinni/SpriteDjinniStill_0002shadow.png",
+    "bin/Resources/Djinni/SpriteDjinniStill_0003shadow.png"},
 
-    {},
+    {"bin/Resources/Djinni/SpriteDjinniATK_0001.png",
+    "bin/Resources/Djinni/SpriteDjinniATK_0002.png",
+    "bin/Resources/Djinni/SpriteDjinniATK_0003.png",
+    "bin/Resources/Djinni/SpriteDjinniATK_0004.png"},
 
-    {},
+    {"bin/Resources/Djinni/SpriteDjinniATK_0001shadow.png",
+    "bin/Resources/Djinni/SpriteDjinniATK_0002shadow.png",
+    "bin/Resources/Djinni/SpriteDjinniATK_0003shadow.png",
+    "bin/Resources/Djinni/SpriteDjinniATK_0004shadow.png"},
 
     "bin/Resources/Djinni/DjinniATK.png",
     "bin/Resources/Djinni/DjinniFX.wav",
@@ -203,21 +244,31 @@ inline const Pj_info Djinni = {
 inline const Pj_info Unicorn = {
     "Unicorn",
 
-    {"bin/Resources/Unicorn/SpriteUnicorn_0002.png",
-    "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png"},
+    {"bin/Resources/Unicorn/SpriteUnicornMov_0001.png",
+    "bin/Resources/Unicorn/SpriteUnicornMov_0002.png"},
 
-    {"bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png"},
+    {"bin/Resources/Unicorn/SpriteUnicornMov_0001shadow.png",
+    "bin/Resources/Unicorn/SpriteUnicornMov_0002shadow.png"},
 
-    {},
+    {"bin/Resources/Unicorn/SpriteUnicornStill_0001.png",
+    "bin/Resources/Unicorn/SpriteUnicornStill_0002.png",
+    "bin/Resources/Unicorn/SpriteUnicornStill_0003.png",
+    "bin/Resources/Unicorn/SpriteUnicornStill_0004.png"},
 
-    {},
+    {"bin/Resources/Unicorn/SpriteUnicornStill_0001shadow.png",
+    "bin/Resources/Unicorn/SpriteUnicornStill_0002shadow.png",
+    "bin/Resources/Unicorn/SpriteUnicornStill_0003shadow.png",
+    "bin/Resources/Unicorn/SpriteUnicornStill_0004shadow.png"},
 
-    {},
+    {"bin/Resources/Unicorn/SpriteUnicornATK_0001.png",
+    "bin/Resources/Unicorn/SpriteUnicornATK_0002.png",
+    "bin/Resources/Unicorn/SpriteUnicornATK_0003.png",
+    "bin/Resources/Unicorn/SpriteUnicornATK_0004.png"},
 
-    {},
+    {"bin/Resources/Unicorn/SpriteUnicornATK_0001shadow.png",
+    "bin/Resources/Unicorn/SpriteUnicornATK_0002shadow.png",
+    "bin/Resources/Unicorn/SpriteUnicornATK_0003shadow.png",
+    "bin/Resources/Unicorn/SpriteUnicornATK_0004shadow.png"},
 
     "bin/Resources/Unicorn/UnicornATK.png",
     "bin/Resources/Valkyrie/magicspearfx.wav",
@@ -235,21 +286,31 @@ inline const Pj_info Unicorn = {
 inline const Pj_info Valkyrie = {
     "Valkyrie",
 
-    {"bin/Resources/Valkyrie/SpriteValkyrie.png",
-    "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png"},
+    {"bin/Resources/Valkyrie/SpriteValkyrieMov_0001.png",
+    "bin/Resources/Valkyrie/SpriteValkyrieMov_0002.png"},
 
-    {"bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png"},
+    {"bin/Resources/Valkyrie/SpriteValkyrieMov_0001shadow.png",
+    "bin/Resources/Valkyrie/SpriteValkyrieMov_0002shadow.png"},
 
-    {},
+    {"bin/Resources/Valkyrie/SpriteValkyrieStill_0001.png",
+    "bin/Resources/Valkyrie/SpriteValkyrieStill_0002.png",
+    "bin/Resources/Valkyrie/SpriteValkyrieStill_0003.png",
+    "bin/Resources/Valkyrie/SpriteValkyrieStill_0004.png"},
 
-    {},
+    {"bin/Resources/Valkyrie/SpriteValkyrieStill_0001shadow.png",
+    "bin/Resources/Valkyrie/SpriteValkyrieStill_0002shadow.png",
+    "bin/Resources/Valkyrie/SpriteValkyrieStill_0003shadow.png",
+    "bin/Resources/Valkyrie/SpriteValkyrieStill_0004shadow.png"},
 
-    {},
+    {"bin/Resources/Valkyrie/SpriteValkyrieATK_0001.png",
+    "bin/Resources/Valkyrie/SpriteValkyrieATK_0002.png",
+    "bin/Resources/Valkyrie/SpriteValkyrieATK_0003.png",
+    "bin/Resources/Valkyrie/SpriteValkyrieATK_0004.png"},
 
-    {},
+    {"bin/Resources/Valkyrie/SpriteValkyrieATK_0001shadow.png",
+    "bin/Resources/Valkyrie/SpriteValkyrieATK_0002shadow.png",
+    "bin/Resources/Valkyrie/SpriteValkyrieATK_0003shadow.png",
+    "bin/Resources/Valkyrie/SpriteValkyrieATK_0004shadow.png"},
 
     "bin/Resources/Valkyrie/ValkyrieATK.png",
     "bin/Resources/Valkyrie/ValkyrieFX.wav",
@@ -267,21 +328,37 @@ inline const Pj_info Valkyrie = {
 inline const Pj_info Archer = {
     "Archer",
 
-    {"bin/Resources/Archer/SpriteArcherpxo.png",
-    "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png"},
+    {"bin/Resources/Archer/SpriteArcherMov_0001.png",
+    "bin/Resources/Archer/SpriteArcherMov_0002.png",
+    "bin/Resources/Archer/SpriteArcherMov_0003.png"},
 
-    {"bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png"},
+    {"bin/Resources/Archer/SpriteArcherMov_0001shadow.png",
+    "bin/Resources/Archer/SpriteArcherMov_0002shadow.png",
+    "bin/Resources/Archer/SpriteArcherMov_0003shadow.png"},
 
-    {},
+    {"bin/Resources/Archer/SpriteArcherStill_0001.png",
+    "bin/Resources/Archer/SpriteArcherStill_0002.png",
+    "bin/Resources/Archer/SpriteArcherStill_0003.png",
+    "bin/Resources/Archer/SpriteArcherStill_0004.png"},
 
-    {},
+    {"bin/Resources/Archer/SpriteArcherStill_0001shadow.png",
+    "bin/Resources/Archer/SpriteArcherStill_0002shadow.png",
+    "bin/Resources/Archer/SpriteArcherStill_0003shadow.png",
+    "bin/Resources/Archer/SpriteArcherStill_0004shadow.png"},
 
-    {},
+    {"bin/Resources/Archer/SpriteArcherATK_0001.png",
+    "bin/Resources/Archer/SpriteArcherATK_0002.png",
+    "bin/Resources/Archer/SpriteArcherATK_0003.png",
+    "bin/Resources/Archer/SpriteArcherATK_0004.png", 
+    "bin/Resources/Archer/SpriteArcherATK_0005.png",
+    "bin/Resources/Archer/SpriteArcherATK_0006.png"},
 
-    {},
+    {"bin/Resources/Archer/SpriteArcherATK_0001shadow.png",
+    "bin/Resources/Archer/SpriteArcherATK_0002shadow.png",
+    "bin/Resources/Archer/SpriteArcherATK_0003shadow.png",
+    "bin/Resources/Archer/SpriteArcherATK_0004shadow.png",
+    "bin/Resources/Archer/SpriteArcherATK_0005shadow.png",
+    "bin/Resources/Archer/SpriteArcherATK_0006shadow.png"},
 
     "bin/Resources/Archer/ArcherATK.png",
     "bin/Resources/Archer/ArcherFX.wav",
@@ -299,21 +376,29 @@ inline const Pj_info Archer = {
 inline const Pj_info Knight = {
     "Knight",
 
-    {"bin/Resources/Knight/SpriteKnight.png",
-    "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png"},
+    {"bin/Resources/Knight/SpriteKnightMov_0001.png",
+    "bin/Resources/Knight/SpriteKnightMov_0002.png",
+    "bin/Resources/Knight/SpriteKnightMov_0003.png",
+    "bin/Resources/Knight/SpriteKnightMov_0004.png"},
 
-    {"bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png"},
+    {"bin/Resources/Knight/SpriteKnightMov_0001shadow.png",
+    "bin/Resources/Knight/SpriteKnightMov_0002shadow.png",
+    "bin/Resources/Knight/SpriteKnightMov_0003shadow.png",
+    "bin/Resources/Knight/SpriteKnightMov_0004shadow.png"},
 
-    {},
+    {"bin/Resources/Knight/SpriteKnightStill_0001.png",
+    "bin/Resources/Knight/SpriteKnightStill_0002.png"},
 
-    {},
+    {"bin/Resources/Knight/SpriteKnightStill_0001shadow.png",
+    "bin/Resources/Knight/SpriteKnightStill_0002shadow.png"},
 
-    {},
+    {"bin/Resources/Knight/SpriteKnightATK_0001.png",
+    "bin/Resources/Knight/SpriteKnightATK_0002.png",
+    "bin/Resources/Knight/SpriteKnightATK_0003.png"},
 
-    {},
+    {"bin/Resources/Knight/SpriteKnightATK_0001shadow.png",
+    "bin/Resources/Knight/SpriteKnightATK_0002shadow.png",
+    "bin/Resources/Knight/SpriteKnightATK_0003shadow.png"},
 
     "bin/Resources/Knight/KnightATK.png",
     "bin/Resources/Knight/KnightFX.wav",
@@ -336,21 +421,31 @@ inline const Pj_info Knight = {
 inline const Pj_info Platero = {
     "Platero",
 
-    {"bin/Resources/Platero/SpritePlatero.png",
-    "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png"},
+    {"bin/Resources/Platero/SpritePlateroMov_0001.png",
+    "bin/Resources/Platero/SpritePlateroMov_0002.png"},
 
-    {"bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png"},
+    {"bin/Resources/Platero/SpritePlateroMov_0001shadow.png",
+    "bin/Resources/Platero/SpritePlateroMov_0002shadow.png"},
 
-    {},
+    {"bin/Resources/Platero/SpritePlateroStill_0001.png",
+    "bin/Resources/Platero/SpritePlateroStill_0002.png",
+    "bin/Resources/Platero/SpritePlateroStill_0003.png"},
 
-    {},
+    {"bin/Resources/Platero/SpritePlateroStill_0001shadow.png",
+    "bin/Resources/Platero/SpritePlateroStill_0002shadow.png",
+    "bin/Resources/Platero/SpritePlateroStill_0003shadow.png"},
 
-    {},
+    {"bin/Resources/Platero/SpritePlateroATK_0001.png",
+    "bin/Resources/Platero/SpritePlateroATK_0002.png",
+    "bin/Resources/Platero/SpritePlateroATK_0003.png",
+    "bin/Resources/Platero/SpritePlateroATK_0004.png",
+    "bin/Resources/Platero/SpritePlateroATK_0005.png"},
 
-    {},
+    {"bin/Resources/Platero/SpritePlateroATK_0001shadow.png",
+    "bin/Resources/Platero/SpritePlateroATK_0002shadow.png",
+    "bin/Resources/Platero/SpritePlateroATK_0003shadow.png",
+    "bin/Resources/Platero/SpritePlateroATK_0004shadow.png",
+    "bin/Resources/Platero/SpritePlateroATK_0005shadow.png"},
 
     "bin/Resources/Platero/PlateroATK.png",
     "bin/Resources/Platero/CorrectoPlatero.wav",
@@ -368,21 +463,31 @@ inline const Pj_info Platero = {
 inline const Pj_info ShapeShifter = {
     "ShapeShifter",
 
-    {"bin/Resources/Shapeshifter/SpriteShapeshifter.png",
-    "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png"},
+    {"bin/Resources/ShapeShifter/SpriteShapeShifterMov_0001.png",
+    "bin/Resources/ShapeShifter/SpriteShapeShifterMov_0002.png",
+    "bin/Resources/ShapeShifter/SpriteShapeShifterMov_0003.png"},
 
-    {"bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png"},
+    {"bin/Resources/ShapeShifter/SpriteShapeShifterMov_0001shadow.png",
+    "bin/Resources/ShapeShifter/SpriteShapeShifterMov_0002shadow.png",
+    "bin/Resources/ShapeShifter/SpriteShapeShifterMov_0003shadow.png"},
 
-    {},
+    {"bin/Resources/ShapeShifter/SpriteShapeShifterStill_0001.png",
+    "bin/Resources/ShapeShifter/SpriteShapeShifterStill_0002.png",
+    "bin/Resources/ShapeShifter/SpriteShapeShifterStill_0003.png"},
 
-    {},
+    {"bin/Resources/ShapeShifter/SpriteShapeShifterStill_0001shadow.png",
+    "bin/Resources/ShapeShifter/SpriteShapeShifterStill_0002shadow.png",
+    "bin/Resources/ShapeShifter/SpriteShapeShifterStill_0003shadow.png"},
 
-    {},
+    {"bin/Resources/ShapeShifter/SpriteShapeShifterATK_0001.png",
+    "bin/Resources/ShapeShifter/SpriteShapeShifterATK_0002.png",
+    "bin/Resources/ShapeShifter/SpriteShapeShifterATK_0003.png",
+    "bin/Resources/ShapeShifter/SpriteShapeShifterATK_0004.png"},
 
-    {},
+    {"bin/Resources/ShapeShifter/SpriteShapeShifterATK_0001shadow.png",
+    "bin/Resources/ShapeShifter/SpriteShapeShifterATK_0002shadow.png",
+    "bin/Resources/ShapeShifter/SpriteShapeShifterATK_0003shadow.png",
+    "bin/Resources/ShapeShifter/SpriteShapeShifterATK_0004shadow.png"},
 
     "bin/Resources/Shapeshifter/ShapeshifterATK.png",
     "bin/Resources/Banshee/scream.wav",
@@ -400,23 +505,33 @@ inline const Pj_info ShapeShifter = {
 inline const Pj_info Troll = {
     "Troll",
 
-    {"bin/Resources/Troll/SpriteTroll.png",
-    "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png"},
+    {"bin/Resources/Troll/SpriteTrollMov_0001.png",
+    "bin/Resources/Troll/SpriteTrollMov_0002.png",
+    "bin/Resources/Troll/SpriteTrollMov_0003.png"},
 
-    {"bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png"},
+    {"bin/Resources/Troll/SpriteTrollMov_0001shadow.png",
+    "bin/Resources/Troll/SpriteTrollMov_0002shadow.png",
+    "bin/Resources/Troll/SpriteTrollMov_0003shadow.png"},
 
-    {},
+    {"bin/Resources/Troll/SpriteTrollStill_0001.png",
+    "bin/Resources/Troll/SpriteTrollStill_0002.png",
+    "bin/Resources/Troll/SpriteTrollStill_0003.png"},
 
-    {},
+    {"bin/Resources/Troll/SpriteTrollStill_0001shadow.png",
+    "bin/Resources/Troll/SpriteTrollStill_0002shadow.png",
+    "bin/Resources/Troll/SpriteTrollStill_0003shadow.png"},
 
-    {},
+    {"bin/Resources/Troll/SpriteTrollATK_0001.png",
+    "bin/Resources/Troll/SpriteTrollATK_0002.png",
+    "bin/Resources/Troll/SpriteTrollATK_0003.png",
+    "bin/Resources/Troll/SpriteTrollATK_0004.png"},
 
-    {},
+    {"bin/Resources/Troll/SpriteTrollATK_0001shadow.png",
+    "bin/Resources/Troll/SpriteTrollATK_0002shadow.png",
+    "bin/Resources/Troll/SpriteTrollATK_0003shadow.png",
+    "bin/Resources/Troll/SpriteTrollATK_0004shadow.png"},
 
-    "bin/Resources/Archer/SpriteFlecha.png",
+    "bin/Resources/Troll/TrollATK.png",
     "bin/Resources/Troll/trollFX.wav",
     Velocidad_baja,
     Vida_alta,
@@ -432,21 +547,31 @@ inline const Pj_info Troll = {
 inline const Pj_info Dragon = {
     "Dragon",
 
-    {"bin/Resources/Dragon/SpriteDragon.png",
-    "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png"},
+    {"bin/Resources/Dragon/SpriteDragonMov_0001.png",
+    "bin/Resources/Dragon/SpriteDragonMov_0002.png"},
 
-    {"bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png"},
+    {"bin/Resources/Dragon/SpriteDragonMov_0001shadow.png",
+    "bin/Resources/Dragon/SpriteDragonMov_0002shadow.png"},
 
-    {},
+    {"bin/Resources/Dragon/SpriteDragonStill_0001.png",
+    "bin/Resources/Dragon/SpriteDragonStill_0002.png",
+    "bin/Resources/Dragon/SpriteDragonStill_0003.png",
+    "bin/Resources/Dragon/SpriteDragonStill_0004.png"},
 
-    {},
+    {"bin/Resources/Dragon/SpriteDragonStill_0001shadow.png",
+    "bin/Resources/Dragon/SpriteDragonStill_0002shadow.png",
+    "bin/Resources/Dragon/SpriteDragonStill_0003shadow.png",
+    "bin/Resources/Dragon/SpriteDragonStill_0004shadow.png"},
 
-    {},
+    {"bin/Resources/Dragon/SpriteDragonATK_0001.png",
+    "bin/Resources/Dragon/SpriteDragonATK_0002.png",
+    "bin/Resources/Dragon/SpriteDragonATK_0003.png",
+    "bin/Resources/Dragon/SpriteDragonATK_0004.png"},
 
-    {},
+    {"bin/Resources/Dragon/SpriteDragonATK_0001shadow.png",
+    "bin/Resources/Dragon/SpriteDragonATK_0002shadow.png",
+    "bin/Resources/Dragon/SpriteDragonATK_0003shadow.png",
+    "bin/Resources/Dragon/SpriteDragonATK_0004shadow.png"},
 
     "bin/Resources/Dragon/DragonATK.png",
     "bin/Resources/Dragon/DragonFX.wav",
@@ -464,21 +589,31 @@ inline const Pj_info Dragon = {
 inline const Pj_info Basilisk = {
     "Basilisk",
 
-    {"bin/Resources/Basilisk/SpriteBasilisk.png",
-    "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png"},
+    {"bin/Resources/Basilisk/SpriteBasiliskMov_0001.png",
+    "bin/Resources/Basilisk/SpriteBasiliskMov_0002.png"},
 
-    {"bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png"},
+    {"bin/Resources/Basilisk/SpriteBasiliskMov_0001shadow.png",
+    "bin/Resources/Basilisk/SpriteBasiliskMov_0002shadow.png"},
 
-    {},
+    {"bin/Resources/Basilisk/SpriteBasiliskStill_0001.png",
+    "bin/Resources/Basilisk/SpriteBasiliskStill_0002.png",
+    "bin/Resources/Basilisk/SpriteBasiliskStill_0003.png"},
 
-    {},
+    {"bin/Resources/Basilisk/SpriteBasiliskStill_0001shadow.png",
+    "bin/Resources/Basilisk/SpriteBasiliskStill_0002shadow.png",
+    "bin/Resources/Basilisk/SpriteBasiliskStill_0003shadow.png"},
 
-    {},
+    {"bin/Resources/Basilisk/SpriteBasiliskATK_0001.png",
+    "bin/Resources/Basilisk/SpriteBasiliskATK_0002.png",
+    "bin/Resources/Basilisk/SpriteBasiliskATK_0003.png",
+    "bin/Resources/Basilisk/SpriteBasiliskATK_0004.png",
+    "bin/Resources/Basilisk/SpriteBasiliskATK_0005.png"},
 
-    {},
+    {"bin/Resources/Basilisk/SpriteBasiliskATK_0001shadow.png",
+    "bin/Resources/Basilisk/SpriteBasiliskATK_0002shadow.png",
+    "bin/Resources/Basilisk/SpriteBasiliskATK_0003shadow.png",
+    "bin/Resources/Basilisk/SpriteBasiliskATK_0004shadow.png",
+    "bin/Resources/Basilisk/SpriteBasiliskATK_0005shadow.png"},
 
     "bin/Resources/Basilisk/BasiliskATK.png",
     "bin/Resources/Basilisk/BasiliskFX.wav",
@@ -496,21 +631,33 @@ inline const Pj_info Basilisk = {
 inline const Pj_info Banshee = {
     "Banshee",
 
-    {"bin/Resources/Banshee/SpriteBanshee.png",
-    "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png"},
+    {"bin/Resources/Banshee/SpriteBansheeMov_0001.png",
+    "bin/Resources/Banshee/SpriteBansheeMov_0002.png",
+    "bin/Resources/Banshee/SpriteBansheeMov_0003.png",
+    "bin/Resources/Banshee/SpriteBansheeMov_0004.png"},
 
-    {"bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png"},
+    {"bin/Resources/Banshee/SpriteBansheeMov_0001shadow.png",
+    "bin/Resources/Banshee/SpriteBansheeMov_0002shadow.png",
+    "bin/Resources/Banshee/SpriteBansheeMov_0003shadow.png",
+    "bin/Resources/Banshee/SpriteBansheeMov_0004shadow.png"},
 
-    {},
+    {"bin/Resources/Banshee/SpriteBansheeStill_0001.png",
+    "bin/Resources/Banshee/SpriteBansheeStill_0002.png",
+    "bin/Resources/Banshee/SpriteBansheeStill_0003.png",
+    "bin/Resources/Banshee/SpriteBansheeStill_0004.png"},
 
-    {},
+    {"bin/Resources/Banshee/SpriteBansheeStill_0001shadow.png",
+    "bin/Resources/Banshee/SpriteBansheeStill_0002shadow.png",
+    "bin/Resources/Banshee/SpriteBansheeStill_0003shadow.png",
+    "bin/Resources/Banshee/SpriteBansheeStill_0004shadow.png"},
 
-    {},
+    {"bin/Resources/Banshee/SpriteBansheeATK_0001.png",
+    "bin/Resources/Banshee/SpriteBansheeATK_0002.png",
+    "bin/Resources/Banshee/SpriteBansheeATK_0003.png"},
 
-    {},
+    {"bin/Resources/Banshee/SpriteBansheeATK_0001shadow.png",
+    "bin/Resources/Banshee/SpriteBansheeATK_0002shadow.png",
+    "bin/Resources/Banshee/SpriteBansheeATK_0003shadow.png"},
 
     "bin/Resources/Banshee/BansheeATK.png",
     "bin/Resources/Banshee/BansheeFX.wav",
@@ -528,24 +675,30 @@ inline const Pj_info Banshee = {
 inline const Pj_info Manticore = {
     "Manticore",
 
-    {"bin/Resources/Manticore/SpriteManticore.png",
-    "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png"},
+    {"bin/Resources/Manticore/SpriteManticoreMov_0001.png",
+    "bin/Resources/Manticore/SpriteManticoreMov_0002.png"},
 
-    {"bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png"},
+    {"bin/Resources/Manticore/SpriteManticoreMov_0001shadow.png",
+    "bin/Resources/Manticore/SpriteManticoreMov_0002shadow.png"},
 
-    {},
+    {"bin/Resources/Manticore/SpriteManticoreStill_0001.png",
+    "bin/Resources/Manticore/SpriteManticoreStill_0002.png"},
 
-    {},
+    {"bin/Resources/Manticore/SpriteManticoreStill_0001shadow.png",
+    "bin/Resources/Manticore/SpriteManticoreStill_0002shadow.png"},
 
-    {},
+    {"bin/Resources/Manticore/SpriteManticoreATK_0001.png",
+    "bin/Resources/Manticore/SpriteManticoreATK_0002.png",
+    "bin/Resources/Manticore/SpriteManticoreATK_0003.png",
+    "bin/Resources/Manticore/SpriteManticoreATK_0004.png"},
 
-    {},
+    {"bin/Resources/Manticore/SpriteManticoreATK_0001shadow.png",
+    "bin/Resources/Manticore/SpriteManticoreATK_0002shadow.png",
+    "bin/Resources/Manticore/SpriteManticoreATK_0003shadow.png",
+    "bin/Resources/Manticore/SpriteManticoreATK_0004shadow.png"},
 
     "bin/Resources/Manticore/ManticoreATK.png",
-    "bin/Resources/Djinni/vientofeericofx.wav",
+    "bin/Resources/Manticore/ManticoreFX.wav",
     Velocidad_media,
     Vida_media,
     Fuerza_baja,
@@ -560,21 +713,31 @@ inline const Pj_info Manticore = {
 inline const Pj_info Goblin = {
     "Goblin",
 
-    {"bin/Resources/Goblin/Spritegoblin.png",
-    "bin/Resources/MH/SpriteMH_0002.png",
-    "bin/Resources/MH/SpriteMH_0003.png"},
+    {"bin/Resources/Goblin/SpriteGoblinMov_0001.png",
+    "bin/Resources/Goblin/SpriteGoblinMov_0002.png"},
 
-    {"bin/Resources/MH/SpriteMH_0001.png",
-    "bin/Resources/MH/SpriteMH_0006.png",
-    "bin/Resources/MH/SpriteMH_0001.png"},
+    {"bin/Resources/Goblin/SpriteGoblinMov_0001shadow.png",
+    "bin/Resources/Goblin/SpriteGoblinMov_0002shadow.png"},
 
-    {},
+    {"bin/Resources/Goblin/SpriteGoblinStill_0001.png",
+    "bin/Resources/Goblin/SpriteGoblinStill_0002.png"},
 
-    {},
+    {"bin/Resources/Goblin/SpriteGoblinStill_0001shadow.png",
+    "bin/Resources/Goblin/SpriteGoblinStill_0002shadow.png"},
 
-    {},
+    {"bin/Resources/Goblin/SpriteGoblinATK_0001.png",
+    "bin/Resources/Goblin/SpriteGoblinATK_0002.png",
+    "bin/Resources/Goblin/SpriteGoblinATK_0003.png",
+    "bin/Resources/Goblin/SpriteGoblinATK_0004.png",
+    "bin/Resources/Goblin/SpriteGoblinATK_0005.png",
+    "bin/Resources/Goblin/SpriteGoblinATK_0006.png"},
 
-    {},
+    {"bin/Resources/Goblin/SpriteGoblinATK_0001shadow.png",
+    "bin/Resources/Goblin/SpriteGoblinATK_0002shadow.png",
+    "bin/Resources/Goblin/SpriteGoblinATK_0003shadow.png",
+    "bin/Resources/Goblin/SpriteGoblinATK_0004shadow.png",
+    "bin/Resources/Goblin/SpriteGoblinATK_0005shadow.png",
+    "bin/Resources/Goblin/SpriteGoblinATK_0006shadow.png"},
 
     "bin/Resources/Goblin/GoblinATK.png",
     "bin/Resources/Goblin/GoblinFX.wav",

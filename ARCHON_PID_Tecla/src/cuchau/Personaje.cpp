@@ -84,14 +84,14 @@ void Personaje::Move(Vec2 dir, float dt)
         frameTimer += dt;
         if (frameTimer >= frameSpeed) {
             frameTimer = 0.0f;
-            frameActual = (frameActual + 1) % Frames_MOV.size();
+            frameActual_Mov = (frameActual_Mov + 1) % Frames_MOV.size();
         }
         break;
     case EstadoAnimacion::STILL:
         frameTimer += dt;
         if (frameTimer >= frameSpeed) {
             frameTimer = 0.0f;
-            frameActual = (frameActual + 1) % Frames_STILL.size();
+            frameActual_Still = (frameActual_Still + 1) % Frames_STILL.size();
         }
         break;
     case EstadoAnimacion::ATK:
@@ -102,11 +102,13 @@ void Personaje::Move(Vec2 dir, float dt)
         frameTimer += dt;
         if (frameTimer >= frameSpeed) {
             frameTimer = 0.0f;
-            frameActual = (frameActual + 1) % Frames_ATK.size();
+            frameActual_Atk = (frameActual_Atk + 1) % Frames_ATK.size();
         }
         break;
     default:
-        frameActual = 0;
+        frameActual_Mov = 0;
+        frameActual_Still = 0;
+        frameActual_Atk = 0;
         frameTimer = 0.0f;
         break;
     }
@@ -143,16 +145,16 @@ void Personaje::Draw(Camera camera) const
 {
     switch (est) {
 	case EstadoAnimacion::MOV:
-		drawAnimation(camera, Frames_MOV);
-        drawshadow({ pos3d.x, 0.01f, pos3d.z - Size3D / 2 }, shadow_MOV);
+		drawAnimation(camera, Frames_MOV, frameActual_Mov);
+        drawshadow({ pos3d.x, 0.01f, pos3d.z - Size3D / 2 }, shadow_MOV, frameActual_Mov);
 		break;
 	case EstadoAnimacion::STILL:
-		drawAnimation(camera, Frames_STILL);
-		drawshadow({ pos3d.x, 0.01f, pos3d.z - Size3D / 2 }, shadow_STILL);
+		drawAnimation(camera, Frames_STILL, frameActual_Still);
+		drawshadow({ pos3d.x, 0.01f, pos3d.z - Size3D / 2 }, shadow_STILL, frameActual_Still);
 		break;
 	case EstadoAnimacion::ATK:
-		drawAnimation(camera, Frames_ATK);
-		drawshadow({ pos3d.x, 0.01f, pos3d.z - Size3D / 2 }, shadow_ATK);
+		drawAnimation(camera, Frames_ATK, frameActual_Atk);
+		drawshadow({ pos3d.x, 0.01f, pos3d.z - Size3D / 2 }, shadow_ATK, frameActual_Atk);
 		break;
     }
 
@@ -163,17 +165,17 @@ void Personaje::Draw(Camera camera) const
 //  Usa BLEND_MULTIPLIED para que la sombra se mezcle con el suelo
 //  oscureciendolo sin taparlo completamente.
 
-void Personaje::drawshadow(Vector3 shadowpos, std::vector<Model> shadowFrames) const
+void Personaje::drawshadow(Vector3 shadowpos, std::vector<Model> shadowFrames, int frameIndex) const
 {
     BeginBlendMode(BLEND_MULTIPLIED);
-    DrawModel(shadowFrames[frameActual], shadowpos, 1.0f, WHITE);
+    DrawModel(shadowFrames[frameIndex], shadowpos, 1.0f, WHITE);
     EndBlendMode();
 }
 
-void Personaje::drawAnimation(Camera camera, std::vector<Texture2D> frames) const
+void Personaje::drawAnimation(Camera camera, std::vector<Texture2D> frames, int frameIndex) const
 {
     if (frames.empty()) return; // Sin frames, no dibujar
-    const Texture2D& texActual = frames[frameActual]; // Usa el frame actual
+    const Texture2D& texActual = frames[frameIndex]; // Usa el frame actual
     float w = (float)texActual.width;
     float h = (float)texActual.height;
     float srcW = (l_dir.x < 0) ? -w : w;       // Espejo si va a la izquierda
