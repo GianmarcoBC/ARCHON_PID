@@ -1,6 +1,5 @@
 #pragma once
-
-#include "Personaje.h"
+#include "PiezaTablero.h"
 #include <vector>
 
 class Tablero;
@@ -10,19 +9,14 @@ class Magia
     bool hechizosOscuridad[7]{ false };
     bool hechizosLuz[7]{ false };
 
-
-
 public:
-  
+    Magia() = default;
 
-   Magia() = default;
-
-   void Shift_Time(Personaje* personaje, Tablero& t);
-   void Teleport(Personaje* personaje, Tablero& t);
-   void Heal(Personaje* personaje, Tablero& t);
-   void Exchange(Personaje* personaje, Tablero& t);
-   void Imprison(Personaje* personaje, Tablero& t);
-   void Revive(Personaje* personaje, Tablero& t);
-   void EliminaMuerto(Personaje* personaje_muerto_seleccionado, std::vector<Personaje*>& Vector);
+    void Shift_Time(PiezaTablero* personaje, Tablero& t);
+    void Teleport(PiezaTablero* personaje, Tablero& t);
+    void Heal(PiezaTablero* personaje, Tablero& t);
+    void Exchange(PiezaTablero* personaje, Tablero& t);
+    void Imprison(PiezaTablero* personaje, Tablero& t);
+    void Revive(PiezaTablero* personaje, Tablero& t);
+    void EliminaMuerto(PiezaTablero* personaje_muerto_seleccionado, std::vector<PiezaTablero*>& Vector);
 };
-

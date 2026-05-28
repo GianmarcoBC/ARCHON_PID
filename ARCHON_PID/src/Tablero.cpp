@@ -1,57 +1,55 @@
 #include "Tablero.h"
-
 #include <iostream>
 
-Tablero::Tablero():magiaTablero(){
+// Constructor: configura dimensiones del tablero
+Tablero::Tablero() : magiaTablero() {
     casillasxlado = 9;
     tamanoCasilla = 64;
-
 }
 
-
+/*
+ * LogicaTablero - Dispatcher principal de la logica del juego
+ *
+ * Segun el modo de juego actual, ejecuta la logica correspondiente:
+ * - NORMAL: seleccion de pieza, movimiento, deteccion de victoria
+ * - HECHIZOS: espera input de teclado para elegir hechizo
+ * - Cada hechizo tiene su propio modo (HEAL, TELEPORT, etc.)
+ */
 void Tablero::LogicaTablero() {
-
-
     if (get_modoJuegoActual() == ModoJuego::NORMAL) {
         personaje_usando_magia = nullptr;
-        casillasPosibles(personaje_seleccionado);
-        moverPieza();
-        detectaGanador();
-
+        casillasPosibles(personaje_seleccionado);   // Calcular movimientos validos
+        moverPieza();                               // Gestionar seleccion y movimiento
+        detectaGanador();                           // Comprobar si alguien ha ganado
     }
 
-    if (get_modoJuegoActual() == ModoJuego::HECHIZOS) {
-        hechizos();
-    }
-    if (get_modoJuegoActual() == ModoJuego::HEAL) {
-        magiaTablero.Heal(personaje_usando_magia,*this);
-    }
-
-    if (get_modoJuegoActual() == ModoJuego::TELEPORT) {
-        magiaTablero.Teleport(personaje_usando_magia,*this);
-    }
-
-    if (get_modoJuegoActual() == ModoJuego::EXCHANGE) {
-        magiaTablero.Exchange(personaje_usando_magia, *this);
-    }
-    if (get_modoJuegoActual() == ModoJuego::IMPRISON) {
-        magiaTablero.Imprison(personaje_usando_magia, *this);
-    }
-    if (get_modoJuegoActual() == ModoJuego::REVIVE) {
-        magiaTablero.Revive(personaje_usando_magia,*this);
-    }
-
-
+    // Delegar al sistema de magia segun el hechizo activo
+    if (get_modoJuegoActual() == ModoJuego::HECHIZOS)  hechizos();
+    if (get_modoJuegoActual() == ModoJuego::HEAL)      magiaTablero.Heal(personaje_usando_magia, *this);
+    if (get_modoJuegoActual() == ModoJuego::TELEPORT)   magiaTablero.Teleport(personaje_usando_magia, *this);
+    if (get_modoJuegoActual() == ModoJuego::EXCHANGE)   magiaTablero.Exchange(personaje_usando_magia, *this);
+    if (get_modoJuegoActual() == ModoJuego::IMPRISON)   magiaTablero.Imprison(personaje_usando_magia, *this);
+    if (get_modoJuegoActual() == ModoJuego::REVIVE)     magiaTablero.Revive(personaje_usando_magia, *this);
 }
 
-
-
-
-
-
-
+/*
+ * inicializarTablero - Coloca todas las piezas en su posicion inicial
+ *
+ * Disposicion (vista desde arriba, columnas 0-8 de izquierda a derecha):
+ *
+ * Equipo LUZ (columnas 0-1):
+ *   Col 0: Valkyrie, Golem, Unicorn, Djinni, MH, Phoenix, Unicorn, Golem, Valkyrie
+ *   Col 1: Archer, Knight x7, Archer
+ *
+ * Equipo OSCURIDAD (columnas 7-8):
+ *   Col 7: Manticore, Goblin x7, Manticore
+ *   Col 8: Banshee, Troll, Basilisk, ShapeShifter, Platero, Dragon, Basilisk, Troll, Banshee
+ *
+ * Tambien inicializa los colores de las casillas con el patron de Archon:
+ * casillas blancas, negras y cambiantes (las cambiantes oscilan con el ciclo 0-4)
+ */
 void Tablero::inicializarTablero() {
-    // Primero, nos aseguramos de que toda la matriz esté vacía
+    // Limpiar cuadricula
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
             cuadricula[i][j] = nullptr;
@@ -59,1117 +57,539 @@ void Tablero::inicializarTablero() {
         }
     }
 
-
     personaje_seleccionado = nullptr;
-    fila_seleccionada = -1; //Inicializamos a un valor imposible de introducir como índice de la matriz
-    columna_seleccionada = -1; // Para que no esté ninguna casilla seleccionada en el momento incial
-
-    // Colocamos todas las piezas en su posición inicial llamando al constructor
-  
-    //LUZ
-    cuadricula[0][0] = new Personaje(Valkyrie, 0, 0);
-    cuadricula[8][0] = new Personaje(Valkyrie, 8, 0);
-
-    cuadricula[1][0] = new Personaje(Golem, 1, 0);
-    cuadricula[7][0] = new Personaje(Golem, 7, 0);
-
-    cuadricula[2][0] = new Personaje(Unicorn, 2, 0);
-    cuadricula[6][0] = new Personaje(Unicorn, 6, 0);
-
-    cuadricula[3][0] = new Personaje(Djinni, 3, 0);
-    cuadricula[4][0] = new Personaje(MH, 4, 0); 
-    cuadricula[5][0] = new Personaje(Phoenix, 5, 0);
-
-    cuadricula[0][1] = new Personaje(Archer, 0, 1);
-    cuadricula[8][1] = new Personaje(Archer, 8, 1);
-
-    for (int fila = 1; fila < casillasxlado-1; fila++) {
-        cuadricula[fila][1] = new Personaje(Knight, fila, 1);
-    }
-
-    //OSCURIDAD
-    cuadricula[0][8] = new Personaje(Banshee, 0, 8);
-    cuadricula[8][8] = new Personaje(Banshee, 8, 8);
-
-    cuadricula[1][8] = new Personaje(Troll, 1, 8);
-    cuadricula[7][8] = new Personaje(Troll, 7, 8);
-
-    cuadricula[2][8] = new Personaje(Basilisk, 2, 8);
-    cuadricula[6][8] = new Personaje(Basilisk, 6, 8);
-
-    cuadricula[3][8] = new Personaje(ShapeShifter, 3, 8);
-    cuadricula[4][8] = new Personaje(Platero, 4, 8);
-    cuadricula[5][8] = new Personaje(Dragon, 5, 8);
-
-    cuadricula[0][7] = new Personaje(Manticore, 0, 7);
-    cuadricula[8][7] = new Personaje(Manticore, 8, 7);
-
-    for (int fila = 1; fila < casillasxlado - 1; fila++) {
-        cuadricula[fila][7] = new Personaje(Goblin, fila, 7);
-    }
-
-
-    
-    for (int fila = 0; fila < 9; fila++) {
-        for (int columna = 0; columna < 9; columna++) {
-            
-         //primero hacemos las fijas de cada fila
-         //luego las cambiantes
-            
-            //primera fila y novena fila
-
-            if(fila==0||fila==8){
-                if (columna != 3 && columna != 4 && columna != 5) {
-
-                    if (columna < 4) {
-                        if ((fila + columna) % 2 == 0) {
-                            set_colorCasilla(ColorCasilla::NEGRO, fila, columna);
-                        }
-                        else {
-                            set_colorCasilla(ColorCasilla::BLANCO, fila, columna);
-                        }
-                    }
-                    else {
-                        if ((fila + columna) % 2 == 0) {
-                            set_colorCasilla(ColorCasilla::BLANCO, fila, columna);
-                        }
-                        else {
-                            set_colorCasilla(ColorCasilla::NEGRO, fila, columna);
-                        }
-                    }
-
-                }
-                else set_colorCasilla(ColorCasilla::CAMBIANTE, fila, columna);
-            }
-
-            //Segunda fila y octava
-
-            if (fila == 1 || fila == 7) {
-                if (columna != 2 && columna != 4 && columna != 6) {
-                   
-                    if (columna < 3||columna==5) {
-                        if ((fila + columna) % 2 == 0) {
-                            set_colorCasilla(ColorCasilla::NEGRO, fila, columna);
-                        }
-                        else {
-                            set_colorCasilla(ColorCasilla::BLANCO, fila, columna);
-                        }
-                    }
-                    else {
-                        if ((fila + columna) % 2 == 0) {
-                            set_colorCasilla(ColorCasilla::BLANCO, fila, columna);
-                        }
-                        else {
-                            set_colorCasilla(ColorCasilla::NEGRO, fila, columna);
-                        }
-                    }
-                }
-                else set_colorCasilla(ColorCasilla::CAMBIANTE, fila, columna);
-            }
-
-            //Tercera fila y septima fila
-            if (fila == 2 || fila == 6) {
-                    if (columna != 1 && columna != 4 && columna != 7) {
-
-                        if (columna ==0|| columna==5||columna==6) {
-                            if ((fila + columna) % 2 == 0) {
-                                set_colorCasilla(ColorCasilla::NEGRO, fila, columna);
-                            }
-                            else {
-                                set_colorCasilla(ColorCasilla::BLANCO, fila, columna);
-                            }
-                        }
-                        else {
-                            if ((fila + columna) % 2 == 0) {
-                                set_colorCasilla(ColorCasilla::BLANCO, fila, columna);
-                            }
-                            else {
-                                set_colorCasilla(ColorCasilla::NEGRO, fila, columna);
-                            }
-                        }
-                    }
-                    else set_colorCasilla(ColorCasilla::CAMBIANTE, fila, columna);
-            }
-
-            //Cuarta fila y sexta fila
-
-            if (fila == 3 || fila == 5) {
-                if (columna != 0 && columna != 4 && columna != 8) {
-
-                    if (columna > 4) {
-                        if ((fila + columna) % 2 == 0) {
-                            set_colorCasilla(ColorCasilla::NEGRO, fila, columna);
-                        }
-                        else {
-                            set_colorCasilla(ColorCasilla::BLANCO, fila, columna);
-                        }
-                    }
-                    else {
-                        if ((fila + columna) % 2 == 0) {
-                            set_colorCasilla(ColorCasilla::BLANCO, fila, columna);
-                        }
-                        else {
-                            set_colorCasilla(ColorCasilla::NEGRO, fila, columna);
-                        }
-                    }
-                }
-                else set_colorCasilla(ColorCasilla::CAMBIANTE, fila, columna);
-            }
-            
-            //Quinta fila
-            if (fila == 4) {
-                if (columna != 0 && columna != 8 ) set_colorCasilla(ColorCasilla::CAMBIANTE, fila, columna);
-                else {
-
-                    if (columna == 0) set_colorCasilla(ColorCasilla::BLANCO, fila, columna);
-                    if (columna == 8) set_colorCasilla(ColorCasilla::NEGRO, fila, columna);
-                    
-                }
-            }
-               
-        }
-    }
-        
-}
-
-
-
-void Tablero::Draw() {
-
-    //Bucle para dibujar el tablero
-    for (int fila = 0; fila < casillasxlado; fila++) {
-        for (int columna = 0; columna < casillasxlado; columna++) {
-
-            Color colorCasilla; 
-            if (get_colorCasilla(fila,columna) == ColorCasilla::BLANCO) colorCasilla = WHITE;
-            if (get_colorCasilla(fila, columna) == ColorCasilla::NEGRO) colorCasilla = BLACK;
-            
-            if (get_colorCasilla(fila, columna) == ColorCasilla::CAMBIANTE) {
-
-
-                if(Ciclo  == 0) colorCasilla = Color{ 230, 200, 245, 255 };
-                else if (Ciclo == 1) colorCasilla = Color{ 180, 130, 210, 255 };
-                else if (Ciclo == 2) colorCasilla = Color{ 130, 70, 175, 255 };
-                else if (Ciclo == 3) colorCasilla = Color{ 80, 30, 120, 255 };
-                else if (Ciclo == 4) colorCasilla = Color{ 40, 10, 70, 255 };
-            }
-
-
-            int posX =  (970/2-4.5*tamanoCasilla)+columna * tamanoCasilla; //970 es el largo de la pantalla
-            int posY = (580 / 2 - 4.5 * tamanoCasilla)+fila * tamanoCasilla; //580 es la altura de la pantalla
-
-            DrawRectangle(posX, posY, tamanoCasilla, tamanoCasilla, colorCasilla);
-
-          
-            
-        }
-    }
-
-   
-    DrawCasillas();
-
-    if (modoJuegoactual == ModoJuego::REVIVE) {
-
-        if (personaje_usando_magia->get_equipo() == LUZ) {
-            for (int i = 0; i < cementerio_Luz.size(); i++) {
-
-                if (i < 9) {
-                    cementerio_Luz[i]->set_fila_columna(i, 0);
-                }
-                else {
-                    cementerio_Luz[i]->set_fila_columna(i-9, 1);
-                }
-                cementerio_Luz[i]->DrawT(50, 36);
-            }
-        }
-    
-        if (personaje_usando_magia->get_equipo() == OSCURIDAD) {
-            for (int i = 0; i < cementerio_Oscuridad.size(); i++) {
-
-                if (i < 9) {
-                    cementerio_Oscuridad[i]->set_fila_columna(i, 0);
-                }
-                else {
-                    cementerio_Oscuridad[i]->set_fila_columna(i-9, 1);
-                }
-                cementerio_Oscuridad[i]->DrawT(850, 36);
-            }
-        }
-    }
-
-
-    //Bucle para dibujar los personajes
-    for (int fila = 0; fila < casillasxlado; fila++) {
-        for (int columna = 0; columna < casillasxlado; columna++) {
-
-            if (cuadricula[fila][columna] != nullptr) {
-
-                cuadricula[fila][columna]->DrawT(230,36);
-            }
-
-
-        }
-    }
-
-    
-}
-
-
-
-void Tablero::seleccionaCasilla() { 
-
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-        
-        int mouseX = GetMouseX();
-        int mouseY = GetMouseY();
-        
-        //Bucle para recorrer el tablero
-        for (int fila = 0; fila < casillasxlado; fila++) {
-            for (int columna = 0; columna < casillasxlado; columna++) {
-
-                int posX = (970 / 2 - 4.5 * tamanoCasilla) + columna * tamanoCasilla; //970 es el largo de la pantalla
-                int posY = (580 / 2 - 4.5 * tamanoCasilla) + fila * tamanoCasilla; //580 es la altura de la pantalla
-               
-                if (mouseX <= (posX + tamanoCasilla) && mouseX > posX) {
-
-                    columna_seleccionada = columna;
-
-                }
-                if (mouseY <= (posY + tamanoCasilla) && mouseY > posY) {
-
-                    fila_seleccionada = fila;
-
-                }
-
-            }
-        }
-     
-
-    } 
-
-}
-
-
-
-void Tablero::cambioPosicionPieza(Personaje* personaje, int fil, int col) {
-
-    cuadricula[personaje->get_fila()][personaje->get_columna()] = nullptr;
-    personaje->set_fila_columna(fil, col);
-    cuadricula[fil][col] = personaje;
-
-    //Esta función asegura que la posición de los personajes siempre sea igual a la información que tiene el tablero
-    //sobre la posición de cada personaje
-
-}
-
-void Tablero::reset_seleccion() {
     fila_seleccionada = -1;
     columna_seleccionada = -1;
 
-}
-
-void Tablero::moverPieza() {
-        
-    seleccionaCasilla();
-
-    //static Personaje* auxPersonaje=nullptr;
-   
-
-    if(cuadricula[fila_seleccionada][columna_seleccionada]!=nullptr && fila_seleccionada!=-1 && columna_seleccionada!=-1){
-    
-        if (turno == cuadricula[fila_seleccionada][columna_seleccionada]->get_equipo()) {
-
-            personaje_seleccionado = cuadricula[fila_seleccionada][columna_seleccionada];
-            reset_seleccion();
-
-        }
-    }
-    iniciaEstadoHechizos();
-
-    if ( fila_seleccionada != -1 && columna_seleccionada != -1 && personaje_seleccionado!=nullptr /*&& get_MovimientosPosibles(fila_seleccionada, columna_seleccionada) == true*/) {
-
-        if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr) {
-            
-            Personaje* personajeAtacado = cuadricula[fila_seleccionada][columna_seleccionada];
-            int auxfila = personaje_seleccionado->get_fila(), auxcolumna = personaje_seleccionado->get_columna();
-
-            personaje_seleccionado->set_fila_columna(fila_seleccionada, columna_seleccionada); //  se cambia eso pero no en la matriz
-           
-            //Iniciar combate (como parámetros dar los personajes implicados)
-           
-            Personaje* personajeGanador = personaje_seleccionado; //Aqui es el que gane, que se decide en la batalla
-            
-            if (personajeGanador == personaje_seleccionado) {//Si gana el que se ha movido:
-            
-                if (cuadricula[fila_seleccionada][columna_seleccionada]->get_equipo() == LUZ) {
-                    cuadricula[fila_seleccionada][columna_seleccionada]->heal();
-                    cementerio_Luz.push_back(cuadricula[fila_seleccionada][columna_seleccionada]);
-                }
-
-                if (cuadricula[fila_seleccionada][columna_seleccionada]->get_equipo() == OSCURIDAD) {
-                    cuadricula[fila_seleccionada][columna_seleccionada]->heal();
-                    cementerio_Oscuridad.push_back(cuadricula[fila_seleccionada][columna_seleccionada]);
-                }
-               // cuadricula[fila_seleccionada][columna_seleccionada]->~Personaje();
-                cuadricula[fila_seleccionada][columna_seleccionada] = personaje_seleccionado;
-                cuadricula[auxfila][auxcolumna] = nullptr;
-             
-
-            }
-            
-            else if (personajeGanador == personajeAtacado) {//Si gana el que estaba en la casilla:
-               
-                if (cuadricula[auxfila][auxcolumna]->get_equipo() == LUZ) {
-                    cuadricula[auxfila][auxcolumna]->heal();
-                    cementerio_Luz.push_back(cuadricula[auxfila][auxcolumna]);
-                }
-
-                if (cuadricula[auxfila][auxcolumna]->get_equipo() == OSCURIDAD) {
-                    cuadricula[auxfila][auxcolumna]->heal();
-                    cementerio_Oscuridad.push_back(cuadricula[auxfila][auxcolumna]);
-                }
-
-                //cuadricula[auxfila][auxcolumna]->~Personaje();
-                cuadricula[auxfila][auxcolumna]=nullptr;
-                
-            }
-
-        }
-        else cambioPosicionPieza(personaje_seleccionado, fila_seleccionada, columna_seleccionada);
-          personaje_seleccionado = nullptr;
-       
-        reset_seleccion();
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                movimientosPosibles[i][j] = false;
-            }
-        }
-        turno = turno == LUZ ? OSCURIDAD : LUZ;
-        avanceCiclo();
-
-
+    // --- Equipo LUZ (columnas 0-1, lado izquierdo) ---
+    cuadricula[0][0] = new PiezaTablero(pjboard::Valkyrie, 0, 0);
+    cuadricula[8][0] = new PiezaTablero(pjboard::Valkyrie, 8, 0);
+    cuadricula[1][0] = new PiezaTablero(pjboard::Golem, 1, 0);
+    cuadricula[7][0] = new PiezaTablero(pjboard::Golem, 7, 0);
+    cuadricula[2][0] = new PiezaTablero(pjboard::Unicorn, 2, 0);
+    cuadricula[6][0] = new PiezaTablero(pjboard::Unicorn, 6, 0);
+    cuadricula[3][0] = new PiezaTablero(pjboard::Djinni, 3, 0);
+    cuadricula[4][0] = new PiezaTablero(pjboard::MH, 4, 0);          // Lider Luz en el centro
+    cuadricula[5][0] = new PiezaTablero(pjboard::Phoenix, 5, 0);
+    cuadricula[0][1] = new PiezaTablero(pjboard::Archer, 0, 1);
+    cuadricula[8][1] = new PiezaTablero(pjboard::Archer, 8, 1);
+    for (int fila = 1; fila < casillasxlado - 1; fila++) {
+        cuadricula[fila][1] = new PiezaTablero(pjboard::Knight, fila, 1);  // Peones
     }
 
-}
+    // --- Equipo OSCURIDAD (columnas 7-8, lado derecho) ---
+    cuadricula[0][8] = new PiezaTablero(pjboard::Banshee, 0, 8);
+    cuadricula[8][8] = new PiezaTablero(pjboard::Banshee, 8, 8);
+    cuadricula[1][8] = new PiezaTablero(pjboard::Troll, 1, 8);
+    cuadricula[7][8] = new PiezaTablero(pjboard::Troll, 7, 8);
+    cuadricula[2][8] = new PiezaTablero(pjboard::Basilisk, 2, 8);
+    cuadricula[6][8] = new PiezaTablero(pjboard::Basilisk, 6, 8);
+    cuadricula[3][8] = new PiezaTablero(pjboard::ShapeShifter, 3, 8);
+    cuadricula[4][8] = new PiezaTablero(pjboard::Platero, 4, 8);     // Lider Oscuridad en el centro
+    cuadricula[5][8] = new PiezaTablero(pjboard::Dragon, 5, 8);
+    cuadricula[0][7] = new PiezaTablero(pjboard::Manticore, 0, 7);
+    cuadricula[8][7] = new PiezaTablero(pjboard::Manticore, 8, 7);
+    for (int fila = 1; fila < casillasxlado - 1; fila++) {
+        cuadricula[fila][7] = new PiezaTablero(pjboard::Goblin, fila, 7); // Peones
+    }
 
-
-
-void Tablero::casillasPosibles(Personaje* p) {
-
-    if (p == nullptr) reset_MovimientosPosibles();
-
-    else if(p != nullptr){
-
-        if (p->get_imprison() == false) {
-
-            if (personaje_seleccionado->get_vuela() == true) { //Si el personaje es Volador o Tp
-                for (int fila = (p->get_fila() - static_cast<int>(p->get_rangoTablero())); fila <= (p->get_fila() + static_cast<int>(p->get_rangoTablero())); fila++) {
-                    for (int columna = (p->get_columna() - static_cast<int>(p->get_rangoTablero())); columna <= (p->get_columna() + static_cast<int>(p->get_rangoTablero())); columna++) {
-
-                        if (cuadricula[fila][columna] == nullptr && fila >= 0 && columna >= 0 && fila <= 8 && columna <= 8) set_MovimientosPosibles(true, fila, columna);
-
-                        else if (cuadricula[fila][columna] != nullptr && fila >= 0 && columna >= 0 && fila <= 8 && columna <= 8) {
-
-                            if (cuadricula[fila][columna]->get_equipo() != p->get_equipo()) set_MovimientosPosibles(true, fila, columna);
-
-                        }
-
+    // --- Patron de colores de casillas ---
+    // El tablero de Archon tiene casillas blancas, negras y "cambiantes"
+    // Las cambiantes oscilan entre claro y oscuro segun el ciclo del juego
+    // El patron forma una cruz central de casillas cambiantes
+    for (int fila = 0; fila < 9; fila++) {
+        for (int columna = 0; columna < 9; columna++) {
+            if (fila == 0 || fila == 8) {
+                if (columna != 3 && columna != 4 && columna != 5) {
+                    if (columna < 4) {
+                        set_colorCasilla((fila + columna) % 2 == 0 ? ColorCasilla::NEGRO : ColorCasilla::BLANCO, fila, columna);
+                    } else {
+                        set_colorCasilla((fila + columna) % 2 == 0 ? ColorCasilla::BLANCO : ColorCasilla::NEGRO, fila, columna);
                     }
-                }
+                } else set_colorCasilla(ColorCasilla::CAMBIANTE, fila, columna);
             }
-
-            if (personaje_seleccionado->get_vuela() == false) { //Si el personaje es Terrestre
-
-                //Usamos 2 bucles por cada eje para ir del centro hacia fuera
-                for (int fila = p->get_fila(); fila <= (p->get_fila() + static_cast<int>(p->get_rangoTablero())); fila++) {
-
-                    if (cuadricula[fila - 1][personaje_seleccionado->get_columna()] != nullptr && fila != p->get_fila()) {
-
-                        if (cuadricula[fila - 1][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo()) break;
+            if (fila == 1 || fila == 7) {
+                if (columna != 2 && columna != 4 && columna != 6) {
+                    if (columna < 3 || columna == 5) {
+                        set_colorCasilla((fila + columna) % 2 == 0 ? ColorCasilla::NEGRO : ColorCasilla::BLANCO, fila, columna);
+                    } else {
+                        set_colorCasilla((fila + columna) % 2 == 0 ? ColorCasilla::BLANCO : ColorCasilla::NEGRO, fila, columna);
                     }
-
-                    if (cuadricula[fila][personaje_seleccionado->get_columna()] == nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0 && fila <= 8 && personaje_seleccionado->get_columna() <= 8)   set_MovimientosPosibles(true,fila, personaje_seleccionado->get_columna());
-
-                    else if (cuadricula[fila][personaje_seleccionado->get_columna()] != nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0 && fila <= 8 && personaje_seleccionado->get_columna() <= 8) {
-
-                        if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() == p->get_equipo() && fila != personaje_seleccionado->get_fila()) break;
-                        if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo())  set_MovimientosPosibles(true,fila, personaje_seleccionado->get_columna());
-
+                } else set_colorCasilla(ColorCasilla::CAMBIANTE, fila, columna);
+            }
+            if (fila == 2 || fila == 6) {
+                if (columna != 1 && columna != 4 && columna != 7) {
+                    if (columna == 0 || columna == 5 || columna == 6) {
+                        set_colorCasilla((fila + columna) % 2 == 0 ? ColorCasilla::NEGRO : ColorCasilla::BLANCO, fila, columna);
+                    } else {
+                        set_colorCasilla((fila + columna) % 2 == 0 ? ColorCasilla::BLANCO : ColorCasilla::NEGRO, fila, columna);
                     }
-
-                    if (fila == 8)break;
-
+                } else set_colorCasilla(ColorCasilla::CAMBIANTE, fila, columna);
+            }
+            if (fila == 3 || fila == 5) {
+                if (columna != 0 && columna != 4 && columna != 8) {
+                    if (columna > 4) {
+                        set_colorCasilla((fila + columna) % 2 == 0 ? ColorCasilla::NEGRO : ColorCasilla::BLANCO, fila, columna);
+                    } else {
+                        set_colorCasilla((fila + columna) % 2 == 0 ? ColorCasilla::BLANCO : ColorCasilla::NEGRO, fila, columna);
+                    }
+                } else set_colorCasilla(ColorCasilla::CAMBIANTE, fila, columna);
+            }
+            if (fila == 4) {
+                // Fila central: casi todas cambiantes excepto los extremos
+                if (columna != 0 && columna != 8) set_colorCasilla(ColorCasilla::CAMBIANTE, fila, columna);
+                else {
+                    if (columna == 0) set_colorCasilla(ColorCasilla::BLANCO, fila, columna);
+                    if (columna == 8) set_colorCasilla(ColorCasilla::NEGRO, fila, columna);
                 }
-
-                for (int fila = p->get_fila(); fila >= (p->get_fila() - static_cast<int>(p->get_rangoTablero())); fila--) {
-
-                    if (cuadricula[fila + 1][personaje_seleccionado->get_columna()] != nullptr && fila != p->get_fila()) {
-
-                        if (cuadricula[fila + 1][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo()) break;
-                    }
-
-                    if (cuadricula[fila][personaje_seleccionado->get_columna()] == nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0 && fila <= 8 && personaje_seleccionado->get_columna() <= 8)   set_MovimientosPosibles(true,fila, personaje_seleccionado->get_columna());
-
-                    else if (cuadricula[fila][personaje_seleccionado->get_columna()] != nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0 && fila <= 8 && personaje_seleccionado->get_columna() <= 8) {
-
-                        if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() == p->get_equipo() && fila != personaje_seleccionado->get_fila()) break;
-                        if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo())  set_MovimientosPosibles(true,fila, personaje_seleccionado->get_columna());
-
-                    }
-                    if (fila == 0)break;
-
-                }
-
-                for (int columna = p->get_columna(); columna <= (p->get_columna() + static_cast<int>(p->get_rangoTablero())); columna++) {
-
-                    if (cuadricula[personaje_seleccionado->get_fila()][columna - 1] != nullptr && columna != p->get_columna()) {
-
-                        if (cuadricula[personaje_seleccionado->get_fila()][columna - 1]->get_equipo() != p->get_equipo()) break;
-                    }
-
-                    if (cuadricula[personaje_seleccionado->get_fila()][columna] == nullptr && personaje_seleccionado->get_fila() >= 0 && columna >= 0)  set_MovimientosPosibles(true,personaje_seleccionado->get_fila(), columna);
-
-                    else if (cuadricula[personaje_seleccionado->get_fila()][columna] != nullptr && personaje_seleccionado->get_fila() >= 0 && columna >= 0 && personaje_seleccionado->get_fila() <= 8 && columna <= 80) {
-
-                        if (cuadricula[personaje_seleccionado->get_fila()][columna]->get_equipo() == p->get_equipo() && columna != personaje_seleccionado->get_columna()) break;
-                        if (cuadricula[personaje_seleccionado->get_fila()][columna]->get_equipo() != p->get_equipo())  set_MovimientosPosibles(true,personaje_seleccionado->get_fila(), columna);
-
-                    }
-                    if (columna == 8)break;
-                }
-
-                for (int columna = p->get_columna(); columna >= (p->get_columna() - static_cast<int>(p->get_rangoTablero())); columna--) {
-
-                    if (cuadricula[personaje_seleccionado->get_fila()][columna + 1] != nullptr && columna != p->get_columna()) {
-
-                        if (cuadricula[personaje_seleccionado->get_fila()][columna + 1]->get_equipo() != p->get_equipo()) break;
-                    }
-
-                    if (cuadricula[personaje_seleccionado->get_fila()][columna] == nullptr && personaje_seleccionado->get_fila() >= 0 && columna >= 0 && personaje_seleccionado->get_fila() <= 8 && columna <= 8)   set_MovimientosPosibles(true,personaje_seleccionado->get_fila(), columna);
-
-                    else if (cuadricula[personaje_seleccionado->get_fila()][columna] != nullptr && personaje_seleccionado->get_fila() >= 0 && columna >= 0 && personaje_seleccionado->get_fila() <= 8 && columna <= 8) {
-
-                        if (cuadricula[personaje_seleccionado->get_fila()][columna]->get_equipo() == p->get_equipo() && columna != personaje_seleccionado->get_columna()) break;
-                        if (cuadricula[personaje_seleccionado->get_fila()][columna]->get_equipo() != p->get_equipo())  set_MovimientosPosibles(true,personaje_seleccionado->get_fila(), columna);
-
-                    }
-
-                    if (columna == 0)break;
-                }
-
             }
         }
     }
 }
 
 /*
-void Tablero::DrawCasillas(int fila, int columna) {
-
-    Color colorCasilla;
-    if ((fila + columna) % 2 == 0) {
-        colorCasilla = DARKBLUE;
+ * Draw - Dibuja el tablero completo
+ *
+ * Orden de dibujado:
+ * 1. Casillas de fondo (blancas, negras, cambiantes segun ciclo)
+ * 2. Resaltado de casillas de movimiento posible (DrawCasillas)
+ * 3. Cementerio si estamos en modo Revive
+ * 4. Piezas sobre las casillas
+ * 5. Indicador de turno en la esquina inferior
+ */
+void Tablero::Draw() {
+    // 1. Dibujar casillas de fondo
+    for (int fila = 0; fila < casillasxlado; fila++) {
+        for (int columna = 0; columna < casillasxlado; columna++) {
+            Color col;
+            if (get_colorCasilla(fila, columna) == ColorCasilla::BLANCO) col = WHITE;
+            if (get_colorCasilla(fila, columna) == ColorCasilla::NEGRO) col = BLACK;
+            // Las casillas cambiantes oscilan entre morado claro y oscuro segun el Ciclo (0-4)
+            if (get_colorCasilla(fila, columna) == ColorCasilla::CAMBIANTE) {
+                if (Ciclo == 0) col = Color{ 230, 200, 245, 255 };       // Muy claro
+                else if (Ciclo == 1) col = Color{ 180, 130, 210, 255 };
+                else if (Ciclo == 2) col = Color{ 130, 70, 175, 255 };
+                else if (Ciclo == 3) col = Color{ 80, 30, 120, 255 };
+                else if (Ciclo == 4) col = Color{ 40, 10, 70, 255 };     // Muy oscuro
+            }
+            // Centrar el tablero en pantalla
+            int posX = (int)(GetScreenWidth() / 2 - 4.5 * tamanoCasilla) + columna * tamanoCasilla;
+            int posY = (int)(GetScreenHeight() / 2 - 4.5 * tamanoCasilla) + fila * tamanoCasilla;
+            DrawRectangle(posX, posY, tamanoCasilla, tamanoCasilla, col);
+        }
     }
-    else {
-        colorCasilla = DARKPURPLE;
+
+    // 2. Resaltado de movimientos posibles
+    DrawCasillas();
+
+    // 3. Cementerio (solo visible en modo Revive)
+    if (modoJuegoactual == ModoJuego::REVIVE) {
+        // Dibujar piezas muertas del equipo del mago que lanza Revive
+        if (personaje_usando_magia->get_equipo() == LUZ) {
+            for (int i = 0; i < (int)cementerio_Luz.size(); i++) {
+                if (i < 9) cementerio_Luz[i]->set_fila_columna(i, 0);
+                else cementerio_Luz[i]->set_fila_columna(i - 9, 1);
+                cementerio_Luz[i]->DrawT(50, 36);   // Lado izquierdo de la pantalla
+            }
+        }
+        if (personaje_usando_magia->get_equipo() == OSCURIDAD) {
+            for (int i = 0; i < (int)cementerio_Oscuridad.size(); i++) {
+                if (i < 9) cementerio_Oscuridad[i]->set_fila_columna(i, 0);
+                else cementerio_Oscuridad[i]->set_fila_columna(i - 9, 1);
+                cementerio_Oscuridad[i]->DrawT(850, 36); // Lado derecho de la pantalla
+            }
+        }
     }
 
-    set_MovimientosPosibles(true, fila, columna);
+    // 4. Dibujar todas las piezas en el tablero
+    for (int fila = 0; fila < casillasxlado; fila++) {
+        for (int columna = 0; columna < casillasxlado; columna++) {
+            if (cuadricula[fila][columna] != nullptr)
+                cuadricula[fila][columna]->DrawT((int)(GetScreenWidth() / 2 - 4.5 * tamanoCasilla), (int)(GetScreenHeight() / 2 - 4.5 * tamanoCasilla));
+        }
+    }
 
-    int posX = (970 / 2 - 4.5 * tamanoCasilla) + columna * tamanoCasilla; //970 es el largo de la pantalla
-    int posY = (580 / 2 - 4.5 * tamanoCasilla) + fila * tamanoCasilla; //580 es la altura de la pantalla
-
-    DrawRectangle(posX, posY, tamanoCasilla, tamanoCasilla, colorCasilla);
-
+    // 5. Indicador de turno
+    const char* turnoTxt = turno == LUZ ? "Turno: LUZ" : "Turno: OSCURIDAD";
+    DrawText(turnoTxt, 10, GetScreenHeight() - 20, 16, turno == LUZ ? GOLD : PURPLE);
 }
-*/
+
+/*
+ * seleccionaCasilla - Convierte un click del raton en coordenadas de la cuadricula
+ *
+ * Recorre todas las casillas y comprueba si el click cae dentro de alguna.
+ * Actualiza fila_seleccionada y columna_seleccionada.
+ */
+void Tablero::seleccionaCasilla() {
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        int mouseX = GetMouseX();
+        int mouseY = GetMouseY();
+        for (int fila = 0; fila < casillasxlado; fila++) {
+            for (int columna = 0; columna < casillasxlado; columna++) {
+                int posX = (int)(GetScreenWidth() / 2 - 4.5 * tamanoCasilla) + columna * tamanoCasilla;
+                int posY = (int)(GetScreenHeight() / 2 - 4.5 * tamanoCasilla) + fila * tamanoCasilla;
+                if (mouseX <= (posX + tamanoCasilla) && mouseX > posX) columna_seleccionada = columna;
+                if (mouseY <= (posY + tamanoCasilla) && mouseY > posY) fila_seleccionada = fila;
+            }
+        }
+    }
+}
+
+// Mover una pieza de su posicion actual a una nueva casilla en la cuadricula
+void Tablero::cambioPosicionPieza(PiezaTablero* personaje, int fil, int col) {
+    cuadricula[personaje->get_fila()][personaje->get_columna()] = nullptr;
+    personaje->set_fila_columna(fil, col);
+    cuadricula[fil][col] = personaje;
+}
+
+// Resetear la seleccion de casilla (fila/columna a -1)
+void Tablero::reset_seleccion() {
+    fila_seleccionada = -1;
+    columna_seleccionada = -1;
+}
+
+/*
+ * moverPieza - Logica principal de seleccion y movimiento de piezas
+ *
+ * Flujo:
+ * 1. Detectar click en una casilla (seleccionaCasilla)
+ * 2. Si hay pieza propia en la casilla -> seleccionarla
+ * 3. Si ya hay pieza seleccionada y se clickea casilla valida:
+ *    a. Casilla con enemigo -> iniciar combate (ModoJuego::COMBATE)
+ *    b. Casilla vacia -> mover pieza, cambiar turno, avanzar ciclo
+ */
+void Tablero::moverPieza() {
+    seleccionaCasilla();
+
+    // Si se clickea una pieza del equipo del turno actual -> seleccionarla
+    if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr && fila_seleccionada != -1 && columna_seleccionada != -1) {
+        if (turno == cuadricula[fila_seleccionada][columna_seleccionada]->get_equipo()) {
+            personaje_seleccionado = cuadricula[fila_seleccionada][columna_seleccionada];
+            reset_seleccion();
+        }
+    }
+
+    // Comprobar si el mago seleccionado quiere usar magia (tecla M)
+    iniciaEstadoHechizos();
+
+    // Si hay pieza seleccionada y se ha clickeado una casilla destino
+    if (fila_seleccionada != -1 && columna_seleccionada != -1 && personaje_seleccionado != nullptr) {
+        if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr) {
+            // La casilla destino tiene una pieza -> comprobar si es enemiga
+            PiezaTablero* personajeAtacado = cuadricula[fila_seleccionada][columna_seleccionada];
+
+            if (personajeAtacado->get_equipo() != personaje_seleccionado->get_equipo()) {
+                // Pieza enemiga: guardar datos y lanzar combate 3D
+                combatePendiente_ = true;
+                atacante_ = personaje_seleccionado;
+                defensor_ = personajeAtacado;
+                filaOrigenAtacante_ = personaje_seleccionado->get_fila();
+                colOrigenAtacante_ = personaje_seleccionado->get_columna();
+                modoJuegoactual = ModoJuego::COMBATE;
+
+                // Limpiar estado de seleccion
+                personaje_seleccionado = nullptr;
+                reset_seleccion();
+                reset_MovimientosPosibles();
+                return;
+            }
+        }
+        else {
+            // Casilla vacia: mover la pieza
+            cambioPosicionPieza(personaje_seleccionado, fila_seleccionada, columna_seleccionada);
+        }
+
+        // Limpiar seleccion y cambiar turno
+        personaje_seleccionado = nullptr;
+        reset_seleccion();
+        for (int i = 0; i < 9; i++)
+            for (int j = 0; j < 9; j++)
+                movimientosPosibles[i][j] = false;
+        turno = turno == LUZ ? OSCURIDAD : LUZ;
+        avanceCiclo();
+    }
+}
+
+/*
+ * resolverCombate - Aplica el resultado del combate 3D al tablero
+ *
+ * Si gana el atacante: el defensor va al cementerio, el atacante ocupa su casilla
+ * Si gana el defensor: el atacante va al cementerio, su casilla original queda vacia
+ *
+ * En ambos casos se restaura la vida del perdedor (para que pueda ser revivido)
+ * y se cambia de turno
+ */
+void Tablero::resolverCombate(bool ganaAtacante) {
+    if (ganaAtacante) {
+        // El defensor muere y va al cementerio de su equipo
+        if (defensor_->get_equipo() == LUZ) {
+            defensor_->heal();
+            cementerio_Luz.push_back(defensor_);
+        } else {
+            defensor_->heal();
+            cementerio_Oscuridad.push_back(defensor_);
+        }
+        // El atacante se mueve a la casilla del defensor
+        cuadricula[defensor_->get_fila()][defensor_->get_columna()] = atacante_;
+        cuadricula[filaOrigenAtacante_][colOrigenAtacante_] = nullptr;
+        atacante_->set_fila_columna(defensor_->get_fila(), defensor_->get_columna());
+    } else {
+        // El atacante muere y va al cementerio de su equipo
+        if (atacante_->get_equipo() == LUZ) {
+            atacante_->heal();
+            cementerio_Luz.push_back(atacante_);
+        } else {
+            atacante_->heal();
+            cementerio_Oscuridad.push_back(atacante_);
+        }
+        // La casilla de origen del atacante queda vacia
+        cuadricula[filaOrigenAtacante_][colOrigenAtacante_] = nullptr;
+    }
+
+    // Volver al modo normal
+    combatePendiente_ = false;
+    atacante_ = nullptr;
+    defensor_ = nullptr;
+    modoJuegoactual = ModoJuego::NORMAL;
+    turno = turno == LUZ ? OSCURIDAD : LUZ;
+    avanceCiclo();
+}
+
+/*
+ * casillasPosibles - Calcula las casillas validas de movimiento para una pieza
+ *
+ * Hay dos tipos de movimiento:
+ * - Voladores (vuela=true): se mueven en un area cuadrada de lado 2*rango+1
+ *   centrada en su posicion, saltando sobre otras piezas
+ * - Terrestres (vuela=false): se mueven en cruz (arriba/abajo/izquierda/derecha)
+ *   hasta su rango, pero se bloquean con piezas aliadas en el camino
+ *
+ * En ambos casos, pueden moverse a casillas vacias o con enemigos (para atacar)
+ */
+void Tablero::casillasPosibles(PiezaTablero* p) {
+    if (p == nullptr) { reset_MovimientosPosibles(); return; }
+
+    // Pieza aprisionada no puede moverse
+    if (p->get_imprison()) return;
+
+    // --- Movimiento de voladores: area cuadrada ---
+    if (personaje_seleccionado->get_vuela()) {
+        for (int fila = (p->get_fila() - (int)p->get_rangoTablero()); fila <= (p->get_fila() + (int)p->get_rangoTablero()); fila++) {
+            for (int columna = (p->get_columna() - (int)p->get_rangoTablero()); columna <= (p->get_columna() + (int)p->get_rangoTablero()); columna++) {
+                if (fila < 0 || columna < 0 || fila > 8 || columna > 8) continue; // Fuera del tablero
+                if (cuadricula[fila][columna] == nullptr) set_MovimientosPosibles(true, fila, columna); // Casilla vacia
+                else if (cuadricula[fila][columna]->get_equipo() != p->get_equipo()) set_MovimientosPosibles(true, fila, columna); // Enemigo
+            }
+        }
+    }
+
+    // --- Movimiento de terrestres: en cruz, bloqueado por aliados ---
+    if (!personaje_seleccionado->get_vuela()) {
+        // Hacia abajo (filas crecientes)
+        for (int fila = p->get_fila(); fila <= (p->get_fila() + (int)p->get_rangoTablero()); fila++) {
+            if (cuadricula[fila - 1][personaje_seleccionado->get_columna()] != nullptr && fila != p->get_fila()) {
+                if (cuadricula[fila - 1][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo()) break;
+            }
+            if (cuadricula[fila][personaje_seleccionado->get_columna()] == nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0 && fila <= 8 && personaje_seleccionado->get_columna() <= 8)
+                set_MovimientosPosibles(true, fila, personaje_seleccionado->get_columna());
+            else if (cuadricula[fila][personaje_seleccionado->get_columna()] != nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0 && fila <= 8 && personaje_seleccionado->get_columna() <= 8) {
+                if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() == p->get_equipo() && fila != personaje_seleccionado->get_fila()) break; // Bloqueado por aliado
+                if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo()) set_MovimientosPosibles(true, fila, personaje_seleccionado->get_columna()); // Enemigo
+            }
+            if (fila == 8) break;
+        }
+
+        // Hacia arriba (filas decrecientes)
+        for (int fila = p->get_fila(); fila >= (p->get_fila() - (int)p->get_rangoTablero()); fila--) {
+            if (cuadricula[fila + 1][personaje_seleccionado->get_columna()] != nullptr && fila != p->get_fila()) {
+                if (cuadricula[fila + 1][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo()) break;
+            }
+            if (cuadricula[fila][personaje_seleccionado->get_columna()] == nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0 && fila <= 8 && personaje_seleccionado->get_columna() <= 8)
+                set_MovimientosPosibles(true, fila, personaje_seleccionado->get_columna());
+            else if (cuadricula[fila][personaje_seleccionado->get_columna()] != nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0 && fila <= 8 && personaje_seleccionado->get_columna() <= 8) {
+                if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() == p->get_equipo() && fila != personaje_seleccionado->get_fila()) break;
+                if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo()) set_MovimientosPosibles(true, fila, personaje_seleccionado->get_columna());
+            }
+            if (fila == 0) break;
+        }
+
+        // Hacia la derecha (columnas crecientes)
+        for (int columna = p->get_columna(); columna <= (p->get_columna() + (int)p->get_rangoTablero()); columna++) {
+            if (cuadricula[personaje_seleccionado->get_fila()][columna - 1] != nullptr && columna != p->get_columna()) {
+                if (cuadricula[personaje_seleccionado->get_fila()][columna - 1]->get_equipo() != p->get_equipo()) break;
+            }
+            if (cuadricula[personaje_seleccionado->get_fila()][columna] == nullptr && personaje_seleccionado->get_fila() >= 0 && columna >= 0)
+                set_MovimientosPosibles(true, personaje_seleccionado->get_fila(), columna);
+            else if (cuadricula[personaje_seleccionado->get_fila()][columna] != nullptr && personaje_seleccionado->get_fila() >= 0 && columna >= 0 && personaje_seleccionado->get_fila() <= 8 && columna <= 8) {
+                if (cuadricula[personaje_seleccionado->get_fila()][columna]->get_equipo() == p->get_equipo() && columna != personaje_seleccionado->get_columna()) break;
+                if (cuadricula[personaje_seleccionado->get_fila()][columna]->get_equipo() != p->get_equipo()) set_MovimientosPosibles(true, personaje_seleccionado->get_fila(), columna);
+            }
+            if (columna == 8) break;
+        }
+
+        // Hacia la izquierda (columnas decrecientes)
+        for (int columna = p->get_columna(); columna >= (p->get_columna() - (int)p->get_rangoTablero()); columna--) {
+            if (cuadricula[personaje_seleccionado->get_fila()][columna + 1] != nullptr && columna != p->get_columna()) {
+                if (cuadricula[personaje_seleccionado->get_fila()][columna + 1]->get_equipo() != p->get_equipo()) break;
+            }
+            if (cuadricula[personaje_seleccionado->get_fila()][columna] == nullptr && personaje_seleccionado->get_fila() >= 0 && columna >= 0 && personaje_seleccionado->get_fila() <= 8 && columna <= 8)
+                set_MovimientosPosibles(true, personaje_seleccionado->get_fila(), columna);
+            else if (cuadricula[personaje_seleccionado->get_fila()][columna] != nullptr && personaje_seleccionado->get_fila() >= 0 && columna >= 0 && personaje_seleccionado->get_fila() <= 8 && columna <= 8) {
+                if (cuadricula[personaje_seleccionado->get_fila()][columna]->get_equipo() == p->get_equipo() && columna != personaje_seleccionado->get_columna()) break;
+                if (cuadricula[personaje_seleccionado->get_fila()][columna]->get_equipo() != p->get_equipo()) set_MovimientosPosibles(true, personaje_seleccionado->get_fila(), columna);
+            }
+            if (columna == 0) break;
+        }
+    }
+}
+
+// Dibujar resaltado azul/morado en las casillas donde la pieza seleccionada puede moverse
 void Tablero::DrawCasillas() {
-
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
-
-            if (movimientosPosibles[i][j] == true) {
-                Color colorCasilla;
-                if ((i + j) % 2 == 0) {
-                    colorCasilla = DARKBLUE;
-                }
-                else {
-                    colorCasilla = DARKPURPLE;
-                }
-                int posX = (970 / 2 - 4.5 * tamanoCasilla) + j * tamanoCasilla; //970 es el largo de la pantalla
-                int posY = (580 / 2 - 4.5 * tamanoCasilla) + i * tamanoCasilla; //580 es la altura de la pantalla
-
-                DrawRectangle(posX, posY, tamanoCasilla, tamanoCasilla, colorCasilla);
-
+            if (movimientosPosibles[i][j]) {
+                Color col = (i + j) % 2 == 0 ? DARKBLUE : DARKPURPLE;
+                int posX = (int)(GetScreenWidth() / 2 - 4.5 * tamanoCasilla) + j * tamanoCasilla;
+                int posY = (int)(GetScreenHeight() / 2 - 4.5 * tamanoCasilla) + i * tamanoCasilla;
+                DrawRectangle(posX, posY, tamanoCasilla, tamanoCasilla, col);
             }
         }
     }
 }
 
-
-
-
-
+/*
+ * detectaGanador - Comprueba las condiciones de victoria
+ *
+ * Se gana de 3 formas:
+ * 1. Controlar los 5 puntos de poder (casillas especiales en cruz)
+ * 2. Eliminar todas las piezas del enemigo
+ * 3. Si al enemigo solo le queda 1 pieza y esta aprisionada (Imprison)
+ */
 void Tablero::detectaGanador() {
-
-
-    //Primera forma: no hay ninguna pieza de un equipo
-    //Segunda forma: dominio de un equipo de todos los puntos de poder
-    //Tercera forma: a un equipo solo le queda un personaje, y este personaje está atrapado:
     bool ganaLuz = false, ganaOscuridad = false;
-    int contadorLuz = 0, contadorOscuridad = 0;
-    int contadorPersonajesLuz = 0, contadorPersonajesOscuridad = 0;
+    int contadorLuz = 0, contadorOscuridad = 0;                    // Puntos de poder ocupados
+    int contadorPersonajesLuz = 0, contadorPersonajesOscuridad = 0; // Piezas vivas
 
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
-
-            //Las posiciones de puntos de poder son: [0][4], [4][1], [4][4], [4][8], [8][4]
+            // Los 5 puntos de poder forman una cruz: centro y 4 extremos del eje central
             bool puntoPoder = (i == 0 && j == 4) || (i == 4 && j == 0) || (i == 4 && j == 4) || (i == 4 && j == 8) || (i == 8 && j == 4);
-            
-            if (cuadricula[i][j] != nullptr) { //Primero nos aseguramos que es un personaje
-
+            if (cuadricula[i][j] != nullptr) {
                 if (cuadricula[i][j]->get_equipo() == LUZ) contadorPersonajesLuz++;
-                if (cuadricula[i][j]->get_equipo() == OSCURIDAD)  contadorPersonajesOscuridad++;
-
-                if (puntoPoder == true) {
-                    
+                if (cuadricula[i][j]->get_equipo() == OSCURIDAD) contadorPersonajesOscuridad++;
+                if (puntoPoder) {
                     if (cuadricula[i][j]->get_equipo() == LUZ) contadorLuz++;
-                    if (cuadricula[i][j]->get_equipo() == OSCURIDAD)  contadorOscuridad++;
+                    if (cuadricula[i][j]->get_equipo() == OSCURIDAD) contadorOscuridad++;
                 }
             }
         }
     }
 
+    // Condicion especial: si solo queda 1 pieza y esta aprisionada, pierde
     if (contadorPersonajesLuz == 1) {
-
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-
-                if (cuadricula[i][j] != nullptr) {
-
-                    if (cuadricula[i][j]->get_equipo() == LUZ) {
-                       if(cuadricula[i][j]->get_imprison() == true) ganaOscuridad = true;
-
-                    }
-                }
-            }
-        }
+        for (int i = 0; i < 9; i++)
+            for (int j = 0; j < 9; j++)
+                if (cuadricula[i][j] != nullptr && cuadricula[i][j]->get_equipo() == LUZ && cuadricula[i][j]->get_imprison())
+                    ganaOscuridad = true;
     }
-
     if (contadorPersonajesOscuridad == 1) {
-
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-
-                if (cuadricula[i][j] != nullptr) {
-                    
-                    if (cuadricula[i][j]->get_equipo() == OSCURIDAD) {
-                        if (cuadricula[i][j]->get_imprison() == true) ganaLuz = true;
-                    }
-
-                    
-
-                }
-            }
-        }
+        for (int i = 0; i < 9; i++)
+            for (int j = 0; j < 9; j++)
+                if (cuadricula[i][j] != nullptr && cuadricula[i][j]->get_equipo() == OSCURIDAD && cuadricula[i][j]->get_imprison())
+                    ganaLuz = true;
     }
 
-
-
-    if (ganaLuz == true||contadorLuz==5||contadorPersonajesOscuridad==0) { //Se acaba el juego, gana luz
+    // Anunciar ganador
+    if (ganaLuz || contadorLuz == 5 || contadorPersonajesOscuridad == 0) {
         std::cout << "Gana Luz" << std::endl;
     }
-    if (ganaOscuridad == true||contadorOscuridad==5||contadorPersonajesLuz==0) { //Se acaba el juego, gana oscuridad
-
+    if (ganaOscuridad || contadorOscuridad == 5 || contadorPersonajesLuz == 0) {
         std::cout << "Gana Oscuridad" << std::endl;
-
     }
+}
 
- 
- }
-
-
-
-
-
+/*
+ * iniciaEstadoHechizos - Detecta si el jugador quiere usar magia
+ *
+ * Solo MH (Luz) y Platero (Oscuridad) pueden lanzar hechizos.
+ * Al pulsar M con uno de ellos seleccionado, se entra al modo HECHIZOS.
+ */
 void Tablero::iniciaEstadoHechizos() {
-
     if (personaje_seleccionado != nullptr) {
         if (personaje_seleccionado->get_ID() == tipo_pj::MH || personaje_seleccionado->get_ID() == tipo_pj::Platero) {
-
             if (IsKeyPressed(KEY_M)) {
-
-                modoJuegoactual = ModoJuego::HECHIZOS; 
-                personaje_usando_magia = personaje_seleccionado; 
+                modoJuegoactual = ModoJuego::HECHIZOS;
+                personaje_usando_magia = personaje_seleccionado;
                 reset_MovimientosPosibles();
             }
         }
     }
 }
 
-
-
-
+/*
+ * hechizos - Menu de seleccion de hechizo por teclado
+ *
+ * Teclas:
+ *   A - Abortar (volver al modo normal)
+ *   S - Shift Time (invierte la direccion del ciclo de casillas cambiantes)
+ *   H - Heal (restaura vida de una pieza aliada)
+ *   T - Teleport (mueve una pieza aliada a cualquier casilla vacia)
+ *   E - Exchange (intercambia la posicion de dos piezas cualesquiera)
+ *   I - Imprison (inmoviliza una pieza enemiga)
+ *   R - Revive (resucita una pieza del cementerio)
+ *
+ * Cada hechizo solo se puede usar una vez por partida por equipo.
+ */
 void Tablero::hechizos() {
-
-    //1. Teleport: mueve una pieza aliada a otra casilla válida HECHO
-    //2. Heal: cura completamente a una pieza aliada HECHO
-    //3. Shift Time: altera el ciclo de oscilación de las casillas  HECHO
-    //4. Exchange: intercambia dos piezas seleccionadas HECHO
-    //5. Summon Elemental: invoca un elemental temporal para luchar contra una pieza enemiga
-    //6. Revive: resucita una pieza aliada eliminada, y se coloca en una casilla vacia que se seleccione
-    //7. Imprison: encierra una pieza enemiga en su casilla, impidiéndole moverse. Se libera en vae a los ciclos de color.  HECHO
-
-    if (IsKeyPressed(KEY_A)) {
-        personaje_usando_magia = nullptr;
-        modoJuegoactual = ModoJuego::NORMAL;
-    }
-
- 
-     //Hechizo 3 Shift
-    if (IsKeyPressed(KEY_S)) {
-
-        magiaTablero.Shift_Time(personaje_usando_magia,*this);
-    }
-     //Hechizo 2 Heal
-    if (IsKeyPressed(KEY_H)) {
-        personaje_seleccionado = nullptr;
-        modoJuegoactual = ModoJuego::HEAL;
-    }
-    if (IsKeyPressed(KEY_T)) {
-        personaje_seleccionado = nullptr;
-        modoJuegoactual = ModoJuego::TELEPORT;
-    }
-        
-    if (IsKeyPressed(KEY_E)) {
-        personaje_seleccionado = nullptr;
-        modoJuegoactual = ModoJuego::EXCHANGE;
-    }
-
-    if (IsKeyPressed(KEY_I)) {
-        personaje_seleccionado = nullptr;
-        modoJuegoactual = ModoJuego::IMPRISON;
-    }
-    
-    if (IsKeyPressed(KEY_R)) {
-        personaje_seleccionado = nullptr;
-        modoJuegoactual = ModoJuego::REVIVE;
-    }
-
-
-
-
-
-
+    if (IsKeyPressed(KEY_A)) { personaje_usando_magia = nullptr; modoJuegoactual = ModoJuego::NORMAL; }
+    if (IsKeyPressed(KEY_S)) magiaTablero.Shift_Time(personaje_usando_magia, *this);
+    if (IsKeyPressed(KEY_H)) { personaje_seleccionado = nullptr; modoJuegoactual = ModoJuego::HEAL; }
+    if (IsKeyPressed(KEY_T)) { personaje_seleccionado = nullptr; modoJuegoactual = ModoJuego::TELEPORT; }
+    if (IsKeyPressed(KEY_E)) { personaje_seleccionado = nullptr; modoJuegoactual = ModoJuego::EXCHANGE; }
+    if (IsKeyPressed(KEY_I)) { personaje_seleccionado = nullptr; modoJuegoactual = ModoJuego::IMPRISON; }
+    if (IsKeyPressed(KEY_R)) { personaje_seleccionado = nullptr; modoJuegoactual = ModoJuego::REVIVE; }
 }
-
-
-void Tablero::avanceCiclo() {
-
-    bool antirrebote = false;
-   
-    if (avance == false) {
-        Ciclo++;
-            if (Ciclo == 4) avance = !avance;
-            antirrebote = true;
-    }
-    if (avance == true && antirrebote==false ) {
-        Ciclo--;
-        if (Ciclo == 0) avance = !avance;
-    }
-
-    //Para revertir el encarcelamiento
-    if (Ciclo == 0) {
-
-        for (int fila = 0; fila < 9; fila++) {
-            for (int columna = 0; columna < 9; columna++) {
-  
-                if (cuadricula[fila][columna] != nullptr) {
-
-                    if (cuadricula[fila][columna]->get_equipo() == LUZ && cuadricula[fila][columna]->get_imprison()==true) {
-                        cuadricula[fila][columna]->set_imprison(false);
-                    }
-
-                }
-            }
-        }
-    }
-
-    if (Ciclo == 4) {
-
-        for (int fila = 0; fila < 9; fila++) {
-            for (int columna = 0; columna < 9; columna++) {
-
-                if (cuadricula[fila][columna] != nullptr) {
-
-                    if (cuadricula[fila][columna]->get_equipo() == OSCURIDAD && cuadricula[fila][columna]->get_imprison() == true) {
-                        cuadricula[fila][columna]->set_imprison(false);
-                    }
-
-                }
-            }
-        }
-    }
-
-}
-
-
-
-
-void Tablero::reset_MovimientosPosibles() {
-
-    for (int i = 0; i < 9; i++) {
-        for (int j = 0; j < 9; j++) {
-
-          movimientosPosibles[i][j] = false;
-        }
-    }
-}
-
-
-
-
-
-
-
-
-
-
 
 /*
-
-void Tablero::Teleport(Personaje* personaje) {
-
-    if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[0] == true) || (personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[0] == true)) {
-
-        std::cout << "El hechizo Teleport ya se ha utilizado" << std::endl;
-        modoJuegoactual = ModoJuego::HECHIZOS;
-
+ * avanceCiclo - Avanza el ciclo de oscilacion de las casillas cambiantes
+ *
+ * El ciclo va de 0 a 4 y luego vuelve de 4 a 0 (oscilacion).
+ * Cada turno avanza un paso. El color de las casillas cambiantes
+ * depende del valor del ciclo (0=claro, 4=oscuro).
+ *
+ * Efecto adicional: cuando el ciclo llega a 0 se liberan las piezas
+ * de Luz aprisionadas, y cuando llega a 4 se liberan las de Oscuridad.
+ */
+void Tablero::avanceCiclo() {
+    bool antirrebote = false;
+    if (avance == false) {
+        Ciclo++;
+        if (Ciclo == 4) avance = !avance;   // Al llegar a 4, empezar a bajar
+        antirrebote = true;
+    }
+    if (avance == true && antirrebote == false) {
+        Ciclo--;
+        if (Ciclo == 0) avance = !avance;   // Al llegar a 0, empezar a subir
     }
 
-    moverPieza();
-
-    if (personaje_seleccionado == nullptr)  reset_MovimientosPosibles();
-
-
-    if (personaje->get_ID() == tipo_pj::MH && turno ==OSCURIDAD ) {
-
-        personaje_seleccionado = nullptr;
-        personaje_usando_magia = nullptr;
-        hechizosLuz[0] = true;
-        modoJuegoactual = ModoJuego::NORMAL;
-
+    // Liberar piezas aprisionadas al llegar a los extremos del ciclo
+    if (Ciclo == 0) {
+        for (int fila = 0; fila < 9; fila++)
+            for (int columna = 0; columna < 9; columna++)
+                if (cuadricula[fila][columna] != nullptr && cuadricula[fila][columna]->get_equipo() == LUZ && cuadricula[fila][columna]->get_imprison())
+                    cuadricula[fila][columna]->set_imprison(false);
     }
-
-    if (personaje->get_ID() == tipo_pj::Platero && turno == LUZ) {
-
-        personaje_seleccionado = nullptr;
-        personaje_usando_magia = nullptr;
-        hechizosOscuridad[0] = true;
-        modoJuegoactual = ModoJuego::NORMAL;
-
-    }
-
-    if (personaje->get_ID() == tipo_pj::MH && hechizosLuz[0] == false) {
-
-        if(personaje_seleccionado!=nullptr){
-            if (personaje_seleccionado->get_equipo() == LUZ) {
-
-                for (int i = 0; i < 9; i++) {
-                    for (int j = 0; j < 9; j++) {
-
-                        if (cuadricula[i][j] == nullptr) movimientosPosibles[i][j]=true;
-                    }
-                }
-            }
-        }
-    }
-
-    if (personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[0] == false) {
-        if (personaje_seleccionado != nullptr) {
-            if (personaje_seleccionado->get_equipo() == OSCURIDAD) {
-                for (int i = 0; i < 9; i++) {
-                    for (int j = 0; j < 9; j++) {
-
-                        if (cuadricula[i][j] == nullptr) movimientosPosibles[i][j] = true;
-                    }
-                }
-            }
-        }
-    }
-
-
-}
-
-void Tablero::Heal(Personaje* personaje) {
-
-    if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[1] == true) || (personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[1] == true)) {
-
-        std::cout << "El hechizo Heal ya se ha utilizado" << std::endl;
-        modoJuegoactual = ModoJuego::HECHIZOS;
-
-    }
-
-    seleccionaCasilla();
-
-    if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr && fila_seleccionada != -1 && columna_seleccionada != -1) {
-        personaje_seleccionado = cuadricula[fila_seleccionada][columna_seleccionada];
-        reset_seleccion();
-    }
-
-    if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[1] == false)) {
-
-        if (personaje_seleccionado != nullptr){
-
-            if (personaje_seleccionado->get_equipo() == LUZ) {
-
-                personaje_seleccionado->heal();
-                turno = turno == LUZ ? OSCURIDAD : LUZ;
-                personaje_seleccionado = nullptr;
-                personaje_usando_magia = nullptr;
-                hechizosLuz[1] = true;
-                modoJuegoactual = ModoJuego::NORMAL;
-                std::cout << "Personaje curado" << std::endl;
-
-            }
-        }
-
-    }
-
-
-    if ((personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[1] == false)) {
-
-        if (personaje_seleccionado != nullptr) {
-
-            if (personaje_seleccionado->get_equipo() == OSCURIDAD) {
-
-                personaje_seleccionado->heal();
-                turno = turno == LUZ ? OSCURIDAD : LUZ;
-                personaje_seleccionado = nullptr;
-                personaje_usando_magia = nullptr;
-                hechizosOscuridad[1] = true;
-                modoJuegoactual = ModoJuego::NORMAL;
-
-            }
-        }
-    }
-
-
-}
-
-
-void Tablero::Exchange() {
-
-    if ((personaje_usando_magia->get_ID() == tipo_pj::MH && hechizosLuz[3] == true) || (personaje_usando_magia->get_ID() == tipo_pj::Platero && hechizosOscuridad[3] == true)) {
-
-        std::cout << "El hechizo Shift ya se ha utilizado" << std::endl;
-        modoJuegoactual = ModoJuego::HECHIZOS;
-
-    }
-
-    seleccionaCasilla();
-
-    if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr && fila_seleccionada != -1 && columna_seleccionada != -1 && personaje_auxiliar == nullptr) {
-        personaje_auxiliar = cuadricula[fila_seleccionada][columna_seleccionada];
-        std::cout << "El hechizo Shift ya se ha utilizado" << std::endl;
-        reset_seleccion();
-    }
-    if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr && fila_seleccionada != -1 && columna_seleccionada != -1 && personaje_auxiliar!=nullptr) {
-        personaje_seleccionado = cuadricula[fila_seleccionada][columna_seleccionada];
-        std::cout << "El hechizo Shift ya se ha utilizado" << std::endl;
-        reset_seleccion();
-    }
-    if (personaje_auxiliar != nullptr && personaje_seleccionado != nullptr) {
-
-        Personaje* auxiliar = personaje_auxiliar;
-        int auxfila, auxcolumna;
-
-        auxfila = personaje_auxiliar->get_fila();
-        auxcolumna = personaje_auxiliar->get_columna();
-
-        int selfila, selcolumna;
-
-        selfila = personaje_seleccionado->get_fila();
-        selcolumna = personaje_seleccionado->get_columna();
-
-        cuadricula[auxfila][auxcolumna] = personaje_seleccionado;
-        cuadricula[selfila][selcolumna] = auxiliar;
-        cuadricula[auxfila][auxcolumna]->set_fila_columna(auxfila, auxcolumna);
-        cuadricula[selfila][selcolumna]->set_fila_columna(selfila, selcolumna);
-
-        turno = turno == LUZ ? OSCURIDAD : LUZ;
-        if (personaje_usando_magia->get_ID() == tipo_pj::MH) hechizosLuz[3] = true;
-        if (personaje_usando_magia->get_ID() == tipo_pj::Platero) hechizosOscuridad[3] = true;
-        personaje_seleccionado = nullptr;
-        personaje_auxiliar = nullptr;
-        personaje_usando_magia = nullptr;
-        modoJuegoactual = ModoJuego::NORMAL;
-
-    }
-
-}
-
-
-void Tablero::Imprison(Personaje* personaje) {
-
-    if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[6] == true) || (personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[6] == true)) {
-
-        std::cout << "El hechizo Imprison ya se ha utilizado" << std::endl;
-        modoJuegoactual = ModoJuego::HECHIZOS;
-
-    }
-
-    seleccionaCasilla();
-
-    if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr && fila_seleccionada != -1 && columna_seleccionada != -1 && personaje_auxiliar == nullptr) {
-        personaje_seleccionado = cuadricula[fila_seleccionada][columna_seleccionada];
-        reset_seleccion();
-    }
-
-    if ((personaje->get_ID() == tipo_pj::MH)){
-        if (personaje_seleccionado != nullptr) {
-
-            if (personaje_seleccionado->get_equipo() != LUZ) {
-                personaje_seleccionado->set_imprison(true);
-
-                turno = turno == LUZ ? OSCURIDAD : LUZ;
-                hechizosLuz[6] = true;
-                personaje_seleccionado = nullptr;
-                personaje_usando_magia = nullptr;
-                modoJuegoactual = ModoJuego::NORMAL;
-            }
-        }
-
-
-
-    }
-
-    if ((personaje->get_ID() == tipo_pj::Platero)) {
-        if (personaje_seleccionado != nullptr) {
-
-            if (personaje_seleccionado->get_equipo() != OSCURIDAD) {
-                personaje_seleccionado->set_imprison(true);
-
-                turno = turno == LUZ ? OSCURIDAD : LUZ;
-                hechizosOscuridad[6] = true;
-                personaje_seleccionado = nullptr;
-                personaje_usando_magia = nullptr;
-                modoJuegoactual = ModoJuego::NORMAL;
-            }
-        }
+    if (Ciclo == 4) {
+        for (int fila = 0; fila < 9; fila++)
+            for (int columna = 0; columna < 9; columna++)
+                if (cuadricula[fila][columna] != nullptr && cuadricula[fila][columna]->get_equipo() == OSCURIDAD && cuadricula[fila][columna]->get_imprison())
+                    cuadricula[fila][columna]->set_imprison(false);
     }
 }
 
-
-
-
-void Tablero::Revive(Personaje* personaje) {
-
-    if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[5] == true) || (personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[5] == true)) {
-
-        std::cout << "El hechizo Revive ya se ha utilizado" << std::endl;
-        modoJuegoactual = ModoJuego::HECHIZOS;
-
-    }
-
-    if ((personaje->get_ID() == tipo_pj::MH && cementerio_Luz.size() == 0) || (personaje->get_ID() == tipo_pj::Platero && cementerio_Oscuridad.size() == 0)) {
-
-        std::cout << "No tienes personajes muertos que revivir" << std::endl;
-        modoJuegoactual = ModoJuego::HECHIZOS;
-
-    }
-
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-
-        int mouseX = GetMouseX();
-        int mouseY = GetMouseY();
-
-        if (personaje_usando_magia->get_equipo() == LUZ) {
-            if (mouseX > 18 && mouseX < 82) {
-
-                for (int i = 0; i < 9; i++) {
-
-                    int posY = 4 + i * tamanoCasilla;
-                    if (mouseY <= (posY + tamanoCasilla) && mouseY > posY) {
-                        if (i < cementerio_Luz.size()) {
-                            personaje_muerto_seleccionado = cementerio_Luz[i];
-                        }
-                    }
-
-                }
-            }
-
-            if (mouseX > 82 && mouseX < 146) {
-
-                for (int i = 10; i < 18; i++) {
-
-                    int posY = 4 + (i - 9) * tamanoCasilla;
-                    if (mouseY <= (posY + tamanoCasilla) && mouseY > posY) {
-                        if (i < cementerio_Luz.size()) {
-                            personaje_muerto_seleccionado = cementerio_Luz[i];
-                        }
-                    }
-
-                }
-            }
-        }
-
-        if (personaje_usando_magia->get_equipo() == OSCURIDAD) {
-            if (mouseX > 818 && mouseX < 882) {
-
-                for (int i = 0; i < 9; i++) {
-
-                    int posY = 4 + i * tamanoCasilla;
-                    if (mouseY <= (posY + tamanoCasilla) && mouseY > posY) {
-                        if (i < cementerio_Oscuridad.size()) {
-                            personaje_muerto_seleccionado = cementerio_Oscuridad[i];
-                        }
-                    }
-
-                }
-            }
-
-            if (mouseX > 882 && mouseX < 946) {
-
-                for (int i = 10; i < 18; i++) {
-
-                    int posY = 4 + (i - 9) * tamanoCasilla;
-                    if (mouseY <= (posY + tamanoCasilla) && mouseY > posY) {
-                        if (i < cementerio_Oscuridad.size()) {
-                            personaje_muerto_seleccionado = cementerio_Oscuridad[i];
-                        }
-                    }
-
-                }
-            }
-        }
-
-
-        if (personaje_muerto_seleccionado != nullptr) {
-
-            seleccionaCasilla();
-            std::cout << fila_seleccionada << " " << columna_seleccionada << std::endl;
-            if (cuadricula[fila_seleccionada][columna_seleccionada] == nullptr && fila_seleccionada != -1 && columna_seleccionada != -1) {
-
-                cuadricula[fila_seleccionada][columna_seleccionada] = personaje_muerto_seleccionado;
-                cuadricula[fila_seleccionada][columna_seleccionada]->set_fila_columna(fila_seleccionada, columna_seleccionada);
-
-
-                turno = turno == LUZ ? OSCURIDAD : LUZ;
-                if (personaje_usando_magia->get_ID() == tipo_pj::MH) hechizosLuz[5] = true;
-                if (personaje_usando_magia->get_ID() == tipo_pj::Platero) hechizosOscuridad[5] = true;
-                personaje_seleccionado = nullptr;
-                personaje_muerto_seleccionado = nullptr;
-                personaje_usando_magia = nullptr;
-                modoJuegoactual = ModoJuego::NORMAL;
-            }
-
-
-        }
-
-    }
-
+// Limpiar todas las casillas marcadas como movimiento posible
+void Tablero::reset_MovimientosPosibles() {
+    for (int i = 0; i < 9; i++)
+        for (int j = 0; j < 9; j++)
+            movimientosPosibles[i][j] = false;
 }
-
-
-
-*/

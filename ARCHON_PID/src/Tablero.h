@@ -1,77 +1,104 @@
 #pragma once
 #include "raylib.h"
-#include "Personaje.h"
+#include "PiezaTablero.h"
 #include "Magia.h"
 #include "Pj.h"
 #include <vector>
 
-enum class ColorCasilla{BLANCO,NEGRO,CAMBIANTE};
-enum class ModoJuego { NORMAL, COMBATE, HECHIZOS, SHIFT, HEAL, TELEPORT, EXCHANGE, IMPRISON, REVIVE};
+/*
+ * Tablero.h - Tablero de juego 9x9 estilo Archon
+ *
+ * Gestiona toda la logica del juego de tablero por turnos:
+ * - Cuadricula 9x9 con piezas de dos equipos (LUZ y OSCURIDAD)
+ * - Turnos alternados con movimiento segun rango y tipo (vuelo/terrestre)
+ * - Casillas de 3 colores: blancas, negras y cambiantes (ciclo de oscilacion)
+ * - Sistema de hechizos (Teleport, Heal, Shift, Exchange, Imprison, Revive)
+ * - Deteccion de victoria (5 puntos de poder o eliminacion total)
+ * - Interfaz de combate: cuando una pieza ataca a otra, se lanza el combate 3D
+ *
+ * Los puntos de poder estan en las posiciones: (0,4), (4,0), (4,4), (4,8), (8,4)
+ * formando una cruz en el centro del tablero.
+ */
+
+// Color de cada casilla del tablero
+enum class ColorCasilla { BLANCO, NEGRO, CAMBIANTE };
+
+// Estados del juego - determinan que logica y que pantalla se muestra
+enum class ModoJuego {
+    NORMAL,     // Turno normal: seleccionar pieza y moverla
+    COMBATE,    // Combate 3D en curso (se delega a ControladorCombate)
+    HECHIZOS,   // Menu de seleccion de hechizo (teclas S/H/T/E/I/R)
+    SHIFT,      // Ejecutando hechizo Shift Time
+    HEAL,       // Ejecutando hechizo Heal (seleccionar aliado)
+    TELEPORT,   // Ejecutando hechizo Teleport (mover aliado a cualquier casilla vacia)
+    EXCHANGE,   // Ejecutando hechizo Exchange (intercambiar posicion de dos piezas)
+    IMPRISON,   // Ejecutando hechizo Imprison (inmovilizar pieza enemiga)
+    REVIVE      // Ejecutando hechizo Revive (resucitar pieza del cementerio)
+};
 
 class Magia;
 
 class Tablero
 {
+    int casillasxlado;                              // Dimension del tablero (9)
+    int tamanoCasilla;                              // Tamanio en pixeles de cada casilla (64)
+    PiezaTablero* cuadricula[9][9];                 // Matriz del tablero: nullptr = casilla vacia
+    PiezaTablero* personaje_seleccionado{ nullptr }; // Pieza actualmente seleccionada por el jugador
+    PiezaTablero* personaje_usando_magia{ nullptr }; // Mago que esta lanzando un hechizo (MH o Platero)
+    PiezaTablero* personaje_auxiliar{ nullptr };     // Pieza auxiliar para Exchange (primera seleccion)
+    std::vector<PiezaTablero*> cementerio_Luz;       // Piezas muertas del equipo Luz (para Revive)
+    std::vector<PiezaTablero*> cementerio_Oscuridad; // Piezas muertas del equipo Oscuridad
+    PiezaTablero* personaje_muerto_seleccionado{ nullptr }; // Pieza seleccionada del cementerio (Revive)
+    int fila_seleccionada{ -1 };                    // Fila clickeada (-1 = ninguna)
+    int columna_seleccionada{ -1 };                 // Columna clickeada (-1 = ninguna)
+    bool turno{ LUZ };                              // Turno actual: LUZ o OSCURIDAD
+    bool movimientosPosibles[9][9]{ false };        // Casillas a las que puede moverse la pieza seleccionada
+    ColorCasilla colorCasilla[9][9];                // Color de cada casilla (blanco/negro/cambiante)
+    int Ciclo{};                                    // Fase del ciclo de oscilacion (0-4) para casillas cambiantes
+    bool avance{ false };                           // Direccion del ciclo: false=subiendo, true=bajando
+    ModoJuego modoJuegoactual{ ModoJuego::NORMAL }; // Estado actual del juego
+    Magia magiaTablero;                             // Sistema de hechizos
 
-    int casillasxlado;
-    int tamanoCasilla;
-    Personaje* cuadricula[9][9];
-    Personaje* personaje_seleccionado{nullptr};
-    Personaje* personaje_usando_magia{ nullptr };
-    Personaje* personaje_auxiliar{ nullptr };
-    std::vector<Personaje*> cementerio_Luz;
-    std::vector<Personaje*> cementerio_Oscuridad;
-    Personaje* personaje_muerto_seleccionado{ nullptr };
-    int fila_seleccionada{-1};
-    int columna_seleccionada{-1};
-    bool turno{LUZ};
-    bool movimientosPosibles[9][9]{ false };
-    ColorCasilla colorCasilla[9][9];
-    int Ciclo{};
-    bool avance{false};
-    //bool hechizosOscuridad[7]{false};
-    //bool hechizosLuz[7]{ false };
-    ModoJuego modoJuegoactual{ ModoJuego::NORMAL };
-    Magia magiaTablero;
+    // --- Datos del combate pendiente ---
+    // Se rellenan cuando una pieza intenta moverse a una casilla ocupada por el enemigo
+    bool combatePendiente_{ false };                // Hay un combate por resolver
+    PiezaTablero* atacante_{ nullptr };             // Pieza que inicio el ataque (se movio)
+    PiezaTablero* defensor_{ nullptr };             // Pieza que fue atacada (estaba en la casilla)
+    int filaOrigenAtacante_{ -1 };                  // Posicion original del atacante (para devolver si pierde)
+    int colOrigenAtacante_{ -1 };
 
-    friend class Magia;
+    friend class Magia;     // Magia necesita acceso directo al tablero para ejecutar hechizos
 
 public:
-
-
     Tablero();
 
-    void LogicaTablero();
-    void Draw();
-    void inicializarTablero();
-    void seleccionaCasilla();
-    void cambioPosicionPieza(Personaje* personaje, int fila, int columna); 
-    void reset_seleccion(); //Resetea los valores de sila_seleccionada y columna_seleccionada a -1
-    void moverPieza();
-    void casillasPosibles(Personaje* p);
-    //void DrawCasillas( int fila, int columna);
-    void DrawCasillas();
-    void set_MovimientosPosibles(bool set, int fila, int columna){ movimientosPosibles[fila][columna] = set; };
-    bool get_MovimientosPosibles(int fila, int columna) { return movimientosPosibles[fila][columna]; };
-    void reset_MovimientosPosibles();
-    void set_colorCasilla(ColorCasilla color,int fil, int col) { colorCasilla[fil][col] = color; };
-    void set_avance(bool aux) { avance = aux; };
+    void LogicaTablero();                           // Ejecutar logica segun el modo de juego actual
+    void Draw();                                    // Dibujar tablero, piezas e indicadores
+    void inicializarTablero();                      // Colocar piezas en posicion inicial y asignar colores
+    void seleccionaCasilla();                       // Detectar click del raton y convertir a fila/columna
+    void cambioPosicionPieza(PiezaTablero* personaje, int fila, int columna);   // Mover pieza en la cuadricula
+    void reset_seleccion();                         // Limpiar fila/columna seleccionada
+    void moverPieza();                              // Logica de seleccion y movimiento de piezas
+    void casillasPosibles(PiezaTablero* p);         // Calcular casillas validas de movimiento
+    void DrawCasillas();                            // Dibujar resaltado de casillas de movimiento posible
+    void set_MovimientosPosibles(bool set, int fila, int columna) { movimientosPosibles[fila][columna] = set; }
+    bool get_MovimientosPosibles(int fila, int columna) { return movimientosPosibles[fila][columna]; }
+    void reset_MovimientosPosibles();               // Limpiar todas las casillas de movimiento posible
+    void set_colorCasilla(ColorCasilla color, int fil, int col) { colorCasilla[fil][col] = color; }
+    void set_avance(bool aux) { avance = aux; }
     ColorCasilla get_colorCasilla(int fil, int col) { return colorCasilla[fil][col]; }
-    void detectaGanador();
-    void hechizos();
-    void avanceCiclo();
-    ModoJuego get_modoJuegoActual() { return modoJuegoactual; };
-    void iniciaEstadoHechizos();
-  
-    
+    void detectaGanador();                          // Comprobar condiciones de victoria
+    void hechizos();                                // Menu de seleccion de hechizo (input por teclado)
+    void avanceCiclo();                             // Avanzar el ciclo de oscilacion de casillas cambiantes
+    ModoJuego get_modoJuegoActual() { return modoJuegoactual; }
+    void iniciaEstadoHechizos();                    // Detectar tecla M para entrar al modo hechizos
 
-    //Hechizos
-   
-    //void Teleport(Personaje* personaje);
-   // void Heal(Personaje* personaje);
-   // void Exchange();
-   // void Imprison(Personaje* personaje);
-    //void Revive(Personaje* personaje);
+    // --- Interfaz de combate (usada por raylibproject.cpp) ---
+    bool combatePendiente() const { return combatePendiente_; }
+    PiezaTablero* getAtacante() { return atacante_; }
+    PiezaTablero* getDefensor() { return defensor_; }
 
+    // Resuelve el combate: ganaAtacante=true si gana el que se movio
+    // El perdedor va al cementerio, el ganador ocupa la casilla
+    void resolverCombate(bool ganaAtacante);
 };
-
