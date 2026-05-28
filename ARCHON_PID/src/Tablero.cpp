@@ -18,7 +18,7 @@ Tablero::Tablero() : magiaTablero() {
 void Tablero::LogicaTablero() {
     if (get_modoJuegoActual() == ModoJuego::NORMAL) {
         personaje_usando_magia = nullptr;
-        casillasPosibles(personaje_seleccionado);   // Calcular movimientos validos
+       
         moverPieza();                               // Gestionar seleccion y movimiento
         detectaGanador();                           // Comprobar si alguien ha ganado
     }
@@ -264,7 +264,9 @@ void Tablero::moverPieza() {
     // Si se clickea una pieza del equipo del turno actual -> seleccionarla
     if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr && fila_seleccionada != -1 && columna_seleccionada != -1) {
         if (turno == cuadricula[fila_seleccionada][columna_seleccionada]->get_equipo()) {
+            reset_MovimientosPosibles();
             personaje_seleccionado = cuadricula[fila_seleccionada][columna_seleccionada];
+            casillasPosibles(personaje_seleccionado);   // Calcular movimientos validos
             reset_seleccion();
         }
     }
