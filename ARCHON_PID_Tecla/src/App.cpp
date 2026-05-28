@@ -14,6 +14,7 @@ Screen* App::GetCurrentScreen() {
     return nullptr;
 }
 
+
 void App::Init() {
     srand((unsigned)time(nullptr));
     InitWindow(0, 0, "ARCHON");
@@ -537,6 +538,7 @@ void App::Run() {
         Update();
         Draw();
     }
+
     if (musicaGlobalCargada) UnloadMusicStream(musicaGlobal);
     CloseAudioDevice();
     CloseWindow();

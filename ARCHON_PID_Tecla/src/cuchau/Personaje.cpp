@@ -95,14 +95,18 @@ void Personaje::Move(Vec2 dir, float dt)
         }
         break;
     case EstadoAnimacion::ATK:
-        pos3d.x += dir.x * spd * dt;
-        pos3d.z += dir.y * spd * dt;
-        l_dir = dir.unitario();
-
         frameTimer += dt;
         if (frameTimer >= frameSpeed) {
             frameTimer = 0.0f;
-            frameActual_Atk = (frameActual_Atk + 1) % Frames_ATK.size();
+            frameActual_Atk++;
+            if (frameActual_Atk >= (int)Frames_ATK.size()) {
+                // Animación terminada → volver al estado que corresponde
+                frameActual_Atk = 0;
+                atkPlaying = false;
+                est = (dir.x != 0 || dir.y != 0)
+                    ? EstadoAnimacion::MOV
+                    : EstadoAnimacion::STILL;
+            }
         }
         break;
     default:
@@ -126,6 +130,7 @@ void Personaje::Update(float dt)
     else cooldown = 0.0f;
     
     if (!isPlayer) return;   // IA controla externamente
+
     Vec2 dir = { 0, 0 };
     // Leer teclas y mover en el plano XZ
     // Cada tecla actualiza la direccion de apuntado (l_dir)
@@ -134,8 +139,12 @@ void Personaje::Update(float dt)
     if (IsKeyDown(Controles.up))    { dir.y = -1; }
     if (IsKeyDown(Controles.down))  { dir.y = 1; }
 
-	if (dir.x != 0 || dir.y != 0) est = EstadoAnimacion::MOV;
-	else est = EstadoAnimacion::STILL;
+    // Solo cambia estado si NO hay ataque en curso
+    if (!atkPlaying) {
+        est = (dir.x != 0 || dir.y != 0)
+            ? EstadoAnimacion::MOV
+            : EstadoAnimacion::STILL;
+    }
 
     Move(dir, dt);
 
@@ -165,14 +174,14 @@ void Personaje::Draw(Camera camera) const
 //  Usa BLEND_MULTIPLIED para que la sombra se mezcle con el suelo
 //  oscureciendolo sin taparlo completamente.
 
-void Personaje::drawshadow(Vector3 shadowpos, std::vector<Model> shadowFrames, int frameIndex) const
+void Personaje::drawshadow(Vector3 shadowpos, const std::vector<Model>& shadowFrames, int frameIndex) const
 {
     BeginBlendMode(BLEND_MULTIPLIED);
     DrawModel(shadowFrames[frameIndex], shadowpos, 1.0f, WHITE);
     EndBlendMode();
 }
 
-void Personaje::drawAnimation(Camera camera, std::vector<Texture2D> frames, int frameIndex) const
+void Personaje::drawAnimation(Camera camera, const std::vector<Texture2D>& frames, int frameIndex) const
 {
     if (frames.empty()) return; // Sin frames, no dibujar
     const Texture2D& texActual = frames[frameIndex]; // Usa el frame actual
@@ -265,33 +274,37 @@ std::vector<Disparo> Personaje::Shoot()
     std::vector<Disparo> disparos{};
     float offset = Size3D / 2.0f;
 
-    if (cooldown <= 0.0f) {
-        cooldown = Player.cooldown;
-        if (Player.tipoAtaque == TipoAtaque::Area) {
-            const Vec2 dirs[8] = {
-                {1,0},{-1,0},{0,1},{0,-1},
-                {0.707f,0.707f},{-0.707f,0.707f},
-                {0.707f,-0.707f},{-0.707f,-0.707f}
-            };
-            for (const auto& d : dirs) {
-                Vec2    pos2d = GetPos() + d * offset;
-                Vector3 origin = { pos2d.x, Size3D / 2.0f, pos2d.y };
-                Vec2    vel = d * Player.attack_speed * SPEED_SCALE;
-                disparos.push_back(Disparo(origin, vel, &Ataque, isPlayer, Player.rango_max));
-            }
-        }
-        else {
-            float rangoMax = (Player.tipoAtaque == TipoAtaque::CuerpoACuerpo) ? Player.rango_max : 0.0f;
-            Vec2    pos2d = GetPos() + l_dir * offset;
+    if (cooldown > 0.0f) return {};
+
+    cooldown = Player.cooldown;
+    atkPlaying = true;               // Dispara la animación
+    frameActual_Atk = 0;             // Siempre empieza desde el frame 0
+    est = EstadoAnimacion::ATK;
+    frameTimer = 0.0f;
+    if (Player.tipoAtaque == TipoAtaque::Area) {
+        const Vec2 dirs[8] = {
+            {1,0},{-1,0},{0,1},{0,-1},
+            {0.707f,0.707f},{-0.707f,0.707f},
+            {0.707f,-0.707f},{-0.707f,-0.707f}
+        };
+        for (const auto& d : dirs) {
+            Vec2    pos2d = GetPos() + d * offset;
             Vector3 origin = { pos2d.x, Size3D / 2.0f, pos2d.y };
-            Vec2    vel = l_dir * Player.attack_speed * SPEED_SCALE;
-            disparos.push_back(Disparo(origin, vel, &Ataque, isPlayer, rangoMax));
+            Vec2    vel = d * Player.attack_speed * SPEED_SCALE;
+            disparos.push_back(Disparo(origin, vel, &Ataque, isPlayer, Player.rango_max));
         }
-
-        PlayAttackSound();
-        return disparos;
-
     }
+    else {
+        float rangoMax = (Player.tipoAtaque == TipoAtaque::CuerpoACuerpo) ? Player.rango_max : 0.0f;
+        Vec2    pos2d = GetPos() + l_dir * offset;
+        Vector3 origin = { pos2d.x, Size3D / 2.0f, pos2d.y };
+        Vec2    vel = l_dir * Player.attack_speed * SPEED_SCALE;
+        disparos.push_back(Disparo(origin, vel, &Ataque, isPlayer, rangoMax));
+    }
+
+    PlayAttackSound();
+    return disparos;
+
 }
 
 //  PlayAttackSound — Reproduce el efecto de sonido de ataque

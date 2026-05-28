@@ -68,6 +68,7 @@ class Personaje
 	int  frameActual_Atk = 0; 	 // Frame actual de animacion (index en Frames y shadow)
     float frameTimer  = 0.0f;       // Acumulador de tiempo para cambiar de frame
 	float frameSpeed = 0.1f;       // Tiempo por frame de animacion (segundos, tomado de Pj_info)
+    bool  atkPlaying = false;   // True mientras la anim ATK se reproduce
     EstadoAnimacion  est{ EstadoAnimacion::STILL };
 
 
@@ -75,9 +76,9 @@ class Personaje
 	friend class Interacciones;
 
     // Dibuja la sombra del frame actual en la posicion dada
-    void drawshadow(Vector3 shadowpos, std::vector<Model> shadowFrames, int frameIndex) const;
+    void drawshadow(Vector3 shadowpos, const std::vector<Model>& shadowFrames, int frameIndex) const;
 
-	void drawAnimation(Camera camera, std::vector<Texture2D> frames, int frameIndex) const;
+	void drawAnimation(Camera camera, const std::vector<Texture2D>& frames, int frameIndex) const;
 
 	
 
