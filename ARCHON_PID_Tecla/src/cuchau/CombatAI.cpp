@@ -47,23 +47,23 @@ bool CombatAI::debe_esquivar(const std::vector<Disparo>& disparos, Vec2& outDir)
 //  Update — Ciclo principal compartido por todas las derivadas
 
 bool CombatAI::Update(float dt, const std::vector<Disparo>& disparos) {
+    bool decidioAhora = false;
+
     if (cooldown_IA > 0) {
         cooldown_IA -= dt;
     }
     else {
-
         ultima_accion = decide(disparos, dt);
-        cooldown_IA = delay_IA;
+        cooldown_IA = delay_IA + cooldown_IA;  // compensa deriva
+        decidioAhora = true;
     }
 
     if (ultima_accion.d.x != 0 || ultima_accion.d.y != 0) {
-        // Apuntar al jugador ANTES de decidir para que la punteria sea correcta
-
         Vec2 toPlayer = (Jugador.GetPos() - IA.GetPos()).unitario();
         IA.SetDir(toPlayer);
-
         IA.Move(ultima_accion.d, dt);
     }
 
-    return ultima_accion.disparar;
+    // Solo dispara en el frame de la decisión, no en todos los frames del cooldown
+    return decidioAhora && ultima_accion.disparar;
 }

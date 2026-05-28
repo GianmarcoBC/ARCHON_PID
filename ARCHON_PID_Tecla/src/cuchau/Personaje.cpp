@@ -67,6 +67,9 @@ void Personaje::Move(Vec2 dir, float dt)
 
 void Personaje::Update(float dt)
 {
+    if (cooldown > 0.0f) cooldown -= dt;  // Reducir cooldown
+    else cooldown = 0.0f;
+    
     if (!isPlayer) return;   // IA controla externamente
     Vec2 dir = { 0, 0 };
     // Leer teclas y mover en el plano XZ
@@ -77,8 +80,7 @@ void Personaje::Update(float dt)
     if (IsKeyDown(Controles.down))  { dir.y = 1; }
 
     Move(dir, dt);
-	if (cooldown > 0.0f) cooldown -= dt;  // Reducir cooldown
-	else cooldown = 0.0f;
+
 }
 
 void Personaje::Draw(Camera camera) const

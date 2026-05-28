@@ -89,6 +89,7 @@ void ControladorCombate::Update()
     // ── Player 2 / IA ────────────────────────────────────────────────
     if (ia != nullptr) {
         // Modo IA: la IA mueve a P2 y decide si disparar
+        P2.Update(dt);
         bool dispara = ia->Update(dt, Disparos_1);
 
         if (dispara) {

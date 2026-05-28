@@ -111,6 +111,9 @@ void CuchauCombateScreen::DrawPausa()
 
 void CuchauCombateScreen::OnEnter(GameState& gs)
 {
+    // Reiniciar música de Cuchau siempre al entrar
+    rolitas = std::make_unique<Rolitas>();
+    
     // Si venimos con un slot pendiente del menú, cargarlo directamente
     if (SaveSystem::pendiente.valida) {
         savePendiente = SaveSystem::pendiente;

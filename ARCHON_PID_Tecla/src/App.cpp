@@ -79,6 +79,7 @@ void App::FinalizarTransicion() {
             default: break;
         }
         // Pausar musica global al entrar en combate, reanudar al salir
+        // Al entrar en combate: pausar música global
         if (gs.estadoActual == CUCHAU_COMBATE) PausarMusicaGlobal();
         if (anterior == CUCHAU_COMBATE && gs.estadoActual != CUCHAU_COMBATE) ReanudarMusicaGlobal();
         if (auto* scr = GetCurrentScreen()) scr->OnEnter(gs);
@@ -233,7 +234,7 @@ void App::Draw() {
         rlMatrixMode(RL_MODELVIEW);
         rlLoadIdentity();
     }
-
+    
     Screens::espadaSlash(gs);
     EndDrawing();
 }
@@ -522,7 +523,10 @@ void App::PausarMusicaGlobal() {
 }
 
 void App::ReanudarMusicaGlobal() {
-    if (musicaGlobalCargada) ResumeMusicStream(musicaGlobal);
+    if (!musicaGlobalCargada) return;
+    if (!IsMusicStreamPlaying(musicaGlobal)) {
+        PlayMusicStream(musicaGlobal);
+    }
 }
 
 void App::Run() {
