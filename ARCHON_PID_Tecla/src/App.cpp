@@ -30,7 +30,7 @@ void App::Init() {
 
     TraceLog(LOG_INFO, "Working directory: %s", GetWorkingDirectory());
 
-    gs.pantallaCompleta = true;
+    gs.pantallaCompleta = false;
     gs.init();
     Particles::init(gs);
 
@@ -302,24 +302,33 @@ void App::HandleInput() {
         }
         if (IsKeyPressed(KEY_A) || IsKeyPressed(KEY_LEFT)) {
             auto& op = gs.controlesOpciones[gs.opcionOpcionesSel];
-            int ant  = op.valor;
-            op.valor = std::max(op.minV, op.valor - 1);
-            // Efectos inmediatos
-            if (gs.opcionOpcionesSel == 0) {
-                gs.volumenMusica = op.valor;
-                if (musicaGlobalCargada) SetMusicVolume(musicaGlobal, gs.volumenMusica / 10.f);
+            if (gs.opcionOpcionesSel == 2) {
+                // Pantalla Completa: dejar que TogglePantallaCompleta lo gestione todo
+                if (op.valor == 1) TogglePantallaCompleta();
             }
-            if (gs.opcionOpcionesSel == 2 && op.valor != ant) TogglePantallaCompleta();
+            else {
+                int ant = op.valor;
+                op.valor = std::max(op.minV, op.valor - 1);
+                if (gs.opcionOpcionesSel == 0) {
+                    gs.volumenMusica = op.valor;
+                    if (musicaGlobalCargada) SetMusicVolume(musicaGlobal, gs.volumenMusica / 10.f);
+                }
+            }
         }
         if (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT)) {
             auto& op = gs.controlesOpciones[gs.opcionOpcionesSel];
-            int ant  = op.valor;
-            op.valor = std::min(op.maxV, op.valor + 1);
-            if (gs.opcionOpcionesSel == 0) {
-                gs.volumenMusica = op.valor;
-                if (musicaGlobalCargada) SetMusicVolume(musicaGlobal, gs.volumenMusica / 10.f);
+            if (gs.opcionOpcionesSel == 2) {
+                // Pantalla Completa: dejar que TogglePantallaCompleta lo gestione todo
+                if (op.valor == 0) TogglePantallaCompleta();
             }
-            if (gs.opcionOpcionesSel == 2 && op.valor != ant) TogglePantallaCompleta();
+            else {
+                int ant = op.valor;
+                op.valor = std::min(op.maxV, op.valor + 1);
+                if (gs.opcionOpcionesSel == 0) {
+                    gs.volumenMusica = op.valor;
+                    if (musicaGlobalCargada) SetMusicVolume(musicaGlobal, gs.volumenMusica / 10.f);
+                }
+            }
         }
         if (IsKeyPressed(KEY_ESCAPE)) IniciarTransicion(MENU);
     }

@@ -309,9 +309,10 @@ void ConfigJuegoCompletoScreen::OnEnter(GameState& gs) {
     gs.opcionBandoSel = 0;
     gs.opcionDifiSel  = 1;
     gs.configJCFoco   = 0;
+
 }
 
-void ConfigJuegoCompletoScreen::drawPanelBando(GameState& gs, float ox) {
+void ConfigJuegoCompletoScreen::drawPanelBando(GameState& gs, float ox) {    
     float t=gs.tiempo, panX=60+ox, panY=110, panW=300, panH=330;
     drawPanel(panX,panY,panW,panH, 0.65f,0.5f,0.08f, 0.06f,0.04f,0.02f);
     Drawing::texto18(panX+20, panY+panH-25, "ELIGE TU BANDO", CFloat(0.8f,0.7f,0.15f));
@@ -490,19 +491,6 @@ void SeleccionEquipoScreen::drawTarjetaEquipo(GameState& gs, int idx,
     Drawing::texto18(cx-(float)MeasureText(eq.nombre.c_str(),18)/2.f,
         y+h-28, eq.nombre,
         activo?CFloat(eq.colorR,eq.colorG,eq.colorB):CFloat(0.65f,0.6f,0.5f));
-
-    // Stats solo si está activo
-    if(activo){
-        float sx=x+10, sw=w-20, sy=y+12;
-        Drawing::texto12(sx,sy,"ATQ",CFloat(0.75f,0.65f,0.5f));
-        drawBarraStat(sx+26,sy+2,sw-26,eq.ataque,   CFloat(0.9f,0.2f,0.1f));
-        Drawing::texto12(sx,sy+14,"DEF",CFloat(0.75f,0.65f,0.5f));
-        drawBarraStat(sx+26,sy+16,sw-26,eq.defensa,  CFloat(0.2f,0.5f,0.9f));
-        Drawing::texto12(sx,sy+28,"VEL",CFloat(0.75f,0.65f,0.5f));
-        drawBarraStat(sx+26,sy+30,sw-26,eq.velocidad,CFloat(0.2f,0.9f,0.3f));
-        Drawing::texto12(sx,sy+42,"MAG",CFloat(0.75f,0.65f,0.5f));
-        drawBarraStat(sx+26,sy+44,sw-26,eq.magia,    CFloat(0.8f,0.3f,0.9f));
-    }
 }
 
 void SeleccionEquipoScreen::Draw(GameState& gs) {
