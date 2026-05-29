@@ -149,6 +149,7 @@
     <ClCompile Include="src\cuchau\AI_Facil.cpp" />
     <ClCompile Include="src\cuchau\AI_Defensiva.cpp" />
     <ClCompile Include="src\cuchau\AI_Agresiva.cpp" />
+    <ClCompile Include="src\TableroAI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\AI_Agresiva_Tablero.h" />
@@ -159,6 +160,7 @@
     <ClInclude Include="src\Magia.h" />
     <ClInclude Include="src\PiezaTablero.h" />
     <ClInclude Include="src\Pj.h" />
+    <ClInclude Include="src\TableroAI.h" />
     <ClInclude Include="src\TiposPj.h" />
     <ClInclude Include="src\PjMapping.h" />
     <ClInclude Include="src\cuchau\Controlador_Combate.h" />
