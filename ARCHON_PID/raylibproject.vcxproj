@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="raylibproject.cpp" />
+    <ClCompile Include="src\Controlador_Tablero.cpp" />
     <ClCompile Include="src\Tablero.cpp" />
     <ClCompile Include="src\Magia.cpp" />
     <ClCompile Include="src\PiezaTablero.cpp" />
@@ -147,6 +148,7 @@
     <ClCompile Include="src\cuchau\AI_Agresiva.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Controlador_Tablero.h" />
     <ClInclude Include="src\Tablero.h" />
     <ClInclude Include="src\Magia.h" />
     <ClInclude Include="src\PiezaTablero.h" />

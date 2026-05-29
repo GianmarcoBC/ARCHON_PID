@@ -69,6 +69,9 @@
     <ClCompile Include="src\cuchau\AI_Agresiva.cpp">
       <Filter>Archivos de origen\Combate</Filter>
     </ClCompile>
+    <ClCompile Include="src\Controlador_Tablero.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Tablero.h">
@@ -124,6 +127,9 @@
     </ClInclude>
     <ClInclude Include="src\cuchau\Pj_info.h">
       <Filter>Archivos de encabezado\Combate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Controlador_Tablero.h">
+      <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
