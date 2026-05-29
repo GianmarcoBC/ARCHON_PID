@@ -24,16 +24,22 @@ class Personaje
     std::vector<Texture2D> Frames_MOV_shadow{};
     std::vector<Mesh> shadowMesh_MOV{};
     std::vector<Model> shadow_MOV{};
+    std::vector<Mesh> shadowMeshFlip_MOV{};
+    std::vector<Model> shadowFlip_MOV{};
 
     std::vector<Texture2D> Frames_STILL{};
     std::vector<Texture2D> Frames_STILL_shadow{};
     std::vector<Mesh> shadowMesh_STILL{};
     std::vector<Model> shadow_STILL{};
+    std::vector<Mesh> shadowMeshFlip_STILL{};
+    std::vector<Model> shadowFlip_STILL{};
 
     std::vector<Texture2D> Frames_ATK{};
     std::vector<Texture2D> Frames_ATK_shadow{};
     std::vector<Mesh> shadowMesh_ATK{};
     std::vector<Model> shadow_ATK{};
+    std::vector<Mesh> shadowMeshFlip_ATK{};
+    std::vector<Model> shadowFlip_ATK{};
 
     Texture2D Ataque{};
     Sound efecto_ataque{};
@@ -48,7 +54,8 @@ class Personaje
 
     friend class Interacciones;
 
-    void drawshadow(Vector3 shadowpos, const std::vector<Model>& shadowFrames, int frameIndex) const;
+    void drawshadow(Vector3 shadowpos, const std::vector<Model>& shadowFrames,
+                    const std::vector<Model>& shadowFramesFlip, int frameIndex) const;
     void drawAnimation(Camera camera, const std::vector<Texture2D>& frames, int frameIndex) const;
 
 public:
@@ -81,18 +88,21 @@ public:
     void    PlayAttackSound();
 
     ~Personaje() {
-        for (int i = 0; i < Frames_MOV.size(); i++) {
+        for (int i = 0; i < (int)Frames_MOV.size(); i++) {
             UnloadModel(shadow_MOV[i]);
+            UnloadModel(shadowFlip_MOV[i]);
             UnloadTexture(Frames_MOV_shadow[i]);
             UnloadTexture(Frames_MOV[i]);
         }
-        for (int i = 0; i < Frames_STILL.size(); i++) {
+        for (int i = 0; i < (int)Frames_STILL.size(); i++) {
             UnloadModel(shadow_STILL[i]);
+            UnloadModel(shadowFlip_STILL[i]);
             UnloadTexture(Frames_STILL_shadow[i]);
             UnloadTexture(Frames_STILL[i]);
         }
-        for (int i = 0; i < Frames_ATK.size(); i++) {
+        for (int i = 0; i < (int)Frames_ATK.size(); i++) {
             UnloadModel(shadow_ATK[i]);
+            UnloadModel(shadowFlip_ATK[i]);
             UnloadTexture(Frames_ATK_shadow[i]);
             UnloadTexture(Frames_ATK[i]);
         }

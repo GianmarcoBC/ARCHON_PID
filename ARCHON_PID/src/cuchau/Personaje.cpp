@@ -10,30 +10,49 @@ Personaje::Personaje(Pj_info p, cntrl c, Vector3 po, bool ip):
         Frames_MOV.push_back(LoadTexture(Player.Sprites_MOV[i].data()));
         Frames_MOV_shadow.push_back(LoadTexture(Player.Sprites_MOV_shadow[i].data()));
     }
-    for (int i = 0; i < Frames_MOV_shadow.size(); i++) {
+    for (int i = 0; i < (int)Frames_MOV_shadow.size(); i++) {
         shadowMesh_MOV.push_back(GenMeshPlane(Size3D, Size3D, 1, 1));
         shadow_MOV.push_back(LoadModelFromMesh(shadowMesh_MOV[i]));
         shadow_MOV[i].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = Frames_MOV_shadow[i];
+        // Version flipped (UVs invertidas en X)
+        shadowMeshFlip_MOV.push_back(GenMeshPlane(Size3D, Size3D, 1, 1));
+        float* tc = (float*)shadowMeshFlip_MOV[i].texcoords;
+        for (int v = 0; v < shadowMeshFlip_MOV[i].vertexCount; v++) tc[v * 2] = 1.0f - tc[v * 2];
+        UpdateMeshBuffer(shadowMeshFlip_MOV[i], 1, tc, shadowMeshFlip_MOV[i].vertexCount * 2 * sizeof(float), 0);
+        shadowFlip_MOV.push_back(LoadModelFromMesh(shadowMeshFlip_MOV[i]));
+        shadowFlip_MOV[i].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = Frames_MOV_shadow[i];
     }
 
-    for (int i = 0; i < Player.Sprites_STILL.size(); i++) {
+    for (int i = 0; i < (int)Player.Sprites_STILL.size(); i++) {
         Frames_STILL.push_back(LoadTexture(Player.Sprites_STILL[i].data()));
         Frames_STILL_shadow.push_back(LoadTexture(Player.Sprites_STILL_shadow[i].data()));
     }
-    for (int i = 0; i < Frames_STILL_shadow.size(); i++) {
+    for (int i = 0; i < (int)Frames_STILL_shadow.size(); i++) {
         shadowMesh_STILL.push_back(GenMeshPlane(Size3D, Size3D, 1, 1));
         shadow_STILL.push_back(LoadModelFromMesh(shadowMesh_STILL[i]));
         shadow_STILL[i].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = Frames_STILL_shadow[i];
+        shadowMeshFlip_STILL.push_back(GenMeshPlane(Size3D, Size3D, 1, 1));
+        float* tc = (float*)shadowMeshFlip_STILL[i].texcoords;
+        for (int v = 0; v < shadowMeshFlip_STILL[i].vertexCount; v++) tc[v * 2] = 1.0f - tc[v * 2];
+        UpdateMeshBuffer(shadowMeshFlip_STILL[i], 1, tc, shadowMeshFlip_STILL[i].vertexCount * 2 * sizeof(float), 0);
+        shadowFlip_STILL.push_back(LoadModelFromMesh(shadowMeshFlip_STILL[i]));
+        shadowFlip_STILL[i].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = Frames_STILL_shadow[i];
     }
 
-    for (int i = 0; i < Player.Sprites_ATK.size(); i++) {
+    for (int i = 0; i < (int)Player.Sprites_ATK.size(); i++) {
         Frames_ATK.push_back(LoadTexture(Player.Sprites_ATK[i].data()));
         Frames_ATK_shadow.push_back(LoadTexture(Player.Sprites_ATK_shadow[i].data()));
     }
-    for (int i = 0; i < Frames_ATK_shadow.size(); i++) {
+    for (int i = 0; i < (int)Frames_ATK_shadow.size(); i++) {
         shadowMesh_ATK.push_back(GenMeshPlane(Size3D, Size3D, 1, 1));
         shadow_ATK.push_back(LoadModelFromMesh(shadowMesh_ATK[i]));
         shadow_ATK[i].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = Frames_ATK_shadow[i];
+        shadowMeshFlip_ATK.push_back(GenMeshPlane(Size3D, Size3D, 1, 1));
+        float* tc = (float*)shadowMeshFlip_ATK[i].texcoords;
+        for (int v = 0; v < shadowMeshFlip_ATK[i].vertexCount; v++) tc[v * 2] = 1.0f - tc[v * 2];
+        UpdateMeshBuffer(shadowMeshFlip_ATK[i], 1, tc, shadowMeshFlip_ATK[i].vertexCount * 2 * sizeof(float), 0);
+        shadowFlip_ATK.push_back(LoadModelFromMesh(shadowMeshFlip_ATK[i]));
+        shadowFlip_ATK[i].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = Frames_ATK_shadow[i];
     }
 
     Ataque = LoadTexture(Player.Ataque.data());
@@ -113,23 +132,28 @@ void Personaje::Draw(Camera camera) const
     switch (est) {
     case EstadoAnimacion::MOV:
         drawAnimation(camera, Frames_MOV, frameActual_Mov);
-        drawshadow({ pos3d.x, 0.01f, pos3d.z - Size3D / 2 }, shadow_MOV, frameActual_Mov);
+        drawshadow({ pos3d.x, 0.01f, pos3d.z - Size3D / 2 }, shadow_MOV, shadowFlip_MOV, frameActual_Mov);
         break;
     case EstadoAnimacion::STILL:
         drawAnimation(camera, Frames_STILL, frameActual_Still);
-        drawshadow({ pos3d.x, 0.01f, pos3d.z - Size3D / 2 }, shadow_STILL, frameActual_Still);
+        drawshadow({ pos3d.x, 0.01f, pos3d.z - Size3D / 2 }, shadow_STILL, shadowFlip_STILL, frameActual_Still);
         break;
     case EstadoAnimacion::ATK:
         drawAnimation(camera, Frames_ATK, frameActual_Atk);
-        drawshadow({ pos3d.x, 0.01f, pos3d.z - Size3D / 2 }, shadow_ATK, frameActual_Atk);
+        drawshadow({ pos3d.x, 0.01f, pos3d.z - Size3D / 2 }, shadow_ATK, shadowFlip_ATK, frameActual_Atk);
         break;
     }
 }
 
-void Personaje::drawshadow(Vector3 shadowpos, const std::vector<Model>& shadowFrames, int frameIndex) const
+void Personaje::drawshadow(Vector3 shadowpos, const std::vector<Model>& shadowFrames,
+                           const std::vector<Model>& shadowFramesFlip, int frameIndex) const
 {
     BeginBlendMode(BLEND_MULTIPLIED);
-    DrawModel(shadowFrames[frameIndex], shadowpos, 1.0f, WHITE);
+    if (l_dir.x < 0) {
+        DrawModel(shadowFramesFlip[frameIndex], shadowpos, 1.0f, WHITE);
+    } else {
+        DrawModel(shadowFrames[frameIndex], shadowpos, 1.0f, WHITE);
+    }
     EndBlendMode();
 }
 

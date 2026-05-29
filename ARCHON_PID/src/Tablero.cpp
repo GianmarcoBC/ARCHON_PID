@@ -1,10 +1,35 @@
 #include "Tablero.h"
 #include <iostream>
+#include <cmath>
+#include <string>
 
-// Constructor: configura dimensiones del tablero
+// Constructor: configura dimensiones del tablero y carga recursos 3D
 Tablero::Tablero() : magiaTablero() {
     casillasxlado = 9;
     tamanoCasilla = 64;
+    alphaDiscard = LoadShader(0, "Resources/alpha_discard.fs");
+
+    // Cargar frames del fondo animado (26 frames, 30ms cada uno)
+    for (int i = 1; i <= 26; i++) {
+        std::string path = "Resources/AAGraficos/Fondotablero/bac086c9e1388a6f418e9b5c01b1832b (1)_30ms_" + std::to_string(i) + ".png";
+        fondoFrames.push_back(LoadTexture(path.c_str()));
+    }
+
+    // Cargar audio del tablero
+    musicaInicio = LoadMusicStream("Resources/AAAudio/Musica/MusciaTablero Inicio.mp3");
+    musicaFin = LoadMusicStream("Resources/AAAudio/Musica/MusciaTableroFin.mp3");
+    sfxSelectPiece = LoadSound("Resources/AAAudio/Efectos/SelectPiece.wav");
+    SetSoundVolume(sfxSelectPiece, 3.0f);
+    reproduciendoInicio = true;
+    PlayMusicStream(musicaInicio);
+}
+
+Tablero::~Tablero() {
+    UnloadShader(alphaDiscard);
+    for (auto& tex : fondoFrames) UnloadTexture(tex);
+    UnloadMusicStream(musicaInicio);
+    UnloadMusicStream(musicaFin);
+    UnloadSound(sfxSelectPiece);
 }
 
 /*
@@ -16,11 +41,39 @@ Tablero::Tablero() : magiaTablero() {
  * - Cada hechizo tiene su propio modo (HEAL, TELEPORT, etc.)
  */
 void Tablero::LogicaTablero() {
+    // Actualizar musica del tablero: Inicio y Fin en bucle alternado
+    if (reproduciendoInicio) {
+        UpdateMusicStream(musicaInicio);
+        if (!IsMusicStreamPlaying(musicaInicio)) {
+            reproduciendoInicio = false;
+            PlayMusicStream(musicaFin);
+        }
+    } else {
+        UpdateMusicStream(musicaFin);
+        if (!IsMusicStreamPlaying(musicaFin)) {
+            reproduciendoInicio = true;
+            PlayMusicStream(musicaInicio);
+        }
+    }
+
     if (get_modoJuegoActual() == ModoJuego::NORMAL) {
         personaje_usando_magia = nullptr;
-       
+
         moverPieza();                               // Gestionar seleccion y movimiento
         detectaGanador();                           // Comprobar si alguien ha ganado
+    }
+
+    // Actualizar animacion de movimiento en curso
+    if (get_modoJuegoActual() == ModoJuego::ANIMANDO_MOVIMIENTO && piezaAnimando_ != nullptr) {
+        float dt = GetFrameTime();
+        if (piezaAnimando_->UpdateMovimiento(dt)) {
+            // Animacion terminada: completar el movimiento en la cuadricula
+            cambioPosicionPieza(piezaAnimando_, filaDestinoAnim_, colDestinoAnim_);
+            piezaAnimando_ = nullptr;
+            modoJuegoactual = ModoJuego::NORMAL;
+            turno = turno == LUZ ? OSCURIDAD : LUZ;
+            avanceCiclo();
+        }
     }
 
     // Delegar al sistema de magia segun el hechizo activo
@@ -148,115 +201,154 @@ void Tablero::inicializarTablero() {
 }
 
 /*
- * Draw - Dibuja el tablero completo
+ * Draw - Dibuja el tablero completo en 3D con vista en perspectiva
  *
  * Orden de dibujado:
- * 1. Casillas de fondo (blancas, negras, cambiantes segun ciclo)
- * 2. Resaltado de casillas de movimiento posible (DrawCasillas)
- * 3. Cementerio si estamos en modo Revive
- * 4. Piezas sobre las casillas
- * 5. Indicador de turno en la esquina inferior
+ * 1. Fondo oscuro
+ * 2. Escena 3D: base del tablero, casillas, puntos de poder, resaltados, piezas
+ * 3. Overlays 2D: cementerio (Revive), indicador de turno
  */
 void Tablero::Draw() {
-    // 1. Dibujar casillas de fondo
+    float dt = GetFrameTime();
+
+    // 1. Fondo animado
+    fondoTimer += dt;
+    if (fondoTimer >= fondoFrameSpeed && !fondoFrames.empty()) {
+        fondoTimer = 0.0f;
+        fondoFrameActual = (fondoFrameActual + 1) % (int)fondoFrames.size();
+    }
+    if (!fondoFrames.empty()) {
+        const Texture2D& bg = fondoFrames[fondoFrameActual];
+        DrawTexturePro(bg,
+            { 0, 0, (float)bg.width, (float)bg.height },
+            { 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() },
+            { 0, 0 }, 0.0f, { 100, 100, 100, 255 });
+    }
+
+    BeginMode3D(camera3D);
+
+    float cubeH = 0.15f;
+    float cubeSize = cellSize3D - cellGap;
+    float boardExtent = 4.5f * cellSize3D;
+
+    // Base del tablero (marco decorativo)
+    DrawCube({ 0, -0.15f, 0 }, boardExtent * 2 + 0.8f, 0.2f, boardExtent * 2 + 0.8f, { 55, 35, 25, 255 });
+
+    // 2. Dibujar casillas
     for (int fila = 0; fila < casillasxlado; fila++) {
         for (int columna = 0; columna < casillasxlado; columna++) {
             Color col;
-            if (get_colorCasilla(fila, columna) == ColorCasilla::BLANCO) col = WHITE;
-            if (get_colorCasilla(fila, columna) == ColorCasilla::NEGRO) col = BLACK;
-            // Las casillas cambiantes oscilan entre morado claro y oscuro segun el Ciclo (0-4)
+            if (get_colorCasilla(fila, columna) == ColorCasilla::BLANCO) col = { 210, 210, 210, 255 };
+            if (get_colorCasilla(fila, columna) == ColorCasilla::NEGRO)  col = { 35, 35, 35, 255 };
             if (get_colorCasilla(fila, columna) == ColorCasilla::CAMBIANTE) {
-                if (Ciclo == 0) col = Color{ 230, 200, 245, 255 };       // Muy claro
-                else if (Ciclo == 1) col = Color{ 180, 130, 210, 255 };
-                else if (Ciclo == 2) col = Color{ 130, 70, 175, 255 };
-                else if (Ciclo == 3) col = Color{ 80, 30, 120, 255 };
-                else if (Ciclo == 4) col = Color{ 40, 10, 70, 255 };     // Muy oscuro
-            }
-            // Centrar el tablero en pantalla
-            int posX = (int)(GetScreenWidth() / 2 - 4.5 * tamanoCasilla) + columna * tamanoCasilla;
-            int posY = (int)(GetScreenHeight() / 2 - 4.5 * tamanoCasilla) + fila * tamanoCasilla;
-            DrawRectangle(posX, posY, tamanoCasilla, tamanoCasilla, col);
-
-            // Dibujamos puntos de poder
-           // Lo hacemos atributo? 
-            bool puntoPoder = (fila == 0 && columna == 4) || (fila == 4 && columna == 0) || (fila == 4 && columna == 4) || (fila == 4 && columna == 8) || (fila == 8 && columna == 4);
-
-            if(puntoPoder){
-            int centroX = (int)(GetScreenWidth() / 2 - 4 * tamanoCasilla) + columna * tamanoCasilla;
-            int centroY = (int)(GetScreenHeight() / 2 - 4 * tamanoCasilla) + fila * tamanoCasilla;
-            int radio = 15; // Un círculo pequeñito, como una ficha
-
-            // Lo dibujamos
-            DrawCircle(centroX, centroY, radio, ORANGE);
+                if (Ciclo == 0)      col = { 230, 200, 245, 255 };
+                else if (Ciclo == 1) col = { 180, 130, 210, 255 };
+                else if (Ciclo == 2) col = { 130, 70, 175, 255 };
+                else if (Ciclo == 3) col = { 80, 30, 120, 255 };
+                else if (Ciclo == 4) col = { 40, 10, 70, 255 };
             }
 
+            float x = (columna - 4.0f) * cellSize3D;
+            float z = (fila - 4.0f) * cellSize3D;
+            DrawCube({ x, 0.0f, z }, cubeSize, cubeH, cubeSize, col);
+
+            // Puntos de poder: esfera naranja sobre la casilla
+            bool puntoPoder = (fila == 0 && columna == 4) || (fila == 4 && columna == 0) ||
+                              (fila == 4 && columna == 4) || (fila == 4 && columna == 8) ||
+                              (fila == 8 && columna == 4);
+            if (puntoPoder) {
+                DrawSphere({ x, cubeH * 0.5f + 0.15f, z }, 0.35f, ORANGE);
+            }
         }
     }
 
-    // 2. Resaltado de movimientos posibles
+    // 3. Resaltado de movimientos posibles (cubos ligeramente elevados)
     DrawCasillas();
 
+    // 4. Resaltar casilla del personaje seleccionado
+    if (personaje_seleccionado != nullptr) {
+        float sx = (personaje_seleccionado->get_columna() - 4.0f) * cellSize3D;
+        float sz = (personaje_seleccionado->get_fila() - 4.0f) * cellSize3D;
+        DrawCube({ sx, 0.02f, sz }, cubeSize, cubeH + 0.02f, cubeSize, { 255, 230, 0, 255 });
+    }
 
-    // 3. Cementerio (solo visible en modo Revive)
+    // 5. Sombras de las piezas en el suelo (antes de los billboards, igual que en combate)
+    BeginShaderMode(alphaDiscard);
+    for (int fila = 0; fila < casillasxlado; fila++) {
+        for (int columna = 0; columna < casillasxlado; columna++) {
+            if (cuadricula[fila][columna] != nullptr)
+                cuadricula[fila][columna]->DrawShadow3D(cellSize3D);
+        }
+    }
+
+    // 6. Dibujar piezas como billboards 3D
+    for (int fila = 0; fila < casillasxlado; fila++) {
+        for (int columna = 0; columna < casillasxlado; columna++) {
+            if (cuadricula[fila][columna] != nullptr)
+                cuadricula[fila][columna]->Draw3D(camera3D, cellSize3D);
+        }
+    }
+    EndShaderMode();
+
+    EndMode3D();
+
+    // --- Overlays 2D (despues de EndMode3D) ---
+
+    // 6. Cementerio (solo visible en modo Revive)
     if (modoJuegoactual == ModoJuego::REVIVE) {
-        // Dibujar piezas muertas del equipo del mago que lanza Revive
         if (personaje_usando_magia->get_equipo() == LUZ) {
             for (int i = 0; i < (int)cementerio_Luz.size(); i++) {
                 if (i < 9) cementerio_Luz[i]->set_fila_columna(i, 0);
                 else cementerio_Luz[i]->set_fila_columna(i - 9, 1);
-                cementerio_Luz[i]->DrawT(50, 36);   // Lado izquierdo de la pantalla
+                cementerio_Luz[i]->DrawT(50, 36);
             }
         }
         if (personaje_usando_magia->get_equipo() == OSCURIDAD) {
             for (int i = 0; i < (int)cementerio_Oscuridad.size(); i++) {
                 if (i < 9) cementerio_Oscuridad[i]->set_fila_columna(i, 0);
                 else cementerio_Oscuridad[i]->set_fila_columna(i - 9, 1);
-                cementerio_Oscuridad[i]->DrawT(850, 36); // Lado derecho de la pantalla
+                cementerio_Oscuridad[i]->DrawT(850, 36);
             }
         }
     }
 
-    // 4. Resaltar el personaje seleccionado
-    if (personaje_seleccionado != nullptr) {
-        int posX = (int)(GetScreenWidth() / 2 - 4.5 * tamanoCasilla) + personaje_seleccionado->get_columna() * tamanoCasilla;
-        int posY = (int)(GetScreenHeight() / 2 - 4.5 * tamanoCasilla) + personaje_seleccionado->get_fila() * tamanoCasilla;
-        DrawRectangle(posX, posY, tamanoCasilla, tamanoCasilla, YELLOW);
-
-    }
-
-    // 5. Dibujar todas las piezas en el tablero
-    for (int fila = 0; fila < casillasxlado; fila++) {
-        for (int columna = 0; columna < casillasxlado; columna++) {
-            if (cuadricula[fila][columna] != nullptr)
-                cuadricula[fila][columna]->DrawT((int)(GetScreenWidth() / 2 - 4.5 * tamanoCasilla), (int)(GetScreenHeight() / 2 - 4.5 * tamanoCasilla));
-        }
-    }
-
-    // 6. Indicador de turno
+    // 7. Indicador de turno
     const char* turnoTxt = turno == LUZ ? "Turno: LUZ" : "Turno: OSCURIDAD";
-    DrawText(turnoTxt, 10, GetScreenHeight() - 20, 16, turno == LUZ ? GOLD : PURPLE);
+    DrawText(turnoTxt, 10, GetScreenHeight() - 30, 20, turno == LUZ ? GOLD : PURPLE);
 
-   
-
-
+    // 8. Avanzar animacion de todas las piezas (despues de dibujar, para que sombra y sprite usen el mismo frame)
+    for (int fila = 0; fila < casillasxlado; fila++)
+        for (int columna = 0; columna < casillasxlado; columna++)
+            if (cuadricula[fila][columna] != nullptr)
+                cuadricula[fila][columna]->UpdateAnimacion(dt);
 }
 
 /*
  * seleccionaCasilla - Convierte un click del raton en coordenadas de la cuadricula
  *
- * Recorre todas las casillas y comprueba si el click cae dentro de alguna.
- * Actualiza fila_seleccionada y columna_seleccionada.
+ * Lanza un rayo desde la posicion del raton a traves de la camara 3D y calcula
+ * la interseccion con el plano Y=0 (superficie del tablero).
+ * Convierte las coordenadas mundo a fila/columna de la cuadricula.
  */
 void Tablero::seleccionaCasilla() {
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-        int mouseX = GetMouseX();
-        int mouseY = GetMouseY();
-        for (int fila = 0; fila < casillasxlado; fila++) {
-            for (int columna = 0; columna < casillasxlado; columna++) {
-                int posX = (int)(GetScreenWidth() / 2 - 4.5 * tamanoCasilla) + columna * tamanoCasilla;
-                int posY = (int)(GetScreenHeight() / 2 - 4.5 * tamanoCasilla) + fila * tamanoCasilla;
-                if (mouseX <= (posX + tamanoCasilla) && mouseX > posX) columna_seleccionada = columna;
-                if (mouseY <= (posY + tamanoCasilla) && mouseY > posY) fila_seleccionada = fila;
+        Ray ray = GetScreenToWorldRay(GetMousePosition(), camera3D);
+
+        // Interseccion con el plano Y=0 (superficie del tablero)
+        if (ray.direction.y != 0.0f) {
+            float t = -ray.position.y / ray.direction.y;
+            if (t > 0.0f) {
+                float hitX = ray.position.x + t * ray.direction.x;
+                float hitZ = ray.position.z + t * ray.direction.z;
+
+                // Convertir coordenadas mundo a indices de cuadricula
+                int col = (int)floorf(hitX / cellSize3D + 4.5f);
+                int row = (int)floorf(hitZ / cellSize3D + 4.5f);
+
+                if (col >= 0 && col < 9 && row >= 0 && row < 9) {
+                    columna_seleccionada = col;
+                    fila_seleccionada = row;
+                }
             }
         }
     }
@@ -292,7 +384,10 @@ void Tablero::moverPieza() {
     if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr && fila_seleccionada != -1 && columna_seleccionada != -1) {
         if (turno == cuadricula[fila_seleccionada][columna_seleccionada]->get_equipo()) {
             reset_MovimientosPosibles();
+            if (personaje_seleccionado != nullptr) personaje_seleccionado->set_seleccionado(false);
             personaje_seleccionado = cuadricula[fila_seleccionada][columna_seleccionada];
+            personaje_seleccionado->set_seleccionado(true);
+            PlaySound(sfxSelectPiece);
             casillasPosibles(personaje_seleccionado);   // Calcular movimientos validos
             reset_seleccion();
         }
@@ -317,6 +412,7 @@ void Tablero::moverPieza() {
                 modoJuegoactual = ModoJuego::COMBATE;
 
                 // Limpiar estado de seleccion
+                if (personaje_seleccionado != nullptr) personaje_seleccionado->set_seleccionado(false);
                 personaje_seleccionado = nullptr;
                 reset_seleccion();
                 reset_MovimientosPosibles();
@@ -324,11 +420,22 @@ void Tablero::moverPieza() {
             }
         }
         else {
-            // Casilla vacia: mover la pieza
-            cambioPosicionPieza(personaje_seleccionado, fila_seleccionada, columna_seleccionada);
+            // Casilla vacia: iniciar animacion de movimiento
+            personaje_seleccionado->set_seleccionado(false);
+            personaje_seleccionado->iniciarMovimiento(fila_seleccionada, columna_seleccionada, cellSize3D);
+            piezaAnimando_ = personaje_seleccionado;
+            filaDestinoAnim_ = fila_seleccionada;
+            colDestinoAnim_ = columna_seleccionada;
+            modoJuegoactual = ModoJuego::ANIMANDO_MOVIMIENTO;
+
+            personaje_seleccionado = nullptr;
+            reset_seleccion();
+            reset_MovimientosPosibles();
+            return;
         }
 
-        // Limpiar seleccion y cambiar turno
+        // Limpiar seleccion y cambiar turno (solo para combate, el movimiento normal sale por return arriba)
+        if (personaje_seleccionado != nullptr) personaje_seleccionado->set_seleccionado(false);
         personaje_seleccionado = nullptr;
         reset_seleccion();
         for (int i = 0; i < 9; i++)
@@ -472,15 +579,18 @@ void Tablero::casillasPosibles(PiezaTablero* p) {
     }
 }
 
-// Dibujar resaltado azul/morado en las casillas donde la pieza seleccionada puede moverse
+// Dibujar resaltado azul/morado en 3D sobre las casillas donde la pieza puede moverse
 void Tablero::DrawCasillas() {
+    float cubeSize = cellSize3D - cellGap;
+    float cubeH = 0.15f;
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
             if (movimientosPosibles[i][j]) {
-                Color col = (i + j) % 2 == 0 ? DARKBLUE : DARKPURPLE;
-                int posX = (int)(GetScreenWidth() / 2 - 4.5 * tamanoCasilla) + j * tamanoCasilla;
-                int posY = (int)(GetScreenHeight() / 2 - 4.5 * tamanoCasilla) + i * tamanoCasilla;
-                DrawRectangle(posX, posY, tamanoCasilla, tamanoCasilla, col);
+                Color col = (i + j) % 2 == 0 ?
+                    Color{ 0, 40, 160, 255 } : Color{ 90, 0, 140, 255 };
+                float x = (j - 4.0f) * cellSize3D;
+                float z = (i - 4.0f) * cellSize3D;
+                DrawCube({ x, 0.02f, z }, cubeSize, cubeH + 0.02f, cubeSize, col);
             }
         }
     }

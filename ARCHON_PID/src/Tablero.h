@@ -4,6 +4,7 @@
 #include "Magia.h"
 #include "Pj.h"
 #include <vector>
+#include <cmath>
 
 /*
  * Tablero.h - Tablero de juego 9x9 estilo Archon
@@ -26,6 +27,7 @@ enum class ColorCasilla { BLANCO, NEGRO, CAMBIANTE };
 // Estados del juego - determinan que logica y que pantalla se muestra
 enum class ModoJuego {
     NORMAL,     // Turno normal: seleccionar pieza y moverla
+    ANIMANDO_MOVIMIENTO, // Pieza moviendose con animacion Mov
     COMBATE,    // Combate 3D en curso (se delega a ControladorCombate)
     HECHIZOS,   // Menu de seleccion de hechizo (teclas S/H/T/E/I/R)
     SHIFT,      // Ejecutando hechizo Shift Time
@@ -41,7 +43,7 @@ class Magia;
 class Tablero
 {
     int casillasxlado;                              // Dimension del tablero (9)
-    int tamanoCasilla;                              // Tamanio en pixeles de cada casilla (64)
+    int tamanoCasilla;                              // Tamanio en pixeles de cada casilla (64) - usado en cementerio 2D
     PiezaTablero* cuadricula[9][9];                 // Matriz del tablero: nullptr = casilla vacia
     PiezaTablero* personaje_seleccionado{ nullptr }; // Pieza actualmente seleccionada por el jugador
     PiezaTablero* personaje_usando_magia{ nullptr }; // Mago que esta lanzando un hechizo (MH o Platero)
@@ -59,6 +61,23 @@ class Tablero
     ModoJuego modoJuegoactual{ ModoJuego::NORMAL }; // Estado actual del juego
     Magia magiaTablero;                             // Sistema de hechizos
 
+    // --- Renderizado 3D del tablero ---
+    static constexpr float cellSize3D = 3.0f;       // Tamanio de cada casilla en unidades 3D
+    static constexpr float cellGap = 0.15f;          // Separacion entre casillas
+    Camera3D camera3D = {
+        { 0.0f, 25.0f, 32.0f },                     // Posicion: elevada y detras (similar a combate)
+        { 0.0f, 0.0f, -3.0f },                      // Objetivo: centro del tablero
+        { 0.0f, 1.0f, 0.0f },                       // Vector arriba
+        45.0f, CAMERA_PERSPECTIVE                    // FOV y proyeccion
+    };
+    Shader alphaDiscard{};                           // Shader para transparencia de sprites
+
+    // --- Fondo animado del tablero (frames extraidos de GIF) ---
+    std::vector<Texture2D> fondoFrames{};
+    int   fondoFrameActual{ 0 };
+    float fondoTimer{ 0.0f };
+    static constexpr float fondoFrameSpeed = 0.03f;  // 30ms por frame (26 frames)
+
     // --- Datos del combate pendiente ---
     // Se rellenan cuando una pieza intenta moverse a una casilla ocupada por el enemigo
     bool combatePendiente_{ false };                // Hay un combate por resolver
@@ -67,10 +86,22 @@ class Tablero
     int filaOrigenAtacante_{ -1 };                  // Posicion original del atacante (para devolver si pierde)
     int colOrigenAtacante_{ -1 };
 
+    // --- Animacion de movimiento pendiente ---
+    PiezaTablero* piezaAnimando_{ nullptr };    // Pieza que se esta moviendo con animacion
+    int filaDestinoAnim_{ -1 };                 // Destino de la animacion
+    int colDestinoAnim_{ -1 };
+
+    // --- Audio del tablero ---
+    Music musicaInicio{};
+    Music musicaFin{};
+    bool reproduciendoInicio{ true };  // true = suena Inicio, false = suena Fin
+    Sound sfxSelectPiece{};
+
     friend class Magia;     // Magia necesita acceso directo al tablero para ejecutar hechizos
 
 public:
     Tablero();
+    ~Tablero();
 
     void LogicaTablero();                           // Ejecutar logica segun el modo de juego actual
     void Draw();                                    // Dibujar tablero, piezas e indicadores
