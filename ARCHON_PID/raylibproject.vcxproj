@@ -132,6 +132,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="raylibproject.cpp" />
+    <ClCompile Include="src\AI_Agresiva_Tablero.cpp" />
+    <ClCompile Include="src\AI_Defensiva_Tablero.cpp" />
+    <ClCompile Include="src\AI_Facil_Tablero.cpp" />
     <ClCompile Include="src\Controlador_Tablero.cpp" />
     <ClCompile Include="src\Tablero.cpp" />
     <ClCompile Include="src\Magia.cpp" />
@@ -148,6 +151,9 @@
     <ClCompile Include="src\cuchau\AI_Agresiva.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\AI_Agresiva_Tablero.h" />
+    <ClInclude Include="src\AI_Defensiva_Tablero.h" />
+    <ClInclude Include="src\AI_Facil_Tablero.h" />
     <ClInclude Include="src\Controlador_Tablero.h" />
     <ClInclude Include="src\Tablero.h" />
     <ClInclude Include="src\Magia.h" />
