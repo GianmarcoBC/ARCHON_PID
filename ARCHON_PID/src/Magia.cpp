@@ -189,19 +189,23 @@ void Magia::Revive(PiezaTablero* personaje, Tablero& t) {
         int mouseY = GetMouseY();
 
         if (personaje->get_equipo() == LUZ) {
-            if (mouseX > 18 && mouseX < 82) {
+            // Columna 1 del cementerio Luz (filas 0-8)
+            if (mouseX > Tablero::cementerioLuzX
+                && mouseX < Tablero::cementerioLuzX + Tablero::cementerioCelda) {
                 for (int i = 0; i < 9; i++) {
-                    int posY = 4 + i * t.tamanoCasilla;
-                    if (mouseY <= (posY + t.tamanoCasilla) && mouseY > posY) {
+                    int posY = Tablero::cementerioY + i * Tablero::cementerioCelda;
+                    if (mouseY >= posY && mouseY < posY + Tablero::cementerioCelda) {
                         if (i < (int)t.cementerio_Luz.size())
                             t.personaje_muerto_seleccionado = t.cementerio_Luz[i];
                     }
                 }
             }
-            if (mouseX > 82 && mouseX < 146) {
-                for (int i = 10; i < 18; i++) {
-                    int posY = 4 + (i - 9) * t.tamanoCasilla;
-                    if (mouseY <= (posY + t.tamanoCasilla) && mouseY > posY) {
+            // Columna 2 del cementerio Luz (filas 9-17)
+            if (mouseX > Tablero::cementerioLuzX + Tablero::cementerioCelda
+                && mouseX < Tablero::cementerioLuzX + Tablero::cementerioCelda * 2) {
+                for (int i = 9; i < 18; i++) {
+                    int posY = Tablero::cementerioY + (i - 9) * Tablero::cementerioCelda;
+                    if (mouseY >= posY && mouseY < posY + Tablero::cementerioCelda) {
                         if (i < (int)t.cementerio_Luz.size())
                             t.personaje_muerto_seleccionado = t.cementerio_Luz[i];
                     }
@@ -210,19 +214,23 @@ void Magia::Revive(PiezaTablero* personaje, Tablero& t) {
         }
 
         if (personaje->get_equipo() == OSCURIDAD) {
-            if (mouseX > 818 && mouseX < 882) {
+            // Columna 1 del cementerio Oscuridad (filas 0-8)
+            if (mouseX > Tablero::cementerioOscX
+                && mouseX < Tablero::cementerioOscX + Tablero::cementerioCelda) {
                 for (int i = 0; i < 9; i++) {
-                    int posY = 4 + i * t.tamanoCasilla;
-                    if (mouseY <= (posY + t.tamanoCasilla) && mouseY > posY) {
+                    int posY = Tablero::cementerioY + i * Tablero::cementerioCelda;
+                    if (mouseY >= posY && mouseY < posY + Tablero::cementerioCelda) {
                         if (i < (int)t.cementerio_Oscuridad.size())
                             t.personaje_muerto_seleccionado = t.cementerio_Oscuridad[i];
                     }
                 }
             }
-            if (mouseX > 882 && mouseX < 946) {
-                for (int i = 10; i < 18; i++) {
-                    int posY = 4 + (i - 9) * t.tamanoCasilla;
-                    if (mouseY <= (posY + t.tamanoCasilla) && mouseY > posY) {
+            // Columna 2 del cementerio Oscuridad (filas 9-17)
+            if (mouseX > Tablero::cementerioOscX + Tablero::cementerioCelda
+                && mouseX < Tablero::cementerioOscX + Tablero::cementerioCelda * 2) {
+                for (int i = 9; i < 18; i++) {
+                    int posY = Tablero::cementerioY + (i - 9) * Tablero::cementerioCelda;
+                    if (mouseY >= posY && mouseY < posY + Tablero::cementerioCelda) {
                         if (i < (int)t.cementerio_Oscuridad.size())
                             t.personaje_muerto_seleccionado = t.cementerio_Oscuridad[i];
                     }

@@ -35,7 +35,11 @@ int main()
     while (!WindowShouldClose())
     {
         // ========================= LOGICA =========================
-        if (tablero.get_modoJuegoActual() == ModoJuego::COMBATE)
+        if (tablero.get_modoJuegoActual() == ModoJuego::GAME_OVER)
+        {
+            if (IsKeyPressed(KEY_ENTER)) break;  // sale del bucle y cierra el juego
+        }
+        else if (tablero.get_modoJuegoActual() == ModoJuego::COMBATE)
         {
             // Cuando el tablero detecta un ataque, creamos el ControladorCombate
             // usando los datos de combate (Pj_info) de ambas piezas enfrentadas

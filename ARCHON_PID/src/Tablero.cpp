@@ -41,6 +41,7 @@ Tablero::~Tablero() {
  * - Cada hechizo tiene su propio modo (HEAL, TELEPORT, etc.)
  */
 void Tablero::LogicaTablero() {
+    if (modoJuegoactual == ModoJuego::GAME_OVER) return;
     // Actualizar musica del tablero: Inicio y Fin en bucle alternado
     if (reproduciendoInicio) {
         UpdateMusicStream(musicaInicio);
@@ -321,6 +322,18 @@ void Tablero::Draw() {
         for (int columna = 0; columna < casillasxlado; columna++)
             if (cuadricula[fila][columna] != nullptr)
                 cuadricula[fila][columna]->UpdateAnimacion(dt);
+
+	// 9. Pantalla de Game Over
+    if (modoJuegoactual == ModoJuego::GAME_OVER) {
+        int w = GetScreenWidth(), h = GetScreenHeight();
+        DrawRectangle(0, 0, w, h, { 0, 0, 0, 180 });   // fondo semitransparente
+        DrawText(ganador.c_str(),
+            w / 2 - MeasureText(ganador.c_str(), 60) / 2,
+            h / 2 - 30, 60, GOLD);
+        DrawText("Pulsa ENTER para salir",
+            w / 2 - MeasureText("Pulsa ENTER para salir", 24) / 2,
+            h / 2 + 50, 24, WHITE);
+    }
 }
 
 /*
@@ -509,7 +522,7 @@ void Tablero::casillasPosibles(PiezaTablero* p) {
     if (p->get_imprison()) return;
 
     // --- Movimiento de voladores: area cuadrada ---
-    if (personaje_seleccionado->get_vuela()) {
+    if (p->get_vuela()) {
         for (int fila = (p->get_fila() - (int)p->get_rangoTablero()); fila <= (p->get_fila() + (int)p->get_rangoTablero()); fila++) {
             for (int columna = (p->get_columna() - (int)p->get_rangoTablero()); columna <= (p->get_columna() + (int)p->get_rangoTablero()); columna++) {
                 if (fila < 0 || columna < 0 || fila > 8 || columna > 8) continue; // Fuera del tablero
@@ -520,59 +533,59 @@ void Tablero::casillasPosibles(PiezaTablero* p) {
     }
 
     // --- Movimiento de terrestres: en cruz, bloqueado por aliados ---
-    if (!personaje_seleccionado->get_vuela()) {
+    if (!p->get_vuela()) {
         // Hacia abajo (filas crecientes)
         for (int fila = p->get_fila(); fila <= (p->get_fila() + (int)p->get_rangoTablero()); fila++) {
-            if (cuadricula[fila - 1][personaje_seleccionado->get_columna()] != nullptr && fila != p->get_fila()) {
-                if (cuadricula[fila - 1][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo()) break;
+            if (cuadricula[fila - 1][p->get_columna()] != nullptr && fila != p->get_fila()) {
+                if (cuadricula[fila - 1][p->get_columna()]->get_equipo() != p->get_equipo()) break;
             }
-            if (cuadricula[fila][personaje_seleccionado->get_columna()] == nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0 && fila <= 8 && personaje_seleccionado->get_columna() <= 8)
-                set_MovimientosPosibles(true, fila, personaje_seleccionado->get_columna());
-            else if (cuadricula[fila][personaje_seleccionado->get_columna()] != nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0 && fila <= 8 && personaje_seleccionado->get_columna() <= 8) {
-                if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() == p->get_equipo() && fila != personaje_seleccionado->get_fila()) break; // Bloqueado por aliado
-                if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo()) set_MovimientosPosibles(true, fila, personaje_seleccionado->get_columna()); // Enemigo
+            if (cuadricula[fila][p->get_columna()] == nullptr && fila >= 0 && p->get_columna() >= 0 && fila <= 8 && p->get_columna() <= 8)
+                set_MovimientosPosibles(true, fila, p->get_columna());
+            else if (cuadricula[fila][p->get_columna()] != nullptr && fila >= 0 && p->get_columna() >= 0 && fila <= 8 && p->get_columna() <= 8) {
+                if (cuadricula[fila][p->get_columna()]->get_equipo() == p->get_equipo() && fila != p->get_fila()) break; // Bloqueado por aliado
+                if (cuadricula[fila][p->get_columna()]->get_equipo() != p->get_equipo()) set_MovimientosPosibles(true, fila, p->get_columna()); // Enemigo
             }
             if (fila == 8) break;
         }
 
         // Hacia arriba (filas decrecientes)
         for (int fila = p->get_fila(); fila >= (p->get_fila() - (int)p->get_rangoTablero()); fila--) {
-            if (cuadricula[fila + 1][personaje_seleccionado->get_columna()] != nullptr && fila != p->get_fila()) {
-                if (cuadricula[fila + 1][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo()) break;
+            if (cuadricula[fila + 1][p->get_columna()] != nullptr && fila != p->get_fila()) {
+                if (cuadricula[fila + 1][p->get_columna()]->get_equipo() != p->get_equipo()) break;
             }
-            if (cuadricula[fila][personaje_seleccionado->get_columna()] == nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0 && fila <= 8 && personaje_seleccionado->get_columna() <= 8)
-                set_MovimientosPosibles(true, fila, personaje_seleccionado->get_columna());
-            else if (cuadricula[fila][personaje_seleccionado->get_columna()] != nullptr && fila >= 0 && personaje_seleccionado->get_columna() >= 0 && fila <= 8 && personaje_seleccionado->get_columna() <= 8) {
-                if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() == p->get_equipo() && fila != personaje_seleccionado->get_fila()) break;
-                if (cuadricula[fila][personaje_seleccionado->get_columna()]->get_equipo() != p->get_equipo()) set_MovimientosPosibles(true, fila, personaje_seleccionado->get_columna());
+            if (cuadricula[fila][p->get_columna()] == nullptr && fila >= 0 && p->get_columna() >= 0 && fila <= 8 && p->get_columna() <= 8)
+                set_MovimientosPosibles(true, fila, p->get_columna());
+            else if (cuadricula[fila][p->get_columna()] != nullptr && fila >= 0 && p->get_columna() >= 0 && fila <= 8 && p->get_columna() <= 8) {
+                if (cuadricula[fila][p->get_columna()]->get_equipo() == p->get_equipo() && fila != p->get_fila()) break;
+                if (cuadricula[fila][p->get_columna()]->get_equipo() != p->get_equipo()) set_MovimientosPosibles(true, fila, p->get_columna());
             }
             if (fila == 0) break;
         }
 
         // Hacia la derecha (columnas crecientes)
         for (int columna = p->get_columna(); columna <= (p->get_columna() + (int)p->get_rangoTablero()); columna++) {
-            if (cuadricula[personaje_seleccionado->get_fila()][columna - 1] != nullptr && columna != p->get_columna()) {
-                if (cuadricula[personaje_seleccionado->get_fila()][columna - 1]->get_equipo() != p->get_equipo()) break;
+            if (cuadricula[p->get_fila()][columna - 1] != nullptr && columna != p->get_columna()) {
+                if (cuadricula[p->get_fila()][columna - 1]->get_equipo() != p->get_equipo()) break;
             }
-            if (cuadricula[personaje_seleccionado->get_fila()][columna] == nullptr && personaje_seleccionado->get_fila() >= 0 && columna >= 0)
-                set_MovimientosPosibles(true, personaje_seleccionado->get_fila(), columna);
-            else if (cuadricula[personaje_seleccionado->get_fila()][columna] != nullptr && personaje_seleccionado->get_fila() >= 0 && columna >= 0 && personaje_seleccionado->get_fila() <= 8 && columna <= 8) {
-                if (cuadricula[personaje_seleccionado->get_fila()][columna]->get_equipo() == p->get_equipo() && columna != personaje_seleccionado->get_columna()) break;
-                if (cuadricula[personaje_seleccionado->get_fila()][columna]->get_equipo() != p->get_equipo()) set_MovimientosPosibles(true, personaje_seleccionado->get_fila(), columna);
+            if (cuadricula[p->get_fila()][columna] == nullptr && p->get_fila() >= 0 && columna >= 0)
+                set_MovimientosPosibles(true, p->get_fila(), columna);
+            else if (cuadricula[p->get_fila()][columna] != nullptr && p->get_fila() >= 0 && columna >= 0 && p->get_fila() <= 8 && columna <= 8) {
+                if (cuadricula[p->get_fila()][columna]->get_equipo() == p->get_equipo() && columna != p->get_columna()) break;
+                if (cuadricula[p->get_fila()][columna]->get_equipo() != p->get_equipo()) set_MovimientosPosibles(true, p->get_fila(), columna);
             }
             if (columna == 8) break;
         }
 
         // Hacia la izquierda (columnas decrecientes)
         for (int columna = p->get_columna(); columna >= (p->get_columna() - (int)p->get_rangoTablero()); columna--) {
-            if (cuadricula[personaje_seleccionado->get_fila()][columna + 1] != nullptr && columna != p->get_columna()) {
-                if (cuadricula[personaje_seleccionado->get_fila()][columna + 1]->get_equipo() != p->get_equipo()) break;
+            if (cuadricula[p->get_fila()][columna + 1] != nullptr && columna != p->get_columna()) {
+                if (cuadricula[p->get_fila()][columna + 1]->get_equipo() != p->get_equipo()) break;
             }
-            if (cuadricula[personaje_seleccionado->get_fila()][columna] == nullptr && personaje_seleccionado->get_fila() >= 0 && columna >= 0 && personaje_seleccionado->get_fila() <= 8 && columna <= 8)
-                set_MovimientosPosibles(true, personaje_seleccionado->get_fila(), columna);
-            else if (cuadricula[personaje_seleccionado->get_fila()][columna] != nullptr && personaje_seleccionado->get_fila() >= 0 && columna >= 0 && personaje_seleccionado->get_fila() <= 8 && columna <= 8) {
-                if (cuadricula[personaje_seleccionado->get_fila()][columna]->get_equipo() == p->get_equipo() && columna != personaje_seleccionado->get_columna()) break;
-                if (cuadricula[personaje_seleccionado->get_fila()][columna]->get_equipo() != p->get_equipo()) set_MovimientosPosibles(true, personaje_seleccionado->get_fila(), columna);
+            if (cuadricula[p->get_fila()][columna] == nullptr && p->get_fila() >= 0 && columna >= 0 && p->get_fila() <= 8 && columna <= 8)
+                set_MovimientosPosibles(true, p->get_fila(), columna);
+            else if (cuadricula[p->get_fila()][columna] != nullptr && p->get_fila() >= 0 && columna >= 0 && p->get_fila() <= 8 && columna <= 8) {
+                if (cuadricula[p->get_fila()][columna]->get_equipo() == p->get_equipo() && columna != p->get_columna()) break;
+                if (cuadricula[p->get_fila()][columna]->get_equipo() != p->get_equipo()) set_MovimientosPosibles(true, p->get_fila(), columna);
             }
             if (columna == 0) break;
         }
@@ -640,10 +653,12 @@ void Tablero::detectaGanador() {
 
     // Anunciar ganador
     if (ganaLuz || contadorLuz == 5 || contadorPersonajesOscuridad == 0) {
-        std::cout << "Gana Luz" << std::endl;
+        modoJuegoactual = ModoJuego::GAME_OVER;
+        ganador = "¡Gana LUZ!";
     }
     if (ganaOscuridad || contadorOscuridad == 5 || contadorPersonajesLuz == 0) {
-        std::cout << "Gana Oscuridad" << std::endl;
+        modoJuegoactual = ModoJuego::GAME_OVER;
+        ganador = "¡Gana OSCURIDAD!";
     }
 }
 

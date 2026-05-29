@@ -35,7 +35,8 @@ enum class ModoJuego {
     TELEPORT,   // Ejecutando hechizo Teleport (mover aliado a cualquier casilla vacia)
     EXCHANGE,   // Ejecutando hechizo Exchange (intercambiar posicion de dos piezas)
     IMPRISON,   // Ejecutando hechizo Imprison (inmovilizar pieza enemiga)
-    REVIVE      // Ejecutando hechizo Revive (resucitar pieza del cementerio)
+    REVIVE,      // Ejecutando hechizo Revive (resucitar pieza del cementerio)
+    GAME_OVER   // Fin del juego
 };
 
 class Magia;
@@ -60,6 +61,7 @@ class Tablero
     bool avance{ false };                           // Direccion del ciclo: false=subiendo, true=bajando
     ModoJuego modoJuegoactual{ ModoJuego::NORMAL }; // Estado actual del juego
     Magia magiaTablero;                             // Sistema de hechizos
+    std::string ganador{};                          // Ganador de la partida
 
     // --- Renderizado 3D del tablero ---
     static constexpr float cellSize3D = 3.0f;       // Tamanio de cada casilla en unidades 3D
@@ -71,6 +73,12 @@ class Tablero
         45.0f, CAMERA_PERSPECTIVE                    // FOV y proyeccion
     };
     Shader alphaDiscard{};                           // Shader para transparencia de sprites
+
+	// --- Posicion y dimension del cementerio 2D ---
+    static constexpr int cementerioLuzX = 50;   // mismo valor que DrawT(50, 36)
+    static constexpr int cementerioOscX = 850;  // mismo valor que DrawT(850, 36)
+    static constexpr int cementerioY = 36;
+    static constexpr int cementerioCelda = 64;    // tamaño de cada pieza en el cementerio
 
     // --- Fondo animado del tablero (frames extraidos de GIF) ---
     std::vector<Texture2D> fondoFrames{};
