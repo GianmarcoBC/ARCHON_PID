@@ -17,10 +17,11 @@
 int main()
 {
     // Inicializar ventana en pantalla completa a la resolucion nativa del monitor
-    SetConfigFlags(FLAG_FULLSCREEN_MODE);
+    InitWindow(1920, 1080, "Archon");   // Primero crear la ventana (GLFW se inicializa aquí)
     int screenW = GetMonitorWidth(0);
     int screenH = GetMonitorHeight(0);
-    InitWindow(screenW, screenH, "Archon");
+    SetWindowSize(screenW, screenH);
+    SetConfigFlags(FLAG_FULLSCREEN_MODE);
     InitAudioDevice();
     SetTargetFPS(60);
 

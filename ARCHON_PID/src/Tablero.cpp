@@ -381,7 +381,7 @@ void Tablero::moverPieza() {
     seleccionaCasilla();
 
     // Si se clickea una pieza del equipo del turno actual -> seleccionarla
-    if (cuadricula[fila_seleccionada][columna_seleccionada] != nullptr && fila_seleccionada != -1 && columna_seleccionada != -1) {
+    if (fila_seleccionada != -1 && columna_seleccionada != -1 && cuadricula[fila_seleccionada][columna_seleccionada] != nullptr ) {
         if (turno == cuadricula[fila_seleccionada][columna_seleccionada]->get_equipo()) {
             reset_MovimientosPosibles();
             if (personaje_seleccionado != nullptr) personaje_seleccionado->set_seleccionado(false);

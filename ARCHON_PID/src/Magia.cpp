@@ -68,7 +68,7 @@ void Magia::Heal(PiezaTablero* personaje, Tablero& t) {
 
     t.seleccionaCasilla();
 
-    if (t.cuadricula[t.fila_seleccionada][t.columna_seleccionada] != nullptr && t.fila_seleccionada != -1 && t.columna_seleccionada != -1) {
+    if (t.fila_seleccionada != -1 && t.columna_seleccionada != -1 && t.cuadricula[t.fila_seleccionada][t.columna_seleccionada] != nullptr) {
         t.personaje_seleccionado = t.cuadricula[t.fila_seleccionada][t.columna_seleccionada];
         t.reset_seleccion();
     }
