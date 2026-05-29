@@ -132,7 +132,7 @@ struct GameState {
     int opcionPausaSel = 0;
     // Tiene "GUARDAR" como primera opción
     std::vector<std::string> opcionesPausa = {
-        "CONTINUAR", "GUARDAR PARTIDA", "OPCIONES", "MENU PRINCIPAL"
+        "CONTINUAR", "GUARDAR PARTIDA", "CARGAR PARTIDA", "OPCIONES", "MENU PRINCIPAL"
     };
     bool guardadoOk      = false; // para mostrar mensaje de confirmación
     float guardadoTimer  = 0.f;

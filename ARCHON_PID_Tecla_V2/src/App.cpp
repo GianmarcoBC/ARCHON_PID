@@ -252,7 +252,10 @@ void App::HandleInput() {
         return;
     }
     // SPACE, ENTER, ESC or left click skip all transition animations (slash + slide-in offsets)
-    bool skipAnim = IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_ESCAPE) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+    // La pausa se excluye: su animación es corta y no necesita skip; además ENTER/ESC
+    // deben llegar siempre a PausaScreen::HandleInput sin consumirse aquí.
+    bool skipAnim = gs.estadoActual != PAUSA &&
+        (IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_ESCAPE) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT));
     if (skipAnim && (gs.slashActivo || gs.menuOffset < 0 || gs.encicloOffset < 0 ||
         gs.opcionesOffset < 0 || gs.musicaOffset < 0 || gs.modoJuegoOffset < 0 ||
         gs.selModoOffset < 0 || gs.configJCOffset < 0 || gs.selEquipoOffset < 0 ||

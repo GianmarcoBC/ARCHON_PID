@@ -3,18 +3,29 @@
 int CuchauCombateScreen::UpdatePausa(float dt) {
     int W = GetScreenWidth(), H = GetScreenHeight();
     float mx = (float)GetMouseX(), my = (float)GetMouseY();
-    bool clicked = IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+    bool clicked  = IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+    bool moved    = (GetMouseDelta().x != 0 || GetMouseDelta().y != 0);
     int panelW = 380, panelH = 310;
     int px = W / 2 - panelW / 2;
     int py = H / 2 - panelH / 2;
 
     // — Submenú de slots —
     if (pausa_submenu == 1 || pausa_submenu == 2) {
-        // Hover + click on slots
+        // Teclado: W/S navegan slots, ENTER confirma
+        if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP))
+            { if (--pausa_slotCursor < 0) pausa_slotCursor = 4; }
+        if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN))
+            { if (++pausa_slotCursor > 4) pausa_slotCursor = 0; }
+        if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_KP_ENTER)) {
+            int accion = (pausa_submenu == 1) ? 1 : 2;
+            pausa_submenu = 0;
+            return accion;
+        }
+        // Ratón: hover + click
         for (int i = 0; i < 5; i++) {
             int bY = py + 70 + i * 44;
             if (mx > px + 20 && mx < px + panelW - 20 && my > bY - 4 && my < bY + 30) {
-                pausa_slotCursor = i;
+                if (moved) pausa_slotCursor = i;
                 if (clicked) {
                     int accion = (pausa_submenu == 1) ? 1 : 2;
                     pausa_submenu = 0;
@@ -26,11 +37,22 @@ int CuchauCombateScreen::UpdatePausa(float dt) {
         return -1;
     }
 
-    // — Menú principal de pausa — hover + click
+    // — Menú principal de pausa —
+    // Teclado: W/S navegan, ENTER confirma
+    if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP))
+        { if (--pausa_cursor < 0) pausa_cursor = 3; }
+    if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN))
+        { if (++pausa_cursor > 3) pausa_cursor = 0; }
+    if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_KP_ENTER)) {
+        if (pausa_cursor == 1) { pausa_submenu = 1; pausa_slotCursor = 0; return -1; }
+        if (pausa_cursor == 2) { pausa_submenu = 2; pausa_slotCursor = 0; return -1; }
+        return pausa_cursor;
+    }
+    // Ratón: hover + click
     for (int i = 0; i < 4; i++) {
         int bY = py + 88 + i * 52;
         if (mx > px + 20 && mx < px + panelW - 20 && my > bY - 4 && my < bY + 34) {
-            pausa_cursor = i;
+            if (moved) pausa_cursor = i;
             if (clicked) {
                 if (pausa_cursor == 1) { pausa_submenu = 1; pausa_slotCursor = 0; return -1; }
                 if (pausa_cursor == 2) { pausa_submenu = 2; pausa_slotCursor = 0; return -1; }
@@ -114,10 +136,15 @@ void CuchauCombateScreen::OnEnter(GameState& gs)
     // Reiniciar música de Cuchau siempre al entrar
     rolitas = std::make_unique<Rolitas>();
     
-    // Si venimos con un slot pendiente del menú, cargarlo directamente
+    // Si venimos con un slot pendiente del menú, cargarlo directamente.
+    // Hacemos el delete aquí, en OnEnter, donde no hay ningún frame de draw
+    // activo — evita el crash por UnloadTexture/UnloadModel dentro de un frame.
     if (SaveSystem::pendiente.valida) {
         savePendiente = SaveSystem::pendiente;
         SaveSystem::pendiente = SaveData{};
+        // Liberar combate anterior de forma limpia antes de crear el nuevo
+        delete combate;
+        combate = nullptr;
         estado = 3;
         return;
     }
@@ -279,18 +306,27 @@ void CuchauCombateScreen::Update(GameState& gs)
         const Pj_info* pj2 = SaveSystem::BuscarPjPorNombre(savePendiente.nombreP2);
 
         if (pj1 && pj2) {
+            // Liberar el combate anterior antes de crear el nuevo.
+            // Nullear primero para que si CargarEstado falla no haya
+            // puntero colgante.
             delete combate;
+            combate = nullptr;
+
             if (savePendiente.modoIA)
                 combate = new ControladorCombate(*pj1, *pj2, true, savePendiente.dificultad);
             else
                 combate = new ControladorCombate(*pj1, *pj2, false, 0);
+
             combate->CargarEstado(savePendiente);
-            modoIA = savePendiente.modoIA;
-            dificultad = savePendiente.dificultad;
+            modoIA      = savePendiente.modoIA;
+            dificultad  = savePendiente.dificultad;
             pausa_cursor = 0;
             estado = 1;
         }
         else {
+            // Nombres no encontrados — volver al menú interno sin crashear
+            delete combate;
+            combate = nullptr;
             estado = 0;
         }
         savePendiente = SaveData{};
