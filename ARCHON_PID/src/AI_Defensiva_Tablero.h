@@ -1,5 +1,7 @@
 #pragma once
-class AI_Defensiva_Tablero
+#include "TableroAI.h"
+
+class AI_Defensiva_Tablero:public TableroAI
 {
 };
 
