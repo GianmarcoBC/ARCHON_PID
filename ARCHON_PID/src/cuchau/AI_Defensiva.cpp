@@ -15,12 +15,12 @@ CombatAI::Accion AI_Defensiva::decide(const std::vector<Disparo>& disparos, floa
     Vec2 dir_esq{};
     bool esquiva = debe_esquivar(disparos, dir_esq);
     bool demasiado_cerca = dist < distancia_combate_optima * 0.6f;
-    float dmax{ 15.0 };
+    float dmax{ 15.0f };
 
     if (Jugador.GetRangoMax() == Rango_bajo)
-        dmax *= 0.1f;
+        dmax *= 0.2f;
     else if (Jugador.GetRangoMax() == Rango_medio)
-        dmax *= 0.6f;
+        dmax *= 0.4f;
 
     if (esquiva || demasiado_cerca) {
         estado = Esquivar;

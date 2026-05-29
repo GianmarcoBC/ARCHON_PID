@@ -11,12 +11,12 @@ AI_Agresiva::AI_Agresiva(Personaje& IA, Personaje& Jugador, Rectangle arena)
 CombatAI::Accion AI_Agresiva::decide(const std::vector<Disparo>& disparos, float dt) {
     Vec2  n = (Jugador.GetPos() - IA.GetPos()).unitario();
     float dist = (Jugador.GetPos() - IA.GetPos()).modulo();
-    float dmax{ 5.0 };
+    float dmax{ 5.0f };
 
     if (Jugador.GetRangoMax() == Rango_bajo)
-        dmax *= 0.1f;
+        dmax *= 0.8f;
     else if (Jugador.GetRangoMax() == Rango_medio)
-        dmax *= 0.6f;
+        dmax *= 0.9f;
 
     if (dist > dmax) estado = Acercar;
     else estado = Huir;

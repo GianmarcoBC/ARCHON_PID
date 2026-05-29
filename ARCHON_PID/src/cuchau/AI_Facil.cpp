@@ -9,12 +9,12 @@ AI_Facil::AI_Facil(Personaje& IA, Personaje& Jugador, Rectangle arena)
 CombatAI::Accion AI_Facil::decide(const std::vector<Disparo>& disparos, float dt) {
     Vec2  n = (Jugador.GetPos() - IA.GetPos()).unitario();
     float dist = (Jugador.GetPos() - IA.GetPos()).modulo();
-    float dmax{ 10.0 };
+    float dmax{ 10.0f };
 
     if (Jugador.GetRangoMax() == Rango_bajo)
-        dmax *= 0.1f;
+        dmax *= 0.3f;
     else if (Jugador.GetRangoMax() == Rango_medio)
-        dmax *= 0.6f;
+        dmax *= 0.5f;
 
     Vec2 dir_esq{};
     if (debe_esquivar(disparos, dir_esq))
