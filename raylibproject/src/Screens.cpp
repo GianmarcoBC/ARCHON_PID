@@ -515,14 +515,6 @@ namespace Archon_PID {
         rlVertex2f(85 + ox, 78); rlVertex2f(388 + ox, 78);
         rlVertex2f(388 + ox, 545); rlVertex2f(85 + ox, 545);
         rlEnd();
-        // Líneas horizontales de la página izquierda
-        rlBegin(RL_LINES);
-        rlColor4f(0.65f, 0.58f, 0.42f, 1);
-        for (int l = 0; l < 18; l++) {
-            float ly2 = 100 + l * 24.0f;
-            rlVertex2f(100 + ox, ly2); rlVertex2f(375 + ox, ly2);
-        }
-        rlEnd();
 
         Drawing::texto18(130 + ox, 510, "CODEX ARCHON", CFloat(0.08f, 0.04f, 0.01f));
 
@@ -532,22 +524,14 @@ namespace Archon_PID {
         rlVertex2f(412 + ox, 78); rlVertex2f(715 + ox, 78);
         rlVertex2f(715 + ox, 545); rlVertex2f(412 + ox, 545);
         rlEnd();
-        // Líneas horizontales de la página derecha
-        rlBegin(RL_LINES);
-        rlColor4f(0.63f, 0.56f, 0.40f, 1);
-        for (int l = 0; l < 18; l++) {
-            float ly2 = 100 + l * 24.0f;
-            rlVertex2f(425 + ox, ly2); rlVertex2f(702 + ox, ly2);
-        }
-        rlEnd();
 
-        // ── Contenido según página ───────────────────────────────────────────────
+        // Contenido según página
         if (gs.paginaLibro == 16) {
 
-            // ── Página de créditos ───────────────────────────────────────────────
+            // Página de créditos
 
             // Título de la página izquierda
-            Drawing::texto24(110 + ox, 500, "CREDITOS", CFloat(0.55f, 0.35f, 0.08f));
+            Drawing::texto24(110 + ox, 450, "CREDITOS", CFloat(0.55f, 0.35f, 0.08f));
 
             // Lista de programadores con su rol
             struct Credito { const char* nombre; const char* rol; };
@@ -557,10 +541,10 @@ namespace Archon_PID {
                 { "Sara Abril Pato", "Programacion / Gameplay"         },
                 { "Iván Yankowich", "Programación / Musica y sonido"           }
             };
-            for (int i = 0; i < 5; i++) {
-                Drawing::texto18(100 + ox, 460 - i * 36.0f,
+            for (int i = 0; i < 4; i++) {
+                Drawing::texto18(100 + ox, 410 - i * 36.0f,
                     creditos[i].nombre, CFloat(0.08f, 0.04f, 0.01f));
-                Drawing::texto12(100 + ox, 442 - i * 36.0f,
+                Drawing::texto12(100 + ox, 392 - i * 36.0f,
                     creditos[i].rol, CFloat(0.35f, 0.22f, 0.06f));
             }
             // Número de página izquierda
@@ -571,7 +555,7 @@ namespace Archon_PID {
             // Agradecimientos y año en la página derecha
             Drawing::texto18(430 + ox, 480, "Proyecto Archon PID", CFloat(0.05f, 0.02f, 0.01f));
             Drawing::texto12(430 + ox, 455, "Todos los derechos reservados", CFloat(0.35f, 0.22f, 0.06f));
-            Drawing::texto12(430 + ox, 435, "2026 — Informatica Industrial", CFloat(0.35f, 0.22f, 0.06f));
+            Drawing::texto12(430 + ox, 435, "2026 Informatica Industrial", CFloat(0.35f, 0.22f, 0.06f));
 
             // Emblema decorativo central (estrella de seis puntas doble)
             float cx = 565 + ox, cy = 290;
