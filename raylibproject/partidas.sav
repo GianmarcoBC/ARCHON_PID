@@ -1,17 +1,16 @@
 ---
 slot=0
-nombre=Genial
-fecha=2026-05-30 14:36
+nombre=Partida Nueva
+fecha=30/05/2026 17:17
 modo=Juego Completo
 bando=Random
 turno=0
 progreso=0
 equipo1=0
 equipo2=1
-dificultad=0
+dificultad=1
 vsAI=0
 equipoIA=1
-boardState=turnoActual=1|ciclo=3|avance=0|hechizosLuz=0000000|hechizosOscuridad=0000000|grid=5:0:0,6:0:0,-1,-1,-1,-1,-1,14:1:0,13:1:0,2:0:0,7:0:0,-1,-1,-1,-1,-1,15:1:0,10:1:0,4:0:0,7:0:0,-1,-1,-1,-1,-1,15:1:0,12:1:0,-1,7:0:0,-1,3:0:0,-1,-1,-1,15:1:0,9:1:0,0:0:0,-1,-1,-1,15:1:0,-1,-1,-1,8:1:0,1:0:0,7:0:0,-1,-1,-1,-1,-1,15:1:0,11:1:0,4:0:0,7:0:0,-1,-1,-1,-1,-1,15:1:0,12:1:0,2:0:0,7:0:0,-1,-1,-1,-1,-1,15:1:0,10:1:0,5:0:0,6:0:0,-1,-1,-1,-1,-1,14:1:0,13:1:0|cemLuz=7|cemOsc=|
 ---
 slot=1
 nombre=Partida Nueva
@@ -26,3 +25,31 @@ dificultad=1
 vsAI=0
 equipoIA=1
 boardState=turnoActual=1|ciclo=1|avance=0|hechizosLuz=0000000|hechizosOscuridad=0000000|grid=5:0:0,6:0:0,-1,-1,-1,-1,-1,14:1:0,13:1:0,2:0:0,7:0:0,-1,-1,-1,-1,-1,15:1:0,10:1:0,4:0:0,7:0:0,-1,-1,-1,-1,-1,15:1:0,12:1:0,3:0:0,7:0:0,-1,-1,-1,-1,-1,15:1:0,9:1:0,0:0:0,7:0:0,-1,-1,-1,-1,-1,15:1:0,8:1:0,1:0:0,-1,-1,-1,15:1:0,-1,-1,-1,11:1:0,4:0:0,7:0:0,-1,-1,-1,-1,-1,15:1:0,12:1:0,2:0:0,7:0:0,-1,-1,-1,-1,-1,15:1:0,10:1:0,5:0:0,6:0:0,-1,-1,-1,-1,-1,14:1:0,13:1:0|cemLuz=|cemOsc=|combatePendiente=1|atacanteFila=5|atacanteCol=4|defensorTipo=7|defensorEquipo=0|defensorFila=5|defensorCol=4|origenAtaFila=5|origenAtaCol=7|combateVidaP1=155.000000|combatePosP1x=-17.348558|combatePosP1y=2.683535|combateVidaP2=115.000000|combatePosP2x=-15.348558|combatePosP2y=2.510566|
+---
+slot=2
+nombre=Partida Nueva
+fecha=2026-05-30 16:05
+modo=Juego Completo
+bando=Luz
+turno=0
+progreso=0
+equipo1=0
+equipo2=1
+dificultad=1
+vsAI=1
+equipoIA=1
+boardState=turnoActual=1|ciclo=1|avance=0|hechizosLuz=0000000|hechizosOscuridad=0000000|grid=5:0:0,6:0:0,-1,-1,-1,-1,-1,14:1:0,13:1:0,2:0:0,7:0:0,-1,-1,-1,-1,-1,15:1:0,10:1:0,4:0:0,7:0:0,-1,-1,-1,-1,-1,15:1:0,12:1:0,3:0:0,7:0:0,-1,-1,-1,-1,-1,15:1:0,9:1:0,0:0:0,7:0:0,-1,-1,1:0:0,-1,-1,15:1:0,8:1:0,-1,7:0:0,-1,-1,-1,-1,-1,15:1:0,11:1:0,4:0:0,7:0:0,-1,-1,-1,-1,-1,15:1:0,12:1:0,2:0:0,7:0:0,-1,-1,-1,-1,-1,15:1:0,10:1:0,5:0:0,6:0:0,-1,-1,-1,-1,-1,14:1:0,13:1:0|cemLuz=|cemOsc=|combatePendiente=1|atacanteFila=4|atacanteCol=7|defensorTipo=1|defensorEquipo=0|defensorFila=4|defensorCol=4|origenAtaFila=4|origenAtaCol=7|combateVidaP1=1000.000000|combatePosP1x=-4.010775|combatePosP1y=1.008400|combateVidaP2=200.000000|combatePosP2x=-0.072605|combatePosP2y=7.543629|
+---
+slot=3
+nombre=Partida Nueva
+fecha=2026-05-30 16:00
+modo=Juego Completo
+bando=Random
+turno=0
+progreso=0
+equipo1=0
+equipo2=1
+dificultad=0
+vsAI=1
+equipoIA=1
+boardState=turnoActual=1|ciclo=1|avance=0|hechizosLuz=0000000|hechizosOscuridad=0000000|grid=5:0:0,-1,-1,-1,14:1:0,-1,-1,-1,13:1:0,2:0:0,7:0:0,-1,-1,-1,-1,-1,15:1:0,10:1:0,4:0:0,7:0:0,-1,-1,-1,-1,-1,15:1:0,12:1:0,3:0:0,7:0:0,-1,-1,-1,-1,-1,15:1:0,9:1:0,0:0:0,7:0:0,-1,-1,-1,-1,-1,15:1:0,8:1:0,1:0:0,7:0:0,-1,-1,-1,-1,-1,15:1:0,11:1:0,4:0:0,7:0:0,-1,-1,-1,-1,-1,15:1:0,12:1:0,2:0:0,7:0:0,-1,-1,-1,-1,-1,15:1:0,10:1:0,5:0:0,6:0:0,-1,-1,-1,-1,-1,14:1:0,13:1:0|cemLuz=|cemOsc=|combatePendiente=1|atacanteFila=0|atacanteCol=4|defensorTipo=6|defensorEquipo=0|defensorFila=0|defensorCol=4|origenAtaFila=0|origenAtaCol=7|combateVidaP1=200.000000|combatePosP1x=-14.000000|combatePosP1y=-8.750000|combateVidaP2=500.000000|combatePosP2x=-6.574020|combatePosP2y=-1.192061|

@@ -89,8 +89,9 @@ void TableroScreen::Update(GameState& gs) {
             // Determine who is the attacker (AI or human)
             atacanteEsIA = vsAI && (ctablero->getEquipoAtacante() == ctablero->getEquipoAI());
 
-            Pj_info pjP1 = getCombatInfo(atacanteEsIA ? ctablero->getID_defensor() : ctablero->getID_atacante());
-            Pj_info pjP2 = getCombatInfo(atacanteEsIA ? ctablero->getID_atacante() : ctablero->getID_defensor());
+            Pj_info pjP1 = getPjInfo(atacanteEsIA ? ctablero->getID_defensor() : ctablero->getID_atacante());
+            Pj_info pjP2 = getPjInfo(atacanteEsIA ? ctablero->getID_atacante() : ctablero->getID_defensor());
+
 
             // Create combat: in board mode, AI always controls P2 if vsAI
             if (vsAI) {
@@ -98,6 +99,12 @@ void TableroScreen::Update(GameState& gs) {
             } else {
                 combate = new ControladorCombate(pjP1, pjP2, false, 0);
             }
+
+            // Aplicar vida real de las piezas del tablero
+            float vidaP1 = atacanteEsIA ? ctablero->getVidaDefensor() : ctablero->getVidaAtacante();
+            float vidaP2 = atacanteEsIA ? ctablero->getVidaAtacante() : ctablero->getVidaDefensor();
+            combate->SetVidasIniciales(vidaP1, vidaP2);
+
             gs.combateActivo = combate;
 
             // Restaurar estado del combate si se cargó desde guardado
@@ -129,7 +136,12 @@ void TableroScreen::Update(GameState& gs) {
                 bool ganaHumano = (combate->GetWinner() == 1);
                 // Map winner back to attacker/defender perspective
                 bool ganaAtacante = atacanteEsIA ? !ganaHumano : ganaHumano;
-                ctablero->cresolverCombate(ganaAtacante);
+
+                float vidaGanador = (combate->GetWinner() == 1)
+                    ? combate->GetP1Vida()
+                    : combate->GetP2Vida();
+
+                ctablero->cresolverCombate(ganaAtacante, vidaGanador);
 
                 limpiarCombate();
                 gs.combateActivo = nullptr;

@@ -84,6 +84,12 @@ public:
         return 0;
     }
 
+    // Establece las vidas iniciales de los personajes (para el tablero)
+    void SetVidasIniciales(float vidaP1, float vidaP2) {
+        P1.SetVida(vidaP1);
+        P2.SetVida(vidaP2);
+    }
+
     // Nombres de los personajes (para la musica)
     std::string_view GetP1Name() const { return P1.GetNombre(); }
     std::string_view GetP2Name() const { return P2.GetNombre(); }

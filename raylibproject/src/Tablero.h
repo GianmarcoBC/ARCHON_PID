@@ -143,9 +143,10 @@ public:
     PiezaTablero* getAtacante() { return atacante_; }
     PiezaTablero* getDefensor() { return defensor_; }
 
+
     // Resuelve el combate: ganaAtacante=true si gana el que se movio
     // El perdedor va al cementerio, el ganador ocupa la casilla
-    void resolverCombate(bool ganaAtacante);
+    void resolverCombate(bool ganaAtacante, float vidaGanador);
 
     // Serialización del estado del tablero para guardado/carga
     std::string serializarEstado() const;

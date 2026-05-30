@@ -1,7 +1,7 @@
 #pragma once
 #include "TiposPj.h"
 #include "Pj.h"
-#include "cuchau/Pj_info.h"
+#include "Pj_info.h"
 
 // Mapea un tipo_pj a su PjBoard (datos de tablero)
 inline PjBoard getBoardPj(tipo_pj tipo) {

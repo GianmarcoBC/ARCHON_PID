@@ -26,7 +26,9 @@ public:
 	bool ccombatePendiente() const { return tablero.combatePendiente(); };
 	tipo_pj getID_atacante() { return tablero.getAtacante()->get_ID(); };
 	tipo_pj getID_defensor() { return  tablero.getDefensor()->get_ID(); };
-	void cresolverCombate(bool ganaAtacante) { tablero.resolverCombate(ganaAtacante); };
+	float getVidaAtacante() { return tablero.getAtacante()->get_vida(); }
+	float getVidaDefensor() { return tablero.getDefensor()->get_vida(); }
+	void cresolverCombate(bool ganaAtacante, float vidaGanador) { tablero.resolverCombate(ganaAtacante, vidaGanador); };
 	bool getEquipoAtacante() const { return tablero.atacante_->get_equipo(); }
 	bool getEquipoAI()       const { return equipoAI; }
 
