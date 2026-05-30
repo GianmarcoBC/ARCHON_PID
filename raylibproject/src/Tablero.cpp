@@ -935,27 +935,49 @@ void Tablero::deserializarEstado(const std::string& data) {
 
         if (clave == "combatePendiente") {
             tieneCombate = (std::stoi(valor) != 0);
-        } else if (clave == "atacanteFila") { ataF = std::stoi(valor);
-        } else if (clave == "atacanteCol")  { ataC = std::stoi(valor);
-        } else if (clave == "defensorTipo")  { defTipo = std::stoi(valor);
-        } else if (clave == "defensorEquipo"){ defEquipo = std::stoi(valor);
-        } else if (clave == "defensorFila") { defF = std::stoi(valor);
-        } else if (clave == "defensorCol")  { defC = std::stoi(valor);
-        } else if (clave == "origenAtaFila"){ orgF = std::stoi(valor);
-        } else if (clave == "origenAtaCol") { orgC = std::stoi(valor);
-        } else if (clave == "turnoActual") {
+        }
+        else if (clave == "atacanteFila") {
+            ataF = std::stoi(valor);
+        }
+        else if (clave == "atacanteCol") {
+            ataC = std::stoi(valor);
+        }
+        else if (clave == "defensorTipo") {
+            defTipo = std::stoi(valor);
+        }
+        else if (clave == "defensorEquipo") {
+            defEquipo = std::stoi(valor);
+        }
+        else if (clave == "defensorFila") {
+            defF = std::stoi(valor);
+        }
+        else if (clave == "defensorCol") {
+            defC = std::stoi(valor);
+        }
+        else if (clave == "origenAtaFila") {
+            orgF = std::stoi(valor);
+        }
+        else if (clave == "origenAtaCol") {
+            orgC = std::stoi(valor);
+        }
+        else if (clave == "turnoActual") {
             turno = (std::stoi(valor) != 0);
-        } else if (clave == "ciclo") {
+        }
+        else if (clave == "ciclo") {
             Ciclo = std::stoi(valor);
-        } else if (clave == "avance") {
+        }
+        else if (clave == "avance") {
             avance = (std::stoi(valor) != 0);
-        } else if (clave == "hechizosLuz") {
+        }
+        else if (clave == "hechizosLuz") {
             for (int i = 0; i < 7 && i < (int)valor.size(); i++)
                 magiaTablero.setHechizo(false, i, valor[i] == '1');
-        } else if (clave == "hechizosOscuridad") {
+        }
+        else if (clave == "hechizosOscuridad") {
             for (int i = 0; i < 7 && i < (int)valor.size(); i++)
                 magiaTablero.setHechizo(true, i, valor[i] == '1');
-        } else if (clave == "grid") {
+        }
+        else if (clave == "grid") {
             // Parsear 81 celdas separadas por coma
             std::istringstream gs(valor);
             std::string celda;
@@ -964,7 +986,8 @@ void Tablero::deserializarEstado(const std::string& data) {
                 int f = idx / 9, c = idx % 9;
                 if (celda == "-1") {
                     cuadricula[f][c] = nullptr;
-                } else {
+                }
+                else {
                     // formato: tipo:equipo:imprison
                     int tipo = 0, eq2 = 0, imp = 0;
                     sscanf(celda.c_str(), "%d:%d:%d", &tipo, &eq2, &imp);
@@ -974,41 +997,54 @@ void Tablero::deserializarEstado(const std::string& data) {
                 }
                 idx++;
             }
-        } else if (clave == "cemLuz") {
+        }
+        else if (clave == "cemLuz") {
             if (!valor.empty()) {
                 std::istringstream cs(valor);
                 std::string tok;
                 while (std::getline(cs, tok, ',')) {
-                    PjBoard pb = getBoardPj((tipo_pj)std::stoi(tok));
-                    cementerio_Luz.push_back(new PiezaTablero(pb, -1, -1, LUZ));
-                }
-            }
-        } else if (clave == "cemOsc") {
-            if (!valor.empty()) {
-                std::istringstream cs(valor);
-                std::string tok;
-                while (std::getline(cs, tok, ',')) {
-                    PjBoard pb = getBoardPj((tipo_pj)std::stoi(tok));
-                    cementerio_Oscuridad.push_back(new PiezaTablero(pb, -1, -1, OSCURIDAD));
+                    if (tok.empty()) continue;
+                    try {
+                        PjBoard pb = getBoardPj((tipo_pj)std::stoi(tok));
+                        cementerio_Luz.push_back(new PiezaTablero(pb, -1, -1, LUZ));
+                    }
+                    catch (...) { continue; }
                 }
             }
         }
-    }
+        else if (clave == "cemOsc") {
+            if (!valor.empty()) {
+                std::istringstream cs(valor);
+                std::string tok;
+                while (std::getline(cs, tok, ',')) {
+                    if (tok.empty()) continue;
+                    try {
+                        PjBoard pb = getBoardPj((tipo_pj)std::stoi(tok));
+                        cementerio_Oscuridad.push_back(new PiezaTablero(pb, -1, -1, OSCURIDAD));
+                    }
+                    catch (...) { continue; }
+                }
+            }
+        }
 
-    // Restaurar combate pendiente si se guardó durante uno
-    // El defensor no está en la cuadrícula (fue sacado antes del combate),
-    // así que lo recreamos como pieza temporal a partir del tipo/equipo guardados.
-    if (tieneCombate && ataF >= 0 && ataC >= 0 && defTipo >= 0 && defEquipo >= 0) {
-        atacante_ = cuadricula[ataF][ataC];
-        if (atacante_) {
-            PjBoard pb = getBoardPj((tipo_pj)defTipo);
-            defensor_ = new PiezaTablero(pb, defF, defC, defEquipo ? OSCURIDAD : LUZ);
-            combatePendiente_ = true;
-            filaOrigenAtacante_ = orgF;
-            colOrigenAtacante_ = orgC;
-            filaDestinoAnim_ = ataF;
-            colDestinoAnim_ = ataC;
-            modoJuegoactual = ModoJuego::COMBATE;
+        // Restaurar combate pendiente si se guardó durante uno
+        // El defensor no está en la cuadrícula (fue sacado antes del combate),
+        // así que lo recreamos como pieza temporal a partir del tipo/equipo guardados.
+        if (tieneCombate && ataF >= 0 && ataF < 9 && ataC >= 0 && ataC < 9
+            && defF >= 0 && defF < 9 && defC >= 0 && defC < 9
+            && defTipo >= 0 && defEquipo >= 0) {
+
+            atacante_ = cuadricula[ataF][ataC];
+            if (atacante_) {
+                PjBoard pb = getBoardPj((tipo_pj)defTipo);
+                defensor_ = new PiezaTablero(pb, defF, defC, defEquipo ? OSCURIDAD : LUZ);
+                combatePendiente_ = true;
+                filaOrigenAtacante_ = orgF;
+                colOrigenAtacante_ = orgC;
+                filaDestinoAnim_ = ataF;
+                colDestinoAnim_ = ataC;
+                modoJuegoactual = ModoJuego::COMBATE;
+            }
         }
     }
 }
