@@ -1,0 +1,12 @@
+---
+slot=0
+modoIA=0
+dificultad=1
+jugador1=MH
+vida1=500
+posX1=-2.65201
+posY1=4.67781
+jugador2=Platero
+vida2=500
+posX2=2.99843
+posY2=4.32168

@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Archivos de origen">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Archivos de encabezado">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Archivos de recursos">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Archivos de origen\Menu">
+      <UniqueIdentifier>{A1B2C3D4-1111-2222-3333-444455556666}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Tablero">
+      <UniqueIdentifier>{A1B2C3D4-1111-2222-3333-444455557777}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Combate">
+      <UniqueIdentifier>{A1B2C3D4-1111-2222-3333-444455558888}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Menu">
+      <UniqueIdentifier>{A1B2C3D4-2222-2222-3333-444455556666}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Tablero">
+      <UniqueIdentifier>{A1B2C3D4-2222-2222-3333-444455557777}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Combate">
+      <UniqueIdentifier>{A1B2C3D4-2222-2222-3333-444455558888}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="raylibproject.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\App.cpp">
+      <Filter>Archivos de origen\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Screens.cpp">
+      <Filter>Archivos de origen\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ScreensNew.cpp">
+      <Filter>Archivos de origen\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Drawing.cpp">
+      <Filter>Archivos de origen\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Particles.cpp">
+      <Filter>Archivos de origen\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SaveSystem.cpp">
+      <Filter>Archivos de origen\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Background.cpp">
+      <Filter>Archivos de origen\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CuchauScreen.cpp">
+      <Filter>Archivos de origen\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TableroScreen.cpp">
+      <Filter>Archivos de origen\Tablero</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Tablero.cpp">
+      <Filter>Archivos de origen\Tablero</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Controlador_Tablero.cpp">
+      <Filter>Archivos de origen\Tablero</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PiezaTablero.cpp">
+      <Filter>Archivos de origen\Tablero</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Magia.cpp">
+      <Filter>Archivos de origen\Tablero</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TableroAI.cpp">
+      <Filter>Archivos de origen\Tablero</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AI_Facil_Tablero.cpp">
+      <Filter>Archivos de origen\Tablero</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AI_Defensiva_Tablero.cpp">
+      <Filter>Archivos de origen\Tablero</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AI_Agresiva_Tablero.cpp">
+      <Filter>Archivos de origen\Tablero</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cuchau\Controlador_Combate.cpp">
+      <Filter>Archivos de origen\Combate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cuchau\Personaje.cpp">
+      <Filter>Archivos de origen\Combate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cuchau\Disparo.cpp">
+      <Filter>Archivos de origen\Combate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cuchau\arena.cpp">
+      <Filter>Archivos de origen\Combate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cuchau\obstaculo.cpp">
+      <Filter>Archivos de origen\Combate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cuchau\Interacciones.cpp">
+      <Filter>Archivos de origen\Combate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cuchau\CombatAI.cpp">
+      <Filter>Archivos de origen\Combate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cuchau\AI_Facil.cpp">
+      <Filter>Archivos de origen\Combate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cuchau\AI_Defensiva.cpp">
+      <Filter>Archivos de origen\Combate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cuchau\AI_Agresiva.cpp">
+      <Filter>Archivos de origen\Combate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cuchau\Menu_Combate.cpp">
+      <Filter>Archivos de origen\Combate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cuchau\Rolitas.cpp">
+      <Filter>Archivos de origen\Combate</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\App.h">
+      <Filter>Archivos de encabezado\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameState.h">
+      <Filter>Archivos de encabezado\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Screen.h">
+      <Filter>Archivos de encabezado\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Screens.h">
+      <Filter>Archivos de encabezado\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Drawing.h">
+      <Filter>Archivos de encabezado\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Background.h">
+      <Filter>Archivos de encabezado\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Particles.h">
+      <Filter>Archivos de encabezado\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SaveSystem.h">
+      <Filter>Archivos de encabezado\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SaveData.h">
+      <Filter>Archivos de encabezado\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CuchauScreen.h">
+      <Filter>Archivos de encabezado\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TableroScreen.h">
+      <Filter>Archivos de encabezado\Tablero</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Tablero.h">
+      <Filter>Archivos de encabezado\Tablero</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Controlador_Tablero.h">
+      <Filter>Archivos de encabezado\Tablero</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PiezaTablero.h">
+      <Filter>Archivos de encabezado\Tablero</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Magia.h">
+      <Filter>Archivos de encabezado\Tablero</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TableroAI.h">
+      <Filter>Archivos de encabezado\Tablero</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AI_Facil_Tablero.h">
+      <Filter>Archivos de encabezado\Tablero</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AI_Defensiva_Tablero.h">
+      <Filter>Archivos de encabezado\Tablero</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AI_Agresiva_Tablero.h">
+      <Filter>Archivos de encabezado\Tablero</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TiposPj.h">
+      <Filter>Archivos de encabezado\Tablero</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pj.h">
+      <Filter>Archivos de encabezado\Tablero</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PjMapping.h">
+      <Filter>Archivos de encabezado\Tablero</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cuchau\Controlador_Combate.h">
+      <Filter>Archivos de encabezado\Combate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cuchau\Personaje.h">
+      <Filter>Archivos de encabezado\Combate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cuchau\Pj_info.h">
+      <Filter>Archivos de encabezado\Combate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cuchau\Arena.h">
+      <Filter>Archivos de encabezado\Combate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cuchau\Disparo.h">
+      <Filter>Archivos de encabezado\Combate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cuchau\obstaculo.h">
+      <Filter>Archivos de encabezado\Combate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cuchau\Interacciones.h">
+      <Filter>Archivos de encabezado\Combate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cuchau\CombatAI.h">
+      <Filter>Archivos de encabezado\Combate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cuchau\AI_Facil.h">
+      <Filter>Archivos de encabezado\Combate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cuchau\AI_Defensiva.h">
+      <Filter>Archivos de encabezado\Combate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cuchau\AI_Agresiva.h">
+      <Filter>Archivos de encabezado\Combate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cuchau\Menu_Combate.h">
+      <Filter>Archivos de encabezado\Combate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cuchau\Rolitas.h">
+      <Filter>Archivos de encabezado\Combate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cuchau\Music.h">
+      <Filter>Archivos de encabezado\Combate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cuchau\Vec2.h">
+      <Filter>Archivos de encabezado\Combate</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
