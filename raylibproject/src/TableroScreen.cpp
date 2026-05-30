@@ -95,6 +95,22 @@ void TableroScreen::Update(GameState& gs) {
             pjP1.vida = atacanteEsIA ? ctablero->getVidaDefensor() : ctablero->getVidaAtacante();
             pjP2.vida = atacanteEsIA ? ctablero->getVidaAtacante() : ctablero->getVidaDefensor();
 
+            // Boost por casilla: color de la casilla del defensor
+            ColorCasilla colorCasilla = ctablero->getColorCasillaDefensor();
+            equipo equipoDefensor = ctablero->getEquipoDefensor();
+
+            if (colorCasilla == ColorCasilla::BLANCO && equipoDefensor == LUZ) {
+                // Casilla blanca: boost al lado Luz
+                // P1 es Luz si no atacanteEsIA, P2 es Luz si atacanteEsIA
+                if (!atacanteEsIA) pjP1.fuerza *= 1.25f;  // P1 es Luz
+                else               pjP2.fuerza *= 1.25f;  // P2 es Luz
+            }
+            else if (colorCasilla == ColorCasilla::NEGRO && equipoDefensor == OSCURIDAD) {
+                // Casilla negra: boost al lado Oscuridad
+                if (!atacanteEsIA) pjP2.fuerza *= 1.25f;  // P2 es Oscuridad
+                else               pjP1.fuerza *= 1.25f;  // P1 es Oscuridad
+            }
+
             if (vsAI) {
                 combate = new ControladorCombate(pjP1, pjP2, true, dificultad);
             }
@@ -182,9 +198,9 @@ void TableroScreen::Draw(GameState& gs) {
 }
 
 void TableroScreen::HandleInput(GameState& gs) {
-    // ESC/P handled by App::HandleInput (opens PAUSA)
+    // ESC/P gestionado por App::HandleInput (abre PAUSA)
 }
 
 void TableroScreen::HandleMouse(GameState& gs) {
-    // Board handles its own mouse input via seleccionaCasilla()
+    // se gestiona la selección de casilla sola
 }

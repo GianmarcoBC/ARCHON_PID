@@ -68,6 +68,7 @@ class Tablero
     PiezaTablero* elemental_{ nullptr };            // Pieza temporal del elemental
     bool bloquearInputJugador{ false };             // Bloquea los clics si no es el turno del jugador
 
+
     // --- Renderizado 3D del tablero ---
     static constexpr float cellSize3D = 3.0f;       // Tamanio de cada casilla en unidades 3D
     static constexpr float cellGap = 0.15f;          // Separacion entre casillas

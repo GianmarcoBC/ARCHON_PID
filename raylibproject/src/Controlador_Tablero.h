@@ -41,6 +41,15 @@ public:
 		combateVidaP1 = v1; combatePosP1x = px1; combatePosP1y = py1;
 		combateVidaP2 = v2; combatePosP2x = px2; combatePosP2y = py2;
 	}
+
+	ColorCasilla getColorCasillaDefensor() {
+		PiezaTablero* def = tablero.getDefensor();
+		return tablero.get_colorCasilla(def->get_fila(), def->get_columna());
+	}
+	equipo getEquipoDefensor() {
+		return tablero.getDefensor()->get_equipo() ? OSCURIDAD : LUZ;
+	}
+
 	void clearCombateState() { combateVidaP1 = -1; }
 	bool tieneCombateState() const { return combateVidaP1 >= 0; }
 

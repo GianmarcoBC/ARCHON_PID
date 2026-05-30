@@ -750,3 +750,45 @@ inline const Pj_info Goblin = {
     TipoAtaque::CuerpoACuerpo,          // Tipo de ataque
     false // No vuela
 };
+
+// Elemental — Elemental. Estadisticas equilibradas, fuerza media.
+inline const Pj_info Elemental = {
+    "Elemental",
+
+    {"bin/Resources/Elemental/SpriteElementalMov_0001.png",
+    "bin/Resources/Elemental/SpriteElementalMov_0002.png",
+    "bin/Resources/Elemental/SpriteElementalMov_0003.png"},
+
+    {"bin/Resources/Elemental/SpriteElementalMov_0001shadow.png",
+    "bin/Resources/Elemental/SpriteElementalMov_0002shadow.png",
+    "bin/Resources/Elemental/SpriteElementalMov_0003shadow.png"},
+
+    {"bin/Resources/Elemental/SpriteElementalStill_0001.png",
+    "bin/Resources/Elemental/SpriteElementalStill_0002.png",
+    "bin/Resources/Elemental/SpriteElementalStill_0003.png"},
+
+    {"bin/Resources/Elemental/SpriteElementalStill_0001shadow.png",
+    "bin/Resources/Elemental/SpriteElementalStill_0002shadow.png",
+    "bin/Resources/Elemental/SpriteElementalStill_0003shadow.png"},
+
+    {"bin/Resources/Elemental/SpriteElementalATK_0001.png",
+    "bin/Resources/Elemental/SpriteElementalATK_0002.png",
+    "bin/Resources/Elemental/SpriteElementalATK_0003.png",
+    "bin/Resources/Elemental/SpriteElementalATK_0004.png"},
+
+    {"bin/Resources/Elemental/SpriteElementalATK_0001shadow.png",
+    "bin/Resources/Elemental/SpriteElementalATK_0002shadow.png",
+    "bin/Resources/Elemental/SpriteElementalATK_0003shadow.png",
+    "bin/Resources/Elemental/SpriteElementalATK_0004shadow.png"},
+
+    "bin/Resources/Djinni/DjinniATK.png",
+    "bin/Resources/Djinni/DjinniFX.wav",
+    Velocidad_media,
+    Vida_alta,
+    Fuerza_media,
+    Cooldown_medio,
+    AttackSpeed_medio,
+    Rango_inf,
+    TipoAtaque::Rango,          // Tipo de ataque
+    true // Vuela
+};
