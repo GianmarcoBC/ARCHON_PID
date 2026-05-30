@@ -2,6 +2,8 @@
 #include <string_view>
 #include <vector>
 
+namespace Archon_PID {
+
 //  Pj_info.h — Definiciones de los 16 personajes jugables
 //
 //  Contiene las constantes de balance del juego (velocidad, vida, fuerza, etc.)
@@ -792,3 +794,5 @@ inline const Pj_info Elemental = {
     TipoAtaque::Rango,          // Tipo de ataque
     true // Vuela
 };
+
+}

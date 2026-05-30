@@ -1,5 +1,7 @@
 #pragma once
 
+namespace Archon_PID {
+
 /*
  * TiposPj.h - Enumeraciones compartidas entre el sistema de tablero y el de combate
  *
@@ -34,3 +36,5 @@ enum class tipo_pj {
 
     Elemental
 };
+
+}

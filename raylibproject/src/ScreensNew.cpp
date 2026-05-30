@@ -7,6 +7,8 @@
 #include "Controlador_Tablero.h"
 #include "rlgl.h"
 
+namespace Archon_PID {
+
 // ============================================================
 // HELPERS COMPARTIDOS
 // Estos helpers son estáticos al fichero (no son métodos de clase)
@@ -1773,4 +1775,6 @@ void PausaScreen::HandleMouse(GameState& gs) {
             }
         }
     }
+}
+
 }

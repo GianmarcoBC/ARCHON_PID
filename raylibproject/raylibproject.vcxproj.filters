@@ -33,7 +33,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="raylibproject.cpp">
+    <ClCompile Include="Archon.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="src\App.cpp">
@@ -235,6 +235,9 @@
     </ClInclude>
     <ClInclude Include="src\cuchau\Vec2.h">
       <Filter>Archivos de encabezado\Combate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Archon_PID.h">
+      <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

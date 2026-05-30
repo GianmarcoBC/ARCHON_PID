@@ -1,6 +1,8 @@
 #pragma once
 #include "TiposPj.h"
 
+namespace Archon_PID {
+
 /*
  * Pj.h - Plantillas de piezas del tablero
  *
@@ -126,3 +128,5 @@ inline constexpr PjBoard Elemental = {
 };
 
 } // namespace pjboard
+
+}

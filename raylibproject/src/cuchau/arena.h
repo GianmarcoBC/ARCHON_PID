@@ -2,47 +2,51 @@
 #include "raylib.h"
 #include "obstaculo.h"
 #include <vector>
-class Arena
-{
-    // --- Dimensiones de la arena ---
-    static constexpr float sueloWidth = 40.0f;   // Ancho del suelo (eje X)
-    static constexpr float sueloLength = 25.0f;   // Largo del suelo (eje Z)
-    static constexpr float wallHeight = 2.0f;    // Alto de cada panel de la pared trasera
-    static constexpr float wallWidth = 4.0f;    // Ancho de cada panel de la pared trasera
 
-    // --- Recursos de renderizado ---
-    Texture2D texBg{};         // Textura de fondo 2D (ciudad)
-    Texture2D texPared{};      // Textura de la pared trasera
-    Texture2D texSuelo{};      // Textura del suelo
-    Texture2D texGameOver{};   // Textura de pantalla de victoria
+namespace Archon_PID {
 
-    Mesh  sueloMesh{};         // Malla del plano del suelo
-    Model sueloModel{};        // Modelo del suelo (malla + textura)
+    class Arena
+    {
+        // --- Dimensiones de la arena ---
+        static constexpr float sueloWidth = 40.0f;   // Ancho del suelo (eje X)
+        static constexpr float sueloLength = 25.0f;   // Largo del suelo (eje Z)
+        static constexpr float wallHeight = 2.0f;    // Alto de cada panel de la pared trasera
+        static constexpr float wallWidth = 4.0f;    // Ancho de cada panel de la pared trasera
 
-    Mesh  wallMesh{};          // Malla de un panel de pared
-    Model wallModel{};         // Modelo de pared (malla + textura)
+        // --- Recursos de renderizado ---
+        Texture2D texBg{};         // Textura de fondo 2D (ciudad)
+        Texture2D texPared{};      // Textura de la pared trasera
+        Texture2D texSuelo{};      // Textura del suelo
+        Texture2D texGameOver{};   // Textura de pantalla de victoria
 
-	friend class Interacciones; // Interacciones necesita acceso a las dimensiones de la arena para resolver colisiones
+        Mesh  sueloMesh{};         // Malla del plano del suelo
+        Model sueloModel{};        // Modelo del suelo (malla + textura)
 
-public:
+        Mesh  wallMesh{};          // Malla de un panel de pared
+        Model wallModel{};         // Modelo de pared (malla + textura)
 
-    Arena();
+        friend class Interacciones; // Interacciones necesita acceso a las dimensiones de la arena para resolver colisiones
 
-	float getSueloWidth()  const { return sueloWidth; }
-	float getSueloLength() const { return sueloLength; }
+    public:
 
-	void DrawFondo() const; // Dibuja el fondo 2D (ciudad) cubriendo toda la pantalla
-    void Draw(Camera camera) const;
+        Arena();
 
-	~Arena() {
-		// Liberar texturas y modelos
-		UnloadTexture(texBg);
-		UnloadTexture(texPared);
-		UnloadTexture(texSuelo);
-		UnloadTexture(texGameOver);
-		UnloadModel(sueloModel);
-		UnloadModel(wallModel);
-		// Liberar obstaculos (texturas, modelos y memoria)
-	}
-};
+        float getSueloWidth()  const { return sueloWidth; }
+        float getSueloLength() const { return sueloLength; }
 
+        void DrawFondo() const; // Dibuja el fondo 2D (ciudad) cubriendo toda la pantalla
+        void Draw(Camera camera) const;
+
+        ~Arena() {
+            // Liberar texturas y modelos
+            UnloadTexture(texBg);
+            UnloadTexture(texPared);
+            UnloadTexture(texSuelo);
+            UnloadTexture(texGameOver);
+            UnloadModel(sueloModel);
+            UnloadModel(wallModel);
+            // Liberar obstaculos (texturas, modelos y memoria)
+        }
+    };
+
+}

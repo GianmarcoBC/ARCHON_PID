@@ -7,57 +7,62 @@
 #include <cstdio>
 #include <cstring>
 #include <array>
-struct GameState;
 
-// Sistema de guardado/carga de partidas en fichero de texto plano.
-// Cada partida ocupa un bloque de líneas con clave=valor.
-// Usamos texto en vez de binario para que sea legible y no dependa
-// del compilador ni del sistema operativo.
+namespace Archon_PID {
 
-class SaveSystem {
+    struct GameState;
 
-	friend class CuchauCombateScreen;
-	friend class CargarPartidaScreen;
+    // Sistema de guardado/carga de partidas en fichero de texto plano.
+    // Cada partida ocupa un bloque de líneas con clave=valor.
+    // Usamos texto en vez de binario para que sea legible y no dependa
+    // del compilador ni del sistema operativo.
 
-    inline static SaveData pendiente{};
+    class SaveSystem {
 
-    // Reescribe el fichero entero con las partidas que quedan en memoria.
-    static void reescribir(const GameState& gs);
+        friend class CuchauCombateScreen;
+        friend class CargarPartidaScreen;
 
-    static std::vector<SaveData> CargarTodosCombate();
+        inline static SaveData pendiente{};
 
-public:
+        // Reescribe el fichero entero con las partidas que quedan en memoria.
+        static void reescribir(const GameState& gs);
+
+        static std::vector<SaveData> CargarTodosCombate();
+
+    public:
 
 
-    // Guarda la partida actual al final del fichero. Devuelve true si va bien.
-    static bool guardar(const GameState& gs, const std::string& nombrePartida);
+        // Guarda la partida actual al final del fichero. Devuelve true si va bien.
+        static bool guardar(const GameState& gs, const std::string& nombrePartida);
 
-    // Lee todas las partidas del fichero y rellena el vector.
-    static void cargarTodas(GameState& gs);
+        // Lee todas las partidas del fichero y rellena el vector.
+        static void cargarTodas(GameState& gs);
 
-    // Borra una partida por índice reescribiendo el fichero sin ese bloque.
-    static void borrar(GameState& gs, int idx);
+        // Borra una partida por índice reescribiendo el fichero sin ese bloque.
+        static void borrar(GameState& gs, int idx);
 
-    // Aplica los datos de una partida guardada al GameState.
-    static void restaurar(GameState& gs, int idx);
+        // Aplica los datos de una partida guardada al GameState.
+        static void restaurar(GameState& gs, int idx);
 
-    // Actualiza una partida existente en partidas.sav por índice
-    static void actualizarPartida(GameState& gs, int idx);
+        // Actualiza una partida existente en partidas.sav por índice
+        static void actualizarPartida(GameState& gs, int idx);
 
-    static bool GuardarCombate(const SaveData& d);
+        static bool GuardarCombate(const SaveData& d);
 
-    static SaveData CargarCombate(int slot = 0);
+        static SaveData CargarCombate(int slot = 0);
 
-	static bool ExisteGuardado(int slot = -1);
+        static bool ExisteGuardado(int slot = -1);
 
-    static const Pj_info* BuscarPjPorNombre(std::string_view nombre);
+        static const Pj_info* BuscarPjPorNombre(std::string_view nombre);
 
-    static void BorrarCombate(int slot);
+        static void BorrarCombate(int slot);
 
-    static std::array<SaveData, 4> ObtenerSlots();
+        static std::array<SaveData, 4> ObtenerSlots();
 
-    // Slots de partidas de tablero (Juego Completo)
-    static std::array<PartidaGuardada, 4> ObtenerSlotsTablero();
-    static void GuardarSlotTablero(const PartidaGuardada& p);
-    static void BorrarSlotTablero(int slot);
-};
+        // Slots de partidas de tablero (Juego Completo)
+        static std::array<PartidaGuardada, 4> ObtenerSlotsTablero();
+        static void GuardarSlotTablero(const PartidaGuardada& p);
+        static void BorrarSlotTablero(int slot);
+    };
+
+}

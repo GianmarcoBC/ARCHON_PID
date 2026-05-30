@@ -4,153 +4,156 @@
 #include "Pj_info.h"
 #include "Vec2.h"
 
-// Estados de animacion para elegir el set de frames y sombras a dibujar
-enum class EstadoAnimacion
-{
-	MOV, STILL, ATK
-};
+namespace Archon_PID {
 
-//  Personaje.h — Clase unificada de personaje 3D
-//
-//  Combina la logica de juego de ARCHON (vida, disparo, controles, animacion)
-//  con el renderizado 3D de Cuchau (billboard + sombra en el suelo).
-//
-//  Posicion interna: Vector3 pos3d (3D para rendering).
-//  Logica de juego:  Vec2 en plano XZ (GetPos/SetPos).
-//  Conversion:       Vec2.x = pos3d.x, Vec2.y = pos3d.z
+    // Estados de animacion para elegir el set de frames y sombras a dibujar
+    enum class EstadoAnimacion
+    {
+        MOV, STILL, ATK
+    };
 
-class Personaje
-{
+    //  Personaje.h — Clase unificada de personaje 3D
+    //
+    //  Combina la logica de juego de ARCHON (vida, disparo, controles, animacion)
+    //  con el renderizado 3D de Cuchau (billboard + sombra en el suelo).
+    //
+    //  Posicion interna: Vector3 pos3d (3D para rendering).
+    //  Logica de juego:  Vec2 en plano XZ (GetPos/SetPos).
+    //  Conversion:       Vec2.x = pos3d.x, Vec2.y = pos3d.z
 
-    Pj_info Player{};             // Datos del personaje (stats, rutas de sprites, etc.)
-    float max_vida{};             // Vida maxima (para calcular porcentaje en barras de vida)
-	float cooldown{};          // Cooldown de disparo (para calcular porcentaje en barra de cooldown)
-    cntrl Controles{};            // Teclas de movimiento asignadas
-    bool  isPlayer{ true };       // true = controlado por teclado, false = controlado por IA
+    class Personaje
+    {
 
-    // --- Posicion y direccion ---
-    Vector3 pos3d{};              // Posicion 3D (x = lateral, y = altura billboard, z = profundidad)
-    Vec2    l_dir{ 1.0f, 0.0f }; // Ultima direccion de movimiento en plano XZ (para apuntar disparos)
+        Pj_info Player{};             // Datos del personaje (stats, rutas de sprites, etc.)
+        float max_vida{};             // Vida maxima (para calcular porcentaje en barras de vida)
+        float cooldown{};          // Cooldown de disparo (para calcular porcentaje en barra de cooldown)
+        cntrl Controles{};            // Teclas de movimiento asignadas
+        bool  isPlayer{ true };       // true = controlado por teclado, false = controlado por IA
 
-    // --- Constantes de renderizado y escala ---
-    static constexpr float Size3D    = 2.5f;   // Tamano del billboard en unidades 3D
-    static constexpr float SPEED_SCALE = 0.02f;  // Factor de conversion: pixeles/s -> unidades/s
-                                                  // (arena 40u / pantalla ~2000px ≈ 0.02)
+        // --- Posicion y direccion ---
+        Vector3 pos3d{};              // Posicion 3D (x = lateral, y = altura billboard, z = profundidad)
+        Vec2    l_dir{ 1.0f, 0.0f }; // Ultima direccion de movimiento en plano XZ (para apuntar disparos)
 
-    // --- Texturas y modelos ---
-	// ======== MOVIMIENTO ========
-    std::vector<Texture2D> Frames_MOV{};          // frames de animacion del personaje 
+        // --- Constantes de renderizado y escala ---
+        static constexpr float Size3D = 2.5f;   // Tamano del billboard en unidades 3D
+        static constexpr float SPEED_SCALE = 0.02f;  // Factor de conversion: pixeles/s -> unidades/s
+        // (arena 40u / pantalla ~2000px ≈ 0.02)
 
-    std::vector<Texture2D> Frames_MOV_shadow{};   // frames de sombra correspondientes
-    std::vector<Mesh> shadowMesh_MOV{};          // Mallas planas para las sombras (una por frame)
-    std::vector<Model> shadow_MOV{};              // Modelos de sombra (malla + textura)
+// --- Texturas y modelos ---
+// ======== MOVIMIENTO ========
+        std::vector<Texture2D> Frames_MOV{};          // frames de animacion del personaje 
 
-	// ======= QUIETO (separado para poder animar sin moverse) ========
-    std::vector<Texture2D> Frames_STILL{};          // frames de animacion del personaje QUIETO
+        std::vector<Texture2D> Frames_MOV_shadow{};   // frames de sombra correspondientes
+        std::vector<Mesh> shadowMesh_MOV{};          // Mallas planas para las sombras (una por frame)
+        std::vector<Model> shadow_MOV{};              // Modelos de sombra (malla + textura)
 
-    std::vector<Texture2D> Frames_STILL_shadow{};   // frames de sombra correspondientes
-    std::vector<Mesh> shadowMesh_STILL{};          // Mallas planas para las sombras (una por frame)
-    std::vector<Model> shadow_STILL{};              // Modelos de sombra (malla + textura)
+        // ======= QUIETO (separado para poder animar sin moverse) ========
+        std::vector<Texture2D> Frames_STILL{};          // frames de animacion del personaje QUIETO
 
-	// ======= ATAQUE (separado para animar el ataque sin moverse) ========
-	std::vector<Texture2D> Frames_ATK{};          // frames de animacion del personaje ATAQUE
+        std::vector<Texture2D> Frames_STILL_shadow{};   // frames de sombra correspondientes
+        std::vector<Mesh> shadowMesh_STILL{};          // Mallas planas para las sombras (una por frame)
+        std::vector<Model> shadow_STILL{};              // Modelos de sombra (malla + textura)
 
-    std::vector<Texture2D> Frames_ATK_shadow{};   // frames de sombra correspondientes
-    std::vector<Mesh> shadowMesh_ATK{};          // Mallas planas para las sombras (una por frame)
-    std::vector<Model> shadow_ATK{};              // Modelos de sombra (malla + textura)
+        // ======= ATAQUE (separado para animar el ataque sin moverse) ========
+        std::vector<Texture2D> Frames_ATK{};          // frames de animacion del personaje ATAQUE
 
-    Texture2D Ataque{};             // Textura del proyectil que dispara este personaje
-    Sound efecto_ataque{};          // Sonido que se reproduce al disparar
+        std::vector<Texture2D> Frames_ATK_shadow{};   // frames de sombra correspondientes
+        std::vector<Mesh> shadowMesh_ATK{};          // Mallas planas para las sombras (una por frame)
+        std::vector<Model> shadow_ATK{};              // Modelos de sombra (malla + textura)
 
-    // --- Animacion ---
-	int   frameActual_Mov = 0; 	 // Frame actual de animacion (index en Frames y shadow)    
-	int  frameActual_Still = 0; 	 // Frame actual de animacion (index en Frames y shadow)
-	int  frameActual_Atk = 0; 	 // Frame actual de animacion (index en Frames y shadow)
-    float frameTimer  = 0.0f;       // Acumulador de tiempo para cambiar de frame
-	float frameSpeed = 0.1f;       // Tiempo por frame de animacion (segundos, tomado de Pj_info)
-    bool  atkPlaying = false;   // True mientras la anim ATK se reproduce
-    EstadoAnimacion  est{ EstadoAnimacion::STILL };
+        Texture2D Ataque{};             // Textura del proyectil que dispara este personaje
+        Sound efecto_ataque{};          // Sonido que se reproduce al disparar
+
+        // --- Animacion ---
+        int   frameActual_Mov = 0; 	 // Frame actual de animacion (index en Frames y shadow)    
+        int  frameActual_Still = 0; 	 // Frame actual de animacion (index en Frames y shadow)
+        int  frameActual_Atk = 0; 	 // Frame actual de animacion (index en Frames y shadow)
+        float frameTimer = 0.0f;       // Acumulador de tiempo para cambiar de frame
+        float frameSpeed = 0.1f;       // Tiempo por frame de animacion (segundos, tomado de Pj_info)
+        bool  atkPlaying = false;   // True mientras la anim ATK se reproduce
+        EstadoAnimacion  est{ EstadoAnimacion::STILL };
 
 
-    // Clase amiga de interacciones
-	friend class Interacciones;
+        // Clase amiga de interacciones
+        friend class Interacciones;
 
-    // Dibuja la sombra del frame actual en la posicion dada
-    void drawshadow(Vector3 shadowpos, const std::vector<Model>& shadowFrames, int frameIndex, bool flip) const;
+        // Dibuja la sombra del frame actual en la posicion dada
+        void drawshadow(Vector3 shadowpos, const std::vector<Model>& shadowFrames, int frameIndex, bool flip) const;
 
-	void drawAnimation(Camera camera, const std::vector<Texture2D>& frames, int frameIndex) const;
-
-	
-
-public:
-    Personaje() = default;
-
-    // Constructor: recibe datos del personaje, controles, posicion inicial, y si es jugador
-    Personaje(Pj_info p, cntrl c, Vector3 po, bool ip);
-
-	// Mueve el personaje en la direccion dada por el jugador real
-    void Move(Vec2 dir, float dt);
-    
-    // Actualiza movimiento y animacion
-    void Update(float dt);
-
-    // Dibuja la vida, el cooldown y el nombre del personaje sobre su cabeza (en coordenadas 2D)
-    void drawHUD(Camera camera, Color color) const; // Dibuja la barra de vida, el cooldown y el nombre del personaje sobre su cabeza (en coordenadas 2D)
-	void Draw(Camera camera) const;
+        void drawAnimation(Camera camera, const std::vector<Texture2D>& frames, int frameIndex) const;
 
 
 
-    // --- Getters y setters ---
+    public:
+        Personaje() = default;
 
-    //float       GetFuerza()      const { return Player.fuerza; }         // Dano por impacto
-    Vec2        GetPos()         const { return { pos3d.x, pos3d.z }; }  // Posicion en plano XZ
-    void        SetPos(Vec2 p)         { pos3d.x = p.x; pos3d.z = p.y; }// Asigna posicion XZ
-    Vector3     GetPos3D()       const { return pos3d; }                 // Posicion 3D completa
-    void        SetPos3D(Vector3 p)    { pos3d = p; }                    // Asigna posicion 3D
-    float       GetVida()        const { return Player.vida; }           // Vida actual
-    void        SetVida(float v)       { Player.vida = v; }              // Asigna vida (para cargar partida)
-    float       GetMaxVida()     const { return max_vida; }              // Vida maxima
-    Vec2        GetDir()         const { return l_dir; }                 // Direccion de apuntado
-    void        SetDir(Vec2 d)         { l_dir = d.unitario(); }         // Cambia direccion (normalizada)
-    float       GetVelocidad()   const { return Player.vel * SPEED_SCALE; }  // Velocidad en u/s
-    float       get_Cooldown()   const { return Player.cooldown; }       // Tiempo entre disparos
-    bool        get_isPlayer()   const { return isPlayer; }              // Es controlado por teclado?
-    //void        set_isPlayer(bool ip)  { isPlayer = ip; }
-    std::string_view GetNombre()      const { return Player.nombre; }         // Nombre del personaje
-	float 	 GetRangoMax()     const { return Player.rango_max; }      // Rango maximo del ataque (en unidades del juego, para calcular alcance de proyectiles)
-    //float       GetCharSize()    const { return Size3D; }              // Tamano del billboard
-    //Texture2D*  GetAtaqueTexture()     { return &Ataque; }               // Textura del proyectil
-    //float       GetAttackSpeed() const { return Player.attack_speed * SPEED_SCALE; } // Vel. proyectil en u/s
+        // Constructor: recibe datos del personaje, controles, posicion inicial, y si es jugador
+        Personaje(Pj_info p, cntrl c, Vector3 po, bool ip);
 
-    // Recibe dano y reduce vida (minimo 0)
-    void    pain(float damage);
+        // Mueve el personaje en la direccion dada por el jugador real
+        void Move(Vec2 dir, float dt);
 
-    void copy(Personaje& other);
+        // Actualiza movimiento y animacion
+        void Update(float dt);
 
-    // Crea y devuelve un Disparo en la posicion del personaje, en su direccion de apuntado
-    std::vector<Disparo> Shoot();
+        // Dibuja la vida, el cooldown y el nombre del personaje sobre su cabeza (en coordenadas 2D)
+        void drawHUD(Camera camera, Color color) const; // Dibuja la barra de vida, el cooldown y el nombre del personaje sobre su cabeza (en coordenadas 2D)
+        void Draw(Camera camera) const;
 
-    // Reproduce el sonido de ataque del personaje
-    void    PlayAttackSound();
 
-    // Libera todas las texturas, modelos y sonidos de GPU/memoria
-    ~Personaje() {
-        for (int i = 0; i < Frames_MOV.size(); i++) {
-            UnloadModel(shadow_MOV[i]);
-            UnloadTexture(Frames_MOV_shadow[i]);
-            UnloadTexture(Frames_MOV[i]);
+
+        // --- Getters y setters ---
+
+        //float       GetFuerza()      const { return Player.fuerza; }         // Dano por impacto
+        Vec2        GetPos()         const { return { pos3d.x, pos3d.z }; }  // Posicion en plano XZ
+        void        SetPos(Vec2 p) { pos3d.x = p.x; pos3d.z = p.y; }// Asigna posicion XZ
+        Vector3     GetPos3D()       const { return pos3d; }                 // Posicion 3D completa
+        void        SetPos3D(Vector3 p) { pos3d = p; }                    // Asigna posicion 3D
+        float       GetVida()        const { return Player.vida; }           // Vida actual
+        void        SetVida(float v) { Player.vida = v; }              // Asigna vida (para cargar partida)
+        float       GetMaxVida()     const { return max_vida; }              // Vida maxima
+        Vec2        GetDir()         const { return l_dir; }                 // Direccion de apuntado
+        void        SetDir(Vec2 d) { l_dir = d.unitario(); }         // Cambia direccion (normalizada)
+        float       GetVelocidad()   const { return Player.vel * SPEED_SCALE; }  // Velocidad en u/s
+        float       get_Cooldown()   const { return Player.cooldown; }       // Tiempo entre disparos
+        bool        get_isPlayer()   const { return isPlayer; }              // Es controlado por teclado?
+        //void        set_isPlayer(bool ip)  { isPlayer = ip; }
+        std::string_view GetNombre()      const { return Player.nombre; }         // Nombre del personaje
+        float 	 GetRangoMax()     const { return Player.rango_max; }      // Rango maximo del ataque (en unidades del juego, para calcular alcance de proyectiles)
+        //float       GetCharSize()    const { return Size3D; }              // Tamano del billboard
+        //Texture2D*  GetAtaqueTexture()     { return &Ataque; }               // Textura del proyectil
+        //float       GetAttackSpeed() const { return Player.attack_speed * SPEED_SCALE; } // Vel. proyectil en u/s
+
+        // Recibe dano y reduce vida (minimo 0)
+        void    pain(float damage);
+
+        void copy(Personaje& other);
+
+        // Crea y devuelve un Disparo en la posicion del personaje, en su direccion de apuntado
+        std::vector<Disparo> Shoot();
+
+        // Reproduce el sonido de ataque del personaje
+        void    PlayAttackSound();
+
+        // Libera todas las texturas, modelos y sonidos de GPU/memoria
+        ~Personaje() {
+            for (int i = 0; i < Frames_MOV.size(); i++) {
+                UnloadModel(shadow_MOV[i]);
+                UnloadTexture(Frames_MOV_shadow[i]);
+                UnloadTexture(Frames_MOV[i]);
+            }
+            for (int i = 0; i < Frames_STILL.size(); i++) {
+                UnloadModel(shadow_STILL[i]);
+                UnloadTexture(Frames_STILL_shadow[i]);
+                UnloadTexture(Frames_STILL[i]);
+            }
+            for (int i = 0; i < Frames_ATK.size(); i++) {
+                UnloadModel(shadow_ATK[i]);
+                UnloadTexture(Frames_ATK_shadow[i]);
+                UnloadTexture(Frames_ATK[i]);
+            }
+            UnloadTexture(Ataque);
+            UnloadSound(efecto_ataque);
         }
-        for (int i = 0; i < Frames_STILL.size(); i++) {
-            UnloadModel(shadow_STILL[i]);
-            UnloadTexture(Frames_STILL_shadow[i]);
-            UnloadTexture(Frames_STILL[i]);
-        }
-        for (int i = 0; i < Frames_ATK.size(); i++) {
-            UnloadModel(shadow_ATK[i]);
-            UnloadTexture(Frames_ATK_shadow[i]);
-            UnloadTexture(Frames_ATK[i]);
-        }
-        UnloadTexture(Ataque);
-        UnloadSound(efecto_ataque);
-    }
-};
+    };
+}

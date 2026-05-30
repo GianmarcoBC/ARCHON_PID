@@ -25,85 +25,89 @@
 //    - Pipeline de renderizado: fondo → 3D (suelo, paredes, bordes, sombras,
 //      billboards ordenados por profundidad)
 
-class ControladorCombate
-{
-    // --- Camara isometrica fija ---
-    // Posicion elevada (0, 25, 35) mirando al origen, perspectiva 45°
-    Camera3D camera = { { 0.0f, 25.0f, 35.0f },    // position
-                        { 0.0f, 0.0f,  0.0f },      // target
-                        { 0.0f, 1.0f,  0.0f },      // up
-                        45.0f, CAMERA_PERSPECTIVE };
+namespace Archon_PID {
 
-	// --- Texturas y modelos de la arena ---
-    Arena arena;    
+    class ControladorCombate
+    {
+        // --- Camara isometrica fija ---
+        // Posicion elevada (0, 25, 35) mirando al origen, perspectiva 45°
+        Camera3D camera = { { 0.0f, 25.0f, 35.0f },    // position
+                            { 0.0f, 0.0f,  0.0f },      // target
+                            { 0.0f, 1.0f,  0.0f },      // up
+                            45.0f, CAMERA_PERSPECTIVE };
 
-    // --- Personajes ---
-    Personaje P1, P2;
+        // --- Texturas y modelos de la arena ---
+        Arena arena;
 
-    // --- Obstaculos (creados en heap porque necesitan ventana OpenGL activa) ---
-    std::vector<obstaculo*> obstaculos{};    // Vector de punteros para iterar facilmente
+        // --- Personajes ---
+        Personaje P1, P2;
 
-    // --- Combate ---
-    CombatAI*      ia = nullptr;       // IA para P2 (nullptr si es modo 2 jugadores)
-    std::vector<Disparo> Disparos_1{}; // Disparos del jugador 1
-    std::vector<Disparo> Disparos_2{}; // Disparos del jugador 2 (o IA)
+        // --- Obstaculos (creados en heap porque necesitan ventana OpenGL activa) ---
+        std::vector<obstaculo*> obstaculos{};    // Vector de punteros para iterar facilmente
 
-    // --- Shader de alpha discard (descarta pixeles transparentes del depth buffer) ---
-    Shader alphaDiscard{};
+        // --- Combate ---
+        CombatAI* ia = nullptr;       // IA para P2 (nullptr si es modo 2 jugadores)
+        std::vector<Disparo> Disparos_1{}; // Disparos del jugador 1
+        std::vector<Disparo> Disparos_2{}; // Disparos del jugador 2 (o IA)
 
-    // --- Metodos privados de dibujo ---
+        // --- Shader de alpha discard (descarta pixeles transparentes del depth buffer) ---
+        Shader alphaDiscard{};
 
-    // Renderiza todo el escenario 3D: fondo, suelo, paredes, bordes, sombras, billboards
-    void Draw3D();
+        // --- Metodos privados de dibujo ---
 
-    // Dibuja la pantalla de victoria con la arena congelada de fondo
-    void DrawVictory();
-    
-	friend class Interacciones; // Interacciones necesita acceso a personajes, disparos y obstaculos para resolver colisiones
-public:
+        // Renderiza todo el escenario 3D: fondo, suelo, paredes, bordes, sombras, billboards
+        void Draw3D();
 
-    // Constructor: crea la arena con dos personajes, opcionalmente con IA
-    //   pj1/pj2: datos de los personajes seleccionados
-    //   vsIA: true para modo VS IA, false para 2 jugadores
-    //   dificultad: 0=facil, 1=normal, 2=dificil (solo si vsIA=true)
-    ControladorCombate(Pj_info pj1, Pj_info pj2, bool vsIA, int dificultad);
+        // Dibuja la pantalla de victoria con la arena congelada de fondo
+        void DrawVictory();
 
-    // Actualiza la logica de combate: movimiento, disparos, IA, colisiones
-    void Update();
+        friend class Interacciones; // Interacciones necesita acceso a personajes, disparos y obstaculos para resolver colisiones
+    public:
 
-    // Dibuja la arena (combate activo) o la pantalla de victoria
-    void Draw();
+        // Constructor: crea la arena con dos personajes, opcionalmente con IA
+        //   pj1/pj2: datos de los personajes seleccionados
+        //   vsIA: true para modo VS IA, false para 2 jugadores
+        //   dificultad: 0=facil, 1=normal, 2=dificil (solo si vsIA=true)
+        ControladorCombate(Pj_info pj1, Pj_info pj2, bool vsIA, int dificultad);
 
-    // Devuelve true si alguno de los dos personajes tiene vida = 0
-    bool IsGameOver() const { return P1.GetVida() == 0 || P2.GetVida() == 0; }
+        // Actualiza la logica de combate: movimiento, disparos, IA, colisiones
+        void Update();
 
-    // Devuelve 0=en curso, 1=P1 gana (P2 muere), 2=P2 gana (P1 muere)
-    int  GetWinner()  const {
-        if (P2.GetVida() == 0) return 1;
-        if (P1.GetVida() == 0) return 2;
-        return 0;
-    }
+        // Dibuja la arena (combate activo) o la pantalla de victoria
+        void Draw();
 
-    // Establece las vidas iniciales de los personajes (para el tablero)
-    void SetVidasIniciales(float vidaP1, float vidaP2) {
-        P1.SetVida(vidaP1);
-        P2.SetVida(vidaP2);
-    }
+        // Devuelve true si alguno de los dos personajes tiene vida = 0
+        bool IsGameOver() const { return P1.GetVida() == 0 || P2.GetVida() == 0; }
 
-    // Nombres de los personajes (para la musica)
-    std::string_view GetP1Name() const { return P1.GetNombre(); }
-    std::string_view GetP2Name() const { return P2.GetNombre(); }
+        // Devuelve 0=en curso, 1=P1 gana (P2 muere), 2=P2 gana (P1 muere)
+        int  GetWinner()  const {
+            if (P2.GetVida() == 0) return 1;
+            if (P1.GetVida() == 0) return 2;
+            return 0;
+        }
 
-    // Estado de combate (para guardado de tablero)
-    float GetP1Vida() const { return P1.GetVida(); }
-    float GetP2Vida() const { return P2.GetVida(); }
-    Vec2 GetP1Pos() const { return P1.GetPos(); }
-    Vec2 GetP2Pos() const { return P2.GetPos(); }
+        // Establece las vidas iniciales de los personajes (para el tablero)
+        void SetVidasIniciales(float vidaP1, float vidaP2) {
+            P1.SetVida(vidaP1);
+            P2.SetVida(vidaP2);
+        }
 
-    // Guardado / Carga de estado
-    bool GuardarEstado(bool modoIA, int dificultad, int slot) const;
-    void CargarEstado(const SaveData& d);
+        // Nombres de los personajes (para la musica)
+        std::string_view GetP1Name() const { return P1.GetNombre(); }
+        std::string_view GetP2Name() const { return P2.GetNombre(); }
 
-    // Destructor: libera IA, personajes, obstaculos, modelos y texturas
-    ~ControladorCombate();
-};
+        // Estado de combate (para guardado de tablero)
+        float GetP1Vida() const { return P1.GetVida(); }
+        float GetP2Vida() const { return P2.GetVida(); }
+        Vec2 GetP1Pos() const { return P1.GetPos(); }
+        Vec2 GetP2Pos() const { return P2.GetPos(); }
+
+        // Guardado / Carga de estado
+        bool GuardarEstado(bool modoIA, int dificultad, int slot) const;
+        void CargarEstado(const SaveData& d);
+
+        // Destructor: libera IA, personajes, obstaculos, modelos y texturas
+        ~ControladorCombate();
+    };
+
+}

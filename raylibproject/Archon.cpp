@@ -1,7 +1,7 @@
 #include "src/App.h"
 
 int main() {
-    App app;
+    Archon_PID::App app;
     app.Run();
     return 0;
 }

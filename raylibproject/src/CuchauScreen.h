@@ -13,43 +13,47 @@
 // so Cuchau can draw using GetScreenWidth/Height as it expects.
 // ============================================================
 
-class CuchauCombateScreen : public Screen {
-    std::unique_ptr<Menu_Combate> menu;
-    std::unique_ptr<Rolitas> rolitas;
-    ControladorCombate* combate = nullptr;
-    int estado = 0; // 0=Menu, 1=Combate, 3=CargandoSave
-    bool modoIA = false;
-    int dificultad = 1;
-    SaveData savePendiente;
+namespace Archon_PID {
 
-public:
-    void OnEnter(GameState& gs) override;
+    class CuchauCombateScreen : public Screen {
+        std::unique_ptr<Menu_Combate> menu;
+        std::unique_ptr<Rolitas> rolitas;
+        ControladorCombate* combate = nullptr;
+        int estado = 0; // 0=Menu, 1=Combate, 3=CargandoSave
+        bool modoIA = false;
+        int dificultad = 1;
+        SaveData savePendiente;
 
-    void Draw(GameState& gs) override;
+    public:
+        void OnEnter(GameState& gs) override;
 
-    void HandleInput(GameState& gs) override {
-        // During active combat (not menu, not game over): open global PAUSA
-        if (estado == 1 && combate && !combate->IsGameOver()) {
-            if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_P)) {
-                gs.estadoAnterior = gs.estadoActual;
-                gs.estadoActual   = PAUSA;
-                gs.opcionPausaSel = 0;
-                gs.pausaOffset    = 600.f;
-                gs.guardadoOk     = false;
+        void Draw(GameState& gs) override;
+
+        void HandleInput(GameState& gs) override {
+            // During active combat (not menu, not game over): open global PAUSA
+            if (estado == 1 && combate && !combate->IsGameOver()) {
+                if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_P)) {
+                    gs.estadoAnterior = gs.estadoActual;
+                    gs.estadoActual = PAUSA;
+                    gs.opcionPausaSel = 0;
+                    gs.pausaOffset = 600.f;
+                    gs.guardadoOk = false;
+                }
             }
         }
-    }
 
-    void HandleMouse(GameState& gs) override {
-        // Cuchau handles its own mouse
-    }
+        void HandleMouse(GameState& gs) override {
+            // Cuchau handles its own mouse
+        }
 
-    void Update(GameState& gs) override;
+        void Update(GameState& gs) override;
 
-    // Transition back to an ARCHON screen, cleaning up Cuchau state
-    void volverARCHON(GameState& gs, Estado destino);
+        // Transition back to an ARCHON screen, cleaning up Cuchau state
+        void volverARCHON(GameState& gs, Estado destino);
 
-    ~CuchauCombateScreen() override {
-        delete combate;
-    }
-};
+        ~CuchauCombateScreen() override {
+            delete combate;
+        }
+    };
+
+}

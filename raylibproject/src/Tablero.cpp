@@ -6,6 +6,8 @@
 #include <sstream>
 #include <algorithm>
 
+namespace Archon_PID {
+
 void Tablero::addSpellEffect(int fila, int columna, Color color, float duration, bool esfera) {
     spellEffects.push_back({ fila, columna, color, duration, duration, esfera });
 }
@@ -1077,4 +1079,6 @@ void Tablero::deserializarEstado(const std::string& data) {
             }
         }
     }
+}
+
 }
