@@ -30,5 +30,7 @@ enum class tipo_pj {
     Basilisk,       // Basilisco - terrestre venenoso
     Banshee,        // Banshee - voladora espectral
     Manticore,      // Manticora - terrestre fuerte
-    Goblin          // Goblin - infanteria basica (peones)
+    Goblin,          // Goblin - infanteria basica (peones)
+
+    Elemental
 };

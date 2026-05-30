@@ -36,7 +36,8 @@ enum class ModoJuego {
     TELEPORT,   // Ejecutando hechizo Teleport (mover aliado a cualquier casilla vacia)
     EXCHANGE,   // Ejecutando hechizo Exchange (intercambiar posicion de dos piezas)
     IMPRISON,   // Ejecutando hechizo Imprison (inmovilizar pieza enemiga)
-    REVIVE,      // Ejecutando hechizo Revive (resucitar pieza del cementerio)
+    REVIVE,     // Ejecutando hechizo Revive (resucitar pieza del cementerio)
+    SUMMON,     // Ejecutando hechizo Summon (invocar elemental)
     GAME_OVER   // Fin del juego
 };
 
@@ -63,6 +64,8 @@ class Tablero
     ModoJuego modoJuegoactual{ ModoJuego::NORMAL }; // Estado actual del juego
     Magia magiaTablero;                             // Sistema de hechizos
     std::string ganador{};                          // Ganador de la partida
+    bool summonPendiente_{ false };                 // El combate es de un elemental invocado
+    PiezaTablero* elemental_{ nullptr };            // Pieza temporal del elemental
 
     // --- Renderizado 3D del tablero ---
     static constexpr float cellSize3D = 3.0f;       // Tamanio de cada casilla en unidades 3D

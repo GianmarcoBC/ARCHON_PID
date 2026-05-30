@@ -121,6 +121,13 @@ public:
         }
     }
 
+    // Constructor para piezas temporales con equipo dinámico (elemental)
+    PiezaTablero(PjBoard p, int ifila, int icolumna, equipo eq)
+        : PiezaTablero(p, ifila, icolumna)   // delega en el constructor base
+    {
+        team = (eq == OSCURIDAD);            // sobreescribe el equipo tras la carga
+    }
+
     // --- Getters y setters ---
     void set_fila_columna(int fil, int col) { fila = fil; columna = col; }
     int get_fila() { return fila; }

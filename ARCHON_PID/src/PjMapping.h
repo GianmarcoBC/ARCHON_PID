@@ -32,6 +32,7 @@ inline const Pj_info& getCombatInfo(tipo_pj tipo) {
     case tipo_pj::Banshee:      return PjC_Banshee;
     case tipo_pj::Manticore:    return PjC_Manticore;
     case tipo_pj::Goblin:       return PjC_Goblin;
+    case tipo_pj::Elemental:    return PjC_MH; 
     default:                    return PjC_Knight;
     }
 }

@@ -120,4 +120,9 @@ inline constexpr PjBoard Goblin = {
     false, false, OSCURIDAD, tipo_pj::Goblin, 3     // Goblin (peon): terrestre, rango 3
 };
 
+inline constexpr PjBoard Elemental = {
+    "Resources/Djinni/SpriteDjinniStill_0001.png",
+    true, true, LUZ, tipo_pj::Djinni, 1   // reutiliza sprites Djinni, rango irrelevante
+};
+
 } // namespace pjboard

@@ -18,5 +18,8 @@ public:
     void Exchange(PiezaTablero* personaje, Tablero& t);
     void Imprison(PiezaTablero* personaje, Tablero& t);
     void Revive(PiezaTablero* personaje, Tablero& t);
+    void Summon(PiezaTablero* personaje, Tablero& t);
+
     void EliminaMuerto(PiezaTablero* personaje_muerto_seleccionado, std::vector<PiezaTablero*>& Vector);
+    bool hechizoBloqueado(tipo_pj lanzador, int indice) const;
 };

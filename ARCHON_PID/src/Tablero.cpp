@@ -91,12 +91,14 @@ void Tablero::LogicaTablero() {
     }
 
     // Delegar al sistema de magia segun el hechizo activo
-    if (get_modoJuegoActual() == ModoJuego::HECHIZOS)  hechizos();
-    if (get_modoJuegoActual() == ModoJuego::HEAL)      magiaTablero.Heal(personaje_usando_magia, *this);
+    if (get_modoJuegoActual() == ModoJuego::HECHIZOS)   hechizos();
+    if (get_modoJuegoActual() == ModoJuego::HEAL)       magiaTablero.Heal(personaje_usando_magia, *this);
     if (get_modoJuegoActual() == ModoJuego::TELEPORT)   magiaTablero.Teleport(personaje_usando_magia, *this);
     if (get_modoJuegoActual() == ModoJuego::EXCHANGE)   magiaTablero.Exchange(personaje_usando_magia, *this);
     if (get_modoJuegoActual() == ModoJuego::IMPRISON)   magiaTablero.Imprison(personaje_usando_magia, *this);
     if (get_modoJuegoActual() == ModoJuego::REVIVE)     magiaTablero.Revive(personaje_usando_magia, *this);
+    if (get_modoJuegoActual() == ModoJuego::SUMMON)     magiaTablero.Summon(personaje_usando_magia, *this);
+
 }
 
 /*
@@ -347,6 +349,52 @@ void Tablero::Draw() {
             w / 2 - MeasureText("Pulsa ENTER para salir", 24) / 2,
             h / 2 + 50, 24, WHITE);
     }
+
+    //10. Menú de hechizos
+    if (modoJuegoactual == ModoJuego::HECHIZOS && personaje_usando_magia != nullptr) {
+        int w = GetScreenWidth(), h = GetScreenHeight();
+        tipo_pj lanzador = personaje_usando_magia->get_ID();
+
+        // Panel semitransparente centrado
+        int panelW = 420, panelH = 340;
+        int panelX = w / 2 - panelW / 2;
+        int panelY = h / 2 - panelH / 2;
+        DrawRectangle(panelX, panelY, panelW, panelH, { 0, 0, 0, 210 });
+        DrawRectangleLines(panelX, panelY, panelW, panelH, GOLD);
+
+        // Título
+        const char* titulo = "-- HECHIZOS --";
+        DrawText(titulo, w / 2 - MeasureText(titulo, 26) / 2, panelY + 18, 26, GOLD);
+
+        // Estructura: { tecla, nombre, índice en array }
+        struct EntradaHechizo { const char* tecla; const char* nombre; int idx; };
+        EntradaHechizo entradas[] = {
+            { "[T]", "Teleport",  0 },
+            { "[H]", "Heal",      1 },
+            { "[S]", "Shift Time",2 },
+            { "[E]", "Exchange",  3 },
+            { "[U]", "Summon",    4 },
+            { "[R]", "Revive",    5 },
+            { "[I]", "Imprison",  6 },
+        };
+
+        int lineaY = panelY + 62;
+        for (auto& e : entradas) {
+            bool usado = magiaTablero.hechizoBloqueado(lanzador, e.idx);
+            Color colorTecla = usado ? GRAY : GOLD;
+            Color colorNombre = usado ? GRAY : WHITE;
+
+            DrawText(e.tecla, panelX + 30, lineaY, 20, colorTecla);
+            DrawText(e.nombre, panelX + 90, lineaY, 20, colorNombre);
+            if (usado) DrawText("(usado)", panelX + 280, lineaY, 18, { 120, 120, 120, 255 });
+
+            lineaY += 34;
+        }
+
+        // Pie
+        const char* pie = "[A] Cancelar";
+        DrawText(pie, w / 2 - MeasureText(pie, 18) / 2, panelY + panelH - 30, 18, { 180, 180, 180, 255 });
+    }
 }
 
 /*
@@ -487,35 +535,37 @@ void Tablero::moverPieza() {
  */
 void Tablero::resolverCombate(bool ganaAtacante) {
     if (ganaAtacante) {
-        // El defensor muere y va al cementerio de su equipo
-        if (defensor_->get_equipo() == LUZ) {
-            defensor_->heal();
-            cementerio_Luz.push_back(defensor_);
-        } else {
-            defensor_->heal();
-            cementerio_Oscuridad.push_back(defensor_);
-        }
-        // El atacante ya está en filaDestinoAnim_/colDestinoAnim_ desde la animación
-        // Solo asegurar que set_fila_columna es correcto (la animación ya lo hizo)
-        // No hay que mover nada en la cuadrícula
+        // Defensor al cementerio
+        if (defensor_->get_equipo() == LUZ) { defensor_->heal(); cementerio_Luz.push_back(defensor_); }
+        else { defensor_->heal(); cementerio_Oscuridad.push_back(defensor_); }
 
-    } else {
-        // El atacante muere y va al cementerio de su equipo
-        if (atacante_->get_equipo() == LUZ) {
-            atacante_->heal();
-            cementerio_Luz.push_back(atacante_);
-        } else {
-            atacante_->heal();
-            cementerio_Oscuridad.push_back(atacante_);
+        if (summonPendiente_) {
+            // Elemental ganó: desaparece junto al defensor, sin ir al cementerio
+            cuadricula[filaDestinoAnim_][colDestinoAnim_] = nullptr;
+            delete elemental_;
+            elemental_ = nullptr;
         }
-        // Atacante perdió: limpiar la casilla donde quedó tras la animación
-        cuadricula[filaDestinoAnim_][colDestinoAnim_] = nullptr;
+        // Si no es summon: el atacante ya está correctamente en filaDestinoAnim_ desde la animación
 
-        // Devolver al defensor a su casilla original
+    }
+    else {
+        if (summonPendiente_) {
+            // Elemental perdió: eliminarlo sin cementerio
+            cuadricula[filaDestinoAnim_][colDestinoAnim_] = nullptr;
+            delete elemental_;
+            elemental_ = nullptr;
+        }
+        else {
+            // Atacante normal perdió: al cementerio
+            if (atacante_->get_equipo() == LUZ) { atacante_->heal(); cementerio_Luz.push_back(atacante_); }
+            else { atacante_->heal(); cementerio_Oscuridad.push_back(atacante_); }
+            cuadricula[filaDestinoAnim_][colDestinoAnim_] = nullptr;
+        }
+        // Defensor sobrevive: volver a su casilla original
         cuadricula[defensor_->get_fila()][defensor_->get_columna()] = defensor_;
     }
 
-    // Volver al modo normal
+    summonPendiente_ = false;
     combatePendiente_ = false;
     atacante_ = nullptr;
     defensor_ = nullptr;
@@ -722,6 +772,7 @@ void Tablero::hechizos() {
     if (IsKeyPressed(KEY_E)) { personaje_seleccionado = nullptr; modoJuegoactual = ModoJuego::EXCHANGE; }
     if (IsKeyPressed(KEY_I)) { personaje_seleccionado = nullptr; modoJuegoactual = ModoJuego::IMPRISON; }
     if (IsKeyPressed(KEY_R)) { personaje_seleccionado = nullptr; modoJuegoactual = ModoJuego::REVIVE; }
+    if (IsKeyPressed(KEY_U)) { personaje_seleccionado = nullptr; modoJuegoactual = ModoJuego::SUMMON; }
 }
 
 /*
