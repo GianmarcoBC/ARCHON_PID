@@ -34,6 +34,8 @@ int main()
     // Puntero al combate activo (nullptr cuando no hay combate en curso)
     ControladorCombate* combate = nullptr;
 
+    bool atacanteEsIA = false; // Para determinar si el atacante es controlado por IA o por el jugador humano
+
     while (!WindowShouldClose())
     {
         // ========================= LOGICA =========================
@@ -43,7 +45,6 @@ int main()
         }
         else if (ctablero.cget_modoJuegoActual() == ModoJuego::COMBATE)
         {
-			bool atacanteEsIA = false; // Para determinar si el atacante es controlado por IA o por el jugador humano
             // Cuando el tablero detecta un ataque, creamos el ControladorCombate
             // usando los datos de combate (Pj_info) de ambas piezas enfrentadas
             if (combate == nullptr && ctablero.ccombatePendiente())
@@ -53,10 +54,6 @@ int main()
 
                 Pj_info pjHumano = getCombatInfo(atacanteEsIA ? ctablero.getID_defensor() : ctablero.getID_atacante());
                 Pj_info pjIA = getCombatInfo(atacanteEsIA ? ctablero.getID_atacante() : ctablero.getID_defensor());
-                
-                // Mapear tipo_pj del tablero -> Pj_info con stats/sprites de combate
-                Pj_info pj1 = getCombatInfo(ctablero.getID_atacante());
-                Pj_info pj2 = getCombatInfo(ctablero.getID_defensor());
 
                 // vsIA=true: el defensor es controlado por IA, dificultad=1 (normal)
                 combate = new ControladorCombate(pjHumano, pjIA, true, 1);
