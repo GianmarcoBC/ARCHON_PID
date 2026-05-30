@@ -279,28 +279,16 @@ void Magia::Summon(PiezaTablero* personaje, Tablero& t) {
     int colObj = t.columna_seleccionada;
     t.reset_seleccion();
 
-    // Buscar casilla adyacente vacía donde colocar el elemental
-    int filaEl = -1, colEl = -1;
-    int dirs[4][2] = { {0,-1},{0,1},{-1,0},{1,0} };
-    for (auto& d : dirs) {
-        int nr = filaObj + d[0], nc = colObj + d[1];
-        if (nr >= 0 && nr < 9 && nc >= 0 && nc < 9 && t.cuadricula[nr][nc] == nullptr) {
-            filaEl = nr; colEl = nc;
-            break;
-        }
-    }
-    if (filaEl == -1) return; // Sin hueco adyacente, cancelar
-
     equipo equipoLanzador = personaje->get_equipo() == LUZ ? LUZ : OSCURIDAD;
-    t.elemental_ = new PiezaTablero(pjboard::Elemental, filaEl, colEl, equipoLanzador);
-    t.cuadricula[filaEl][colEl] = t.elemental_;
+    t.elemental_ = new PiezaTablero(pjboard::Elemental, filaObj, colObj, equipoLanzador);
+    t.cuadricula[filaObj][colObj] = t.elemental_;
 
     t.summonPendiente_ = true;
     t.combatePendiente_ = true;
     t.atacante_ = t.elemental_;
     t.defensor_ = objetivo;
-    t.filaOrigenAtacante_ = filaEl;
-    t.colOrigenAtacante_ = colEl;
+    t.filaOrigenAtacante_ = filaObj;
+    t.colOrigenAtacante_ = colObj;
     t.filaDestinoAnim_ = filaObj;
     t.colDestinoAnim_ = colObj;
 
@@ -311,9 +299,7 @@ void Magia::Summon(PiezaTablero* personaje, Tablero& t) {
     t.personaje_usando_magia = nullptr;
     t.personaje_seleccionado = nullptr;
 
-    t.elemental_->iniciarMovimiento(filaObj, colObj, t.cellSize3D);
-    t.piezaAnimando_ = t.elemental_;
-    t.modoJuegoactual = ModoJuego::ANIMANDO_MOVIMIENTO;
+    t.modoJuegoactual = ModoJuego::COMBATE;
 }
 
 void Magia::EliminaMuerto(PiezaTablero* personaje_muerto_seleccionado, std::vector<PiezaTablero*>& Vector) {

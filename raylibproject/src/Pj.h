@@ -121,8 +121,8 @@ inline constexpr PjBoard Goblin = {
 };
 
 inline constexpr PjBoard Elemental = {
-    "bin/Resources/Djinni/SpriteDjinniStill_0001.png",
-    true, true, LUZ, tipo_pj::Djinni, 1   // reutiliza sprites Djinni, rango irrelevante
+    "bin/Resources/Elemental/SpriteElementalStill_0001.png",
+    true, true, LUZ, tipo_pj::Elemental, 1   // reutiliza sprites Djinni, rango irrelevante
 };
 
 } // namespace pjboard
