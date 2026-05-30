@@ -6,6 +6,7 @@
 #include <vector>
 #include <cmath>
 
+
 /*
  * Tablero.h - Tablero de juego 9x9 estilo Archon
  *
@@ -106,6 +107,7 @@ class Tablero
     Sound sfxSelectPiece{};
 
     friend class Magia;     // Magia necesita acceso directo al tablero para ejecutar hechizos
+    friend class Controlador_Tablero;
 
 public:
     Tablero();
@@ -131,6 +133,7 @@ public:
     void avanceCiclo();                             // Avanzar el ciclo de oscilacion de casillas cambiantes
     ModoJuego get_modoJuegoActual() { return modoJuegoactual; }
     void iniciaEstadoHechizos();                    // Detectar tecla M para entrar al modo hechizos
+  
 
     // --- Interfaz de combate (usada por raylibproject.cpp) ---
     bool combatePendiente() const { return combatePendiente_; }

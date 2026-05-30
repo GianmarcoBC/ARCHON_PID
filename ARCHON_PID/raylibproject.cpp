@@ -10,7 +10,7 @@
  */
 
 #include "raylib.h"
-#include "src/Tablero.h"
+#include "src/Controlador_Tablero.h"
 #include "src/PjMapping.h"
 #include "src/cuchau/Controlador_Combate.h"
 
@@ -26,8 +26,10 @@ int main()
     SetTargetFPS(60);
 
     // Crear e inicializar el tablero con todas las piezas en posicion inicial
-    Tablero tablero;
+   /* Tablero tablero;
     tablero.inicializarTablero();
+*/
+    Controlador_Tablero ctablero(true,1); //// El bool primero cambia si hay IA o no, tambien hay que cambiarlo mas abajo en logicacontrolador
 
     // Puntero al combate activo (nullptr cuando no hay combate en curso)
     ControladorCombate* combate = nullptr;
@@ -35,19 +37,19 @@ int main()
     while (!WindowShouldClose())
     {
         // ========================= LOGICA =========================
-        if (tablero.get_modoJuegoActual() == ModoJuego::GAME_OVER)
+        if (ctablero.cget_modoJuegoActual() == ModoJuego::GAME_OVER)
         {
             if (IsKeyPressed(KEY_ENTER)) break;  // sale del bucle y cierra el juego
         }
-        else if (tablero.get_modoJuegoActual() == ModoJuego::COMBATE)
+        else if (ctablero.cget_modoJuegoActual() == ModoJuego::COMBATE)
         {
             // Cuando el tablero detecta un ataque, creamos el ControladorCombate
             // usando los datos de combate (Pj_info) de ambas piezas enfrentadas
-            if (combate == nullptr && tablero.combatePendiente())
+            if (combate == nullptr && ctablero.ccombatePendiente())
             {
                 // Mapear tipo_pj del tablero -> Pj_info con stats/sprites de combate
-                Pj_info pj1 = getCombatInfo(tablero.getAtacante()->get_ID());
-                Pj_info pj2 = getCombatInfo(tablero.getDefensor()->get_ID());
+                Pj_info pj1 = getCombatInfo(ctablero.getID_atacante());
+                Pj_info pj2 = getCombatInfo(ctablero.getID_defensor());
 
                 // vsIA=true: el defensor es controlado por IA, dificultad=1 (normal)
                 combate = new ControladorCombate(pj1, pj2, true, 1);
@@ -65,7 +67,7 @@ int main()
                     bool ganaAtacante = (combate->GetWinner() == 1);
 
                     // Resolver consecuencias en el tablero (mover/eliminar piezas)
-                    tablero.resolverCombate(ganaAtacante);
+                    ctablero.cresolverCombate(ganaAtacante);
                     delete combate;
                     combate = nullptr;
                 }
@@ -74,14 +76,14 @@ int main()
         else
         {
             // Modo tablero: turnos, movimiento de piezas, hechizos, deteccion de victoria
-            tablero.LogicaTablero();
+           ctablero.Logica_controlador(true); //True si hay IA false si no la hay
         }
 
         // ========================= DIBUJO =========================
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
-        if (tablero.get_modoJuegoActual() == ModoJuego::COMBATE && combate != nullptr)
+        if (ctablero.cget_modoJuegoActual() == ModoJuego::COMBATE && combate != nullptr)
         {
             // Dibujar escena de combate 3D (arena, personajes, proyectiles, HUD)
             combate->Draw();
@@ -89,7 +91,7 @@ int main()
         else
         {
             // Dibujar tablero 2D (casillas, piezas, indicadores)
-            tablero.Draw();
+            ctablero.draw();
         }
 
         EndDrawing();
