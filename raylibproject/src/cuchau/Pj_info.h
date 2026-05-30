@@ -103,7 +103,7 @@ inline const Pj_info MH = {
     "bin/Resources/MH/SpriteMHATK_0003shadow.png"},
 
     "bin/Resources/MH/MHATK.png",
-    "bin/Resources/MH/RaspberryPIMH.wav",
+    "bin/Resources/MH/MHFX.wav",
     Velocidad_media,
     Vida_media,
     Fuerza_alta,
@@ -271,7 +271,7 @@ inline const Pj_info Unicorn = {
     "bin/Resources/Unicorn/SpriteUnicornATK_0004shadow.png"},
 
     "bin/Resources/Unicorn/UnicornATK.png",
-    "bin/Resources/Valkyrie/magicspearfx.wav",
+    "bin/Resources/Unicorn/UnicornFX.wav",
     Velocidad_media,
     Vida_media,
     Fuerza_media,
@@ -448,7 +448,7 @@ inline const Pj_info Platero = {
     "bin/Resources/Platero/SpritePlateroATK_0005shadow.png"},
 
     "bin/Resources/Platero/PlateroATK.png",
-    "bin/Resources/Platero/CorrectoPlatero.wav",
+    "bin/Resources/Platero/PlateroFX.wav",
     Velocidad_media,
     Vida_media,
     Fuerza_media,
@@ -489,8 +489,8 @@ inline const Pj_info ShapeShifter = {
     "bin/Resources/ShapeShifter/SpriteShapeShifterATK_0003shadow.png",
     "bin/Resources/ShapeShifter/SpriteShapeShifterATK_0004shadow.png"},
 
-    "bin/Resources/Shapeshifter/ShapeshifterATK.png",
-    "bin/Resources/Banshee/scream.wav",
+    "bin/Resources/ShapeShifter/ShapeshifterATK.png",
+    "bin/Resources/Banshee/BansheeFX.wav",
     Velocidad_media,
     Vida_alta,
     Fuerza_alta,
@@ -532,7 +532,7 @@ inline const Pj_info Troll = {
     "bin/Resources/Troll/SpriteTrollATK_0004shadow.png"},
 
     "bin/Resources/Troll/TrollATK.png",
-    "bin/Resources/Troll/trollFX.wav",
+    "bin/Resources/Troll/trollfx.wav",
     Velocidad_baja,
     Vida_alta,
     Fuerza_alta,
@@ -574,7 +574,7 @@ inline const Pj_info Dragon = {
     "bin/Resources/Dragon/SpriteDragonATK_0004shadow.png"},
 
     "bin/Resources/Dragon/DragonATK.png",
-    "bin/Resources/Dragon/DragonFX.wav",
+    "bin/Resources/Dragon/dragonfx.wav",
     Velocidad_media,
     Vida_muyalta,
     Fuerza_muyalta,
@@ -616,7 +616,7 @@ inline const Pj_info Basilisk = {
     "bin/Resources/Basilisk/SpriteBasiliskATK_0005shadow.png"},
 
     "bin/Resources/Basilisk/BasiliskATK.png",
-    "bin/Resources/Basilisk/BasiliskFX.wav",
+    "bin/Resources/Basilisk/basiliskfx.wav",
     Velocidad_media,
     Vida_baja,
     Fuerza_alta,
@@ -759,27 +759,27 @@ inline const Pj_info Elemental = {
     "bin/Resources/Elemental/SpriteElementalMov_0002.png",
     "bin/Resources/Elemental/SpriteElementalMov_0003.png"},
 
-    {"bin/Resources/Elemental/SpriteElementalMov_0001shadow.png",
-    "bin/Resources/Elemental/SpriteElementalMov_0002shadow.png",
-    "bin/Resources/Elemental/SpriteElementalMov_0003shadow.png"},
+    {"bin/Resources/Djinni/SpriteDjinniMov_0001shadow.png",
+    "bin/Resources/Djinni/SpriteDjinniMov_0002shadow.png",
+    "bin/Resources/Djinni/SpriteDjinniMov_0003shadow.png"},
 
     {"bin/Resources/Elemental/SpriteElementalStill_0001.png",
     "bin/Resources/Elemental/SpriteElementalStill_0002.png",
     "bin/Resources/Elemental/SpriteElementalStill_0003.png"},
 
-    {"bin/Resources/Elemental/SpriteElementalStill_0001shadow.png",
-    "bin/Resources/Elemental/SpriteElementalStill_0002shadow.png",
-    "bin/Resources/Elemental/SpriteElementalStill_0003shadow.png"},
+    {"bin/Resources/Djinni/SpriteDjinniStill_0001shadow.png",
+    "bin/Resources/Djinni/SpriteDjinniStill_0002shadow.png",
+    "bin/Resources/Djinni/SpriteDjinniStill_0003shadow.png"},
 
     {"bin/Resources/Elemental/SpriteElementalATK_0001.png",
     "bin/Resources/Elemental/SpriteElementalATK_0002.png",
     "bin/Resources/Elemental/SpriteElementalATK_0003.png",
     "bin/Resources/Elemental/SpriteElementalATK_0004.png"},
 
-    {"bin/Resources/Elemental/SpriteElementalATK_0001shadow.png",
-    "bin/Resources/Elemental/SpriteElementalATK_0002shadow.png",
-    "bin/Resources/Elemental/SpriteElementalATK_0003shadow.png",
-    "bin/Resources/Elemental/SpriteElementalATK_0004shadow.png"},
+    {"bin/Resources/Djinni/SpriteDjinniATK_0001shadow.png",
+    "bin/Resources/Djinni/SpriteDjinniATK_0002shadow.png",
+    "bin/Resources/Djinni/SpriteDjinniATK_0003shadow.png",
+    "bin/Resources/Djinni/SpriteDjinniATK_0004shadow.png"},
 
     "bin/Resources/Djinni/DjinniATK.png",
     "bin/Resources/Djinni/DjinniFX.wav",

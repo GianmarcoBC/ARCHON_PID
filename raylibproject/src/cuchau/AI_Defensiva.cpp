@@ -13,7 +13,7 @@ AI_Defensiva::AI_Defensiva(Personaje& IA, Personaje& Jugador, Rectangle arena)
 {
     delay_IA = 0.12f;        // Intervalo de decision: ~120ms (nivel medio entre Facil y Agresiva)
     distancia_combate_optima *= 1.3f; // Aumenta la distancia optima: prefiere combatir desde lejos
-    aimbot = 0.97f;                   // Umbral de punteria alto: solo dispara apuntando casi perfecto
+    aimbot = 0.80f;                   // Umbral de punteria bajo: dispara frecuentemente
 }
 
 // ============================================================================

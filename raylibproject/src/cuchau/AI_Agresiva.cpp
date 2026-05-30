@@ -11,7 +11,7 @@ AI_Agresiva::AI_Agresiva(Personaje& IA, Personaje& Jugador, Rectangle arena)
 {
     delay_IA = 0.04f;       // Intervalo de decision: ~40ms (el mas rapido de los tres niveles)
     distancia_combate_optima *= 0.6f; // Reduce la distancia optima para mantenerse pegado al jugador
-    aimbot = 0.85f;                  // Umbral de punteria bajo: dispara aunque no apunte perfecto
+    aimbot = 0.60f;                  // Umbral de punteria minimo: dispara casi constantemente
 }
 
 //  decide — Estrategia agresiva: presion maxima, sin esquiva

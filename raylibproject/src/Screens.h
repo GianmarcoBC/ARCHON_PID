@@ -39,8 +39,12 @@ public:
 class ConfigJuegoCompletoScreen : public Screen {
     void drawPanelBando(GameState& gs, float ox);
     void drawPanelDificultad(GameState& gs, float ox);
+    void drawSlotPicker(GameState& gs, float panX, float panY, float panW, float panH, float t);
     std::string nombrePartida = "Partida Nueva";
     bool editandoNombre = false;
+    int  slotCursor = 0;
+    int  hoverBando = -1;   // -1 = ninguno bajo el mouse
+    int  hoverDifi  = -1;
 public:
     ~ConfigJuegoCompletoScreen() override = default;
     void Draw(GameState& gs)        override;
@@ -107,6 +111,8 @@ class PausaScreen : public Screen {
     int  submenu = 0;       // 0=menú principal, 1=eligiendo slot para guardar
     int  slotCursor = 0;    // cursor dentro del selector de slots
     bool esTablero = false; // true=guardando tablero, false=guardando combate
+    bool editandoNombre = false;
+    std::string nombreGuardado = "";
     void DrawSlotPicker(GameState& gs, float panX, float panY, float panW, float panH, float t);
 public:
     ~PausaScreen() override = default;

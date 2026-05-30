@@ -111,10 +111,21 @@ class Tablero
     bool reproduciendoInicio{ true };  // true = suena Inicio, false = suena Fin
     Sound sfxSelectPiece{};
 
+    // --- Efectos visuales de hechizos ---
+    struct SpellEffect {
+        int fila, columna;      // Posicion en el tablero
+        Color color;            // Color del efecto
+        float timer;            // Tiempo restante
+        float duration;         // Duracion total (para calcular alpha)
+        bool esEsfera;          // true=esfera, false=cubo elevado
+    };
+    std::vector<SpellEffect> spellEffects;
+
     friend class Magia;     // Magia necesita acceso directo al tablero para ejecutar hechizos
     friend class Controlador_Tablero;
 
 public:
+    void addSpellEffect(int fila, int columna, Color color, float duration = 1.5f, bool esfera = false);
     Tablero();
     ~Tablero();
 

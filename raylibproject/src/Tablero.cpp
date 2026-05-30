@@ -4,6 +4,11 @@
 #include <cmath>
 #include <string>
 #include <sstream>
+#include <algorithm>
+
+void Tablero::addSpellEffect(int fila, int columna, Color color, float duration, bool esfera) {
+    spellEffects.push_back({ fila, columna, color, duration, duration, esfera });
+}
 
 // Constructor: configura dimensiones del tablero y carga recursos 3D
 Tablero::Tablero() : magiaTablero() {
@@ -310,6 +315,29 @@ void Tablero::Draw() {
         }
     }
     EndShaderMode();
+
+    // 6b. Efectos visuales de hechizos
+    for (auto& fx : spellEffects) {
+        float alpha = fx.timer / fx.duration;
+        float pulse = 0.8f + 0.2f * sinf((fx.duration - fx.timer) * 12.0f);
+        unsigned char a = (unsigned char)(alpha * 180.0f);
+        Color c = { fx.color.r, fx.color.g, fx.color.b, a };
+        float x = (fx.columna - 4.0f) * cellSize3D;
+        float z = (fx.fila - 4.0f) * cellSize3D;
+        float y = 0.5f + (1.0f - alpha) * 2.0f;  // Sube al desvanecerse
+        float size = 1.2f * pulse;
+        if (fx.esEsfera)
+            DrawSphere({ x, y, z }, size * 0.6f, c);
+        else
+            DrawCube({ x, y, z }, size, size, size, c);
+        // Anillo de luz en el suelo
+        DrawCylinder({ x, 0.05f, z }, size * 0.8f, size * 0.8f, 0.02f, 12, c);
+        fx.timer -= dt;
+    }
+    spellEffects.erase(
+        std::remove_if(spellEffects.begin(), spellEffects.end(),
+            [](const SpellEffect& fx) { return fx.timer <= 0.0f; }),
+        spellEffects.end());
 
     EndMode3D();
 
@@ -861,7 +889,8 @@ std::string Tablero::serializarEstado() const {
                 PiezaTablero* p = cuadricula[f][c];
                 s += std::to_string((int)p->get_ID()) + ":"
                    + std::to_string(p->get_equipo() ? 1 : 0) + ":"
-                   + std::to_string(p->get_imprison() ? 1 : 0);
+                   + std::to_string(p->get_imprison() ? 1 : 0) + ":"
+                   + std::to_string((int)p->get_vida());
             }
         }
     }
@@ -988,12 +1017,13 @@ void Tablero::deserializarEstado(const std::string& data) {
                     cuadricula[f][c] = nullptr;
                 }
                 else {
-                    // formato: tipo:equipo:imprison
-                    int tipo = 0, eq2 = 0, imp = 0;
-                    sscanf(celda.c_str(), "%d:%d:%d", &tipo, &eq2, &imp);
+                    // formato: tipo:equipo:imprison o tipo:equipo:imprison:vida
+                    int tipo = 0, eq2 = 0, imp = 0, vidaInt = -1;
+                    sscanf(celda.c_str(), "%d:%d:%d:%d", &tipo, &eq2, &imp, &vidaInt);
                     PjBoard pb = getBoardPj((tipo_pj)tipo);
                     cuadricula[f][c] = new PiezaTablero(pb, f, c, eq2 ? OSCURIDAD : LUZ);
                     if (imp) cuadricula[f][c]->set_imprison(true);
+                    if (vidaInt > 0) cuadricula[f][c]->set_vida((float)vidaInt);
                 }
                 idx++;
             }

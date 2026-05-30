@@ -1,6 +1,7 @@
 #include "Personaje.h"
 #include <cassert>
 #include <cmath>
+#include "rlgl.h"
 
 // ============================================================================
 //  Constructor — Inicializa un personaje con sus recursos graficos y de audio
@@ -156,18 +157,19 @@ void Personaje::Update(float dt)
 
 void Personaje::Draw(Camera camera) const
 {
+    bool flip = (l_dir.x < 0);
     switch (est) {
 	case EstadoAnimacion::MOV:
 		drawAnimation(camera, Frames_MOV, frameActual_Mov);
-        drawshadow({ pos3d.x, 0.01f, pos3d.z - Size3D / 2 }, shadow_MOV, frameActual_Mov);
+        drawshadow({ pos3d.x, 0.01f, pos3d.z - Size3D / 2 }, shadow_MOV, frameActual_Mov, flip);
 		break;
 	case EstadoAnimacion::STILL:
 		drawAnimation(camera, Frames_STILL, frameActual_Still);
-		drawshadow({ pos3d.x, 0.01f, pos3d.z - Size3D / 2 }, shadow_STILL, frameActual_Still);
+		drawshadow({ pos3d.x, 0.01f, pos3d.z - Size3D / 2 }, shadow_STILL, frameActual_Still, flip);
 		break;
 	case EstadoAnimacion::ATK:
 		drawAnimation(camera, Frames_ATK, frameActual_Atk);
-		drawshadow({ pos3d.x, 0.01f, pos3d.z - Size3D / 2 }, shadow_ATK, frameActual_Atk);
+		drawshadow({ pos3d.x, 0.01f, pos3d.z - Size3D / 2 }, shadow_ATK, frameActual_Atk, flip);
 		break;
     }
 
@@ -178,10 +180,13 @@ void Personaje::Draw(Camera camera) const
 //  Usa BLEND_MULTIPLIED para que la sombra se mezcle con el suelo
 //  oscureciendolo sin taparlo completamente.
 
-void Personaje::drawshadow(Vector3 shadowpos, const std::vector<Model>& shadowFrames, int frameIndex) const
+void Personaje::drawshadow(Vector3 shadowpos, const std::vector<Model>& shadowFrames, int frameIndex, bool flip) const
 {
     BeginBlendMode(BLEND_MULTIPLIED);
-    DrawModel(shadowFrames[frameIndex], shadowpos, 1.0f, WHITE);
+    if (flip) rlDisableBackfaceCulling();
+    float sx = flip ? -1.0f : 1.0f;
+    DrawModelEx(shadowFrames[frameIndex], shadowpos, {0, 1, 0}, 0.0f, {sx, 1, 1}, WHITE);
+    if (flip) rlEnableBackfaceCulling();
     EndBlendMode();
 }
 

@@ -42,7 +42,7 @@ void TableroScreen::OnEnter(GameState& gs) {
     dificultad = (int)gs.dificultadSel;
 
     // Determine which team the AI controls
-    if (!gs.boardStatePendiente.empty()) {
+    if (!gs.boardStatePendiente.empty() && gs.partidaActualIdx >= 0 && gs.partidaActualIdx < (int)gs.partidas.size()) {
         // Cargando partida: usar el equipoIA guardado
         equipoIA = gs.partidas[gs.partidaActualIdx].equipoIA;
     } else if (gs.bandoSel == BANDO_LUZ) {
@@ -111,15 +111,6 @@ void TableroScreen::Update(GameState& gs) {
                 else               pjP1.fuerza *= 1.25f;  // P1 es Oscuridad
             }
 
-            if (vsAI) {
-                combate = new ControladorCombate(pjP1, pjP2, true, dificultad);
-            }
-            else {
-                combate = new ControladorCombate(pjP1, pjP2, false, 0);
-            }
-
-
-            // Create combat: in board mode, AI always controls P2 if vsAI
             if (vsAI) {
                 combate = new ControladorCombate(pjP1, pjP2, true, dificultad);
             } else {

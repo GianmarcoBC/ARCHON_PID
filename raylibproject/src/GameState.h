@@ -261,14 +261,14 @@ struct GameState {
             {"Idioma",              0, 0,  1, true },
         };
         canciones = {
-            {"Skill Issue Bro",          "Archon OST","---","Menu Principal",     "bin/Resources/AAAudio/Musica/Menugnomo.mp3",           0.6f,0.5f,0.9f},
-            {"Espabila Julian",          "Archon OST","---","Batalla Epica",      "bin/Resources/AAAudio/Musica/ageofwar.mp3",            0.9f,0.2f,0.2f},
+            {"Polvora, Ira y Dominio",   "Archon OST","---","Menu Principal",     "bin/Resources/AAAudio/Musica/Menugnomo.mp3",           0.6f,0.5f,0.9f},
+            {"Lord Quesada's Theme",     "Archon OST","---","Batalla Epica",      "bin/Resources/AAAudio/Musica/ageofwar.mp3",            0.9f,0.2f,0.2f},
             {"The Peak",                 "Archon OST","---","Duelo Estrategico",  "bin/Resources/AAAudio/Musica/blackjack.mp3",           0.3f,0.7f,0.4f},
-            {"No Cap On God Bro",        "Archon OST","---","Creditos",           "bin/Resources/AAAudio/Musica/credits.mp3",             0.9f,0.85f,0.3f},
-            {"Bombardilo Coccodrillo",   "Archon OST","---","Victoria",           "bin/Resources/AAAudio/Musica/ifrith.mp3",              0.5f,0.1f,0.8f},
+            {"Sir Darlington's Lament",  "Archon OST","---","Creditos",           "bin/Resources/AAAudio/Musica/credits.mp3",             0.9f,0.85f,0.3f},
+            {"El Lugar de las Raices",   "Archon OST","---","Victoria",           "bin/Resources/AAAudio/Musica/ifrith.mp3",              0.5f,0.1f,0.8f},
             {"TIA Portal Contraataca",   "Archon OST","---","Tablero Inicio",     "bin/Resources/AAAudio/Musica/MusciaTablero Inicio.mp3",0.8f,0.4f,0.1f},
             {"Oh Mi Dios",               "Archon OST","---","Tablero Final",      "bin/Resources/AAAudio/Musica/slimshady.mp3",           0.4f,0.4f,0.6f},
-            {"Santa Vaca",               "Archon OST","---","Batalla PvP",        "bin/Resources/AAAudio/Musica/MusicaBatalla1V1.mp3",    0.7f,0.3f,0.3f},
+            {"El Dominio de Laplace",    "Archon OST","---","Batalla PvP",        "bin/Resources/AAAudio/Musica/MusicaBatalla1V1.mp3",    0.7f,0.3f,0.3f},
             {"Clase Padre",              "Archon OST","---","MH vs Platero",      "bin/Resources/AAAudio/Musica/MusicaMagoMago.mp3",      0.4f,0.6f,0.9f},
             {"Esto es Cine Senores",     "Archon OST","---","Peon vs Mago",       "bin/Resources/AAAudio/Musica/MusicaPeonMago.mp3",      0.6f,0.8f,0.4f},
         };

@@ -330,9 +330,10 @@ void ConfigJuegoCompletoScreen::OnEnter(GameState& gs) {
     gs.configJCFoco   = 0;
     nombrePartida = "Partida Nueva";
     editandoNombre = false;
+    slotCursor = 0;
 }
 
-void ConfigJuegoCompletoScreen::drawPanelBando(GameState& gs, float ox) {    
+void ConfigJuegoCompletoScreen::drawPanelBando(GameState& gs, float ox) {
     float t=gs.tiempo, panX=60+ox, panY=110, panW=300, panH=330;
     drawPanel(panX,panY,panW,panH, 0.65f,0.5f,0.08f, 0.06f,0.04f,0.02f);
     Drawing::texto18(panX+20, panY+panH-25, "ELIGE TU BANDO", CFloat(0.8f,0.7f,0.15f));
@@ -344,15 +345,16 @@ void ConfigJuegoCompletoScreen::drawPanelBando(GameState& gs, float ox) {
 
     for(int i=0;i<3;i++){
         float by=panY+panH-80-i*82.f;
-        bool sel=(i==gs.opcionBandoSel), foco=(gs.configJCFoco==0);
-        // Fondo de fila
+        bool sel=(i==gs.opcionBandoSel), hov=(i==hoverBando && !sel);
+        bool foco=(gs.configJCFoco==0);
+        // Fondo de fila: seleccionado > hover > normal
+        float bgMul = sel ? 0.22f : (hov ? 0.14f : 0.07f);
         rlBegin(RL_QUADS);
-        rlColor4f(cols[i][0]*(sel?0.22f:0.07f),
-                  cols[i][1]*(sel?0.22f:0.07f),
-                  cols[i][2]*(sel?0.22f:0.07f),0.9f);
+        rlColor4f(cols[i][0]*bgMul, cols[i][1]*bgMul, cols[i][2]*bgMul, 0.9f);
         rlVertex2f(panX+12,by-28); rlVertex2f(panX+panW-12,by-28);
         rlVertex2f(panX+panW-12,by+28); rlVertex2f(panX+12,by+28);
         rlEnd();
+        // Borde: seleccionado = animado grueso, hover = fino estático
         if(sel&&foco){
             float al=0.5f+0.4f*sinf(t*0.012f);
             rlSetLineWidth(2); rlBegin(RL_LINES);
@@ -362,15 +364,24 @@ void ConfigJuegoCompletoScreen::drawPanelBando(GameState& gs, float ox) {
             rlVertex2f(panX+panW-12,by+28); rlVertex2f(panX+12,by+28);
             rlVertex2f(panX+12,by+28); rlVertex2f(panX+12,by-28);
             rlEnd();
+        } else if(hov){
+            rlSetLineWidth(1); rlBegin(RL_LINES);
+            rlColor4f(cols[i][0]*0.4f,cols[i][1]*0.4f,cols[i][2]*0.4f,0.7f);
+            rlVertex2f(panX+12,by-28); rlVertex2f(panX+panW-12,by-28);
+            rlVertex2f(panX+panW-12,by-28); rlVertex2f(panX+panW-12,by+28);
+            rlVertex2f(panX+panW-12,by+28); rlVertex2f(panX+12,by+28);
+            rlVertex2f(panX+12,by+28); rlVertex2f(panX+12,by-28);
+            rlEnd();
         }
         // Icono de bando
-        if(i==0)      Drawing::iconoEspada(panX+35,by, sel?CFloat(cols[i][0],cols[i][1],cols[i][2]):CFloat(0.5f,0.5f,0.5f));
-        else if(i==1) Drawing::iconoOpciones(panX+35,by, sel?CFloat(cols[i][0],cols[i][1],cols[i][2]):CFloat(0.5f,0.5f,0.5f));
-        else          Drawing::iconoLibro(panX+35,by, sel?CFloat(cols[i][0],cols[i][1],cols[i][2]):CFloat(0.5f,0.5f,0.5f));
+        bool activo = sel || hov;
+        if(i==0)      Drawing::iconoEspada(panX+35,by, activo?CFloat(cols[i][0],cols[i][1],cols[i][2]):CFloat(0.5f,0.5f,0.5f));
+        else if(i==1) Drawing::iconoOpciones(panX+35,by, activo?CFloat(cols[i][0],cols[i][1],cols[i][2]):CFloat(0.5f,0.5f,0.5f));
+        else          Drawing::iconoLibro(panX+35,by, activo?CFloat(cols[i][0],cols[i][1],cols[i][2]):CFloat(0.5f,0.5f,0.5f));
 
         float escL=sel&&foco?1.1f+sinf(t*0.008f)*0.03f:1.f;
         rlPushMatrix(); rlTranslatef(panX+65,by,0); rlScalef(escL,escL,1);
-        Drawing::texto18(0,-7,labels[i], sel?CFloat(cols[i][0],cols[i][1],cols[i][2]):CFloat(0.55f,0.5f,0.4f));
+        Drawing::texto18(0,-7,labels[i], activo?CFloat(cols[i][0],cols[i][1],cols[i][2]):CFloat(0.55f,0.5f,0.4f));
         rlPopMatrix();
         if(sel&&foco) Drawing::cursorAnimado(panX+20,by,t);
     }
@@ -393,11 +404,11 @@ void ConfigJuegoCompletoScreen::drawPanelDificultad(GameState& gs, float ox) {
     const char* noms[3]={"PLATERO","MH","SANSEGUNDO"};
     for(int i=0;i<3;i++){
         float by=panY+panH-72-i*82.f;
-        bool sel=(i==gs.opcionDifiSel),foco=(gs.configJCFoco==1);
+        bool sel=(i==gs.opcionDifiSel), hov=(i==hoverDifi && !sel);
+        bool foco=(gs.configJCFoco==1);
+        float bgMul = sel ? 0.18f : (hov ? 0.12f : 0.06f);
         rlBegin(RL_QUADS);
-        rlColor4f(cols[i][0]*(sel?0.18f:0.06f),
-                  cols[i][1]*(sel?0.18f:0.06f),
-                  cols[i][2]*(sel?0.18f:0.06f),0.9f);
+        rlColor4f(cols[i][0]*bgMul, cols[i][1]*bgMul, cols[i][2]*bgMul, 0.9f);
         rlVertex2f(panX+12,by-20); rlVertex2f(panX+panW-12,by-20);
         rlVertex2f(panX+panW-12,by+20); rlVertex2f(panX+12,by+20);
         rlEnd();
@@ -410,22 +421,101 @@ void ConfigJuegoCompletoScreen::drawPanelDificultad(GameState& gs, float ox) {
             rlVertex2f(panX+panW-12,by+20); rlVertex2f(panX+12,by+20);
             rlVertex2f(panX+12,by+20); rlVertex2f(panX+12,by-20);
             rlEnd();
+        } else if(hov){
+            rlSetLineWidth(1); rlBegin(RL_LINES);
+            rlColor4f(cols[i][0]*0.4f,cols[i][1]*0.4f,cols[i][2]*0.4f,0.7f);
+            rlVertex2f(panX+12,by-20); rlVertex2f(panX+panW-12,by-20);
+            rlVertex2f(panX+panW-12,by-20); rlVertex2f(panX+panW-12,by+20);
+            rlVertex2f(panX+panW-12,by+20); rlVertex2f(panX+12,by+20);
+            rlVertex2f(panX+12,by+20); rlVertex2f(panX+12,by-20);
+            rlEnd();
         }
         // Estrellas como indicador de nivel
+        bool activo = sel || hov;
         for(int s=0;s<=i;s++)
             Drawing::circulo(panX+panW-20-s*14.f,by,4,8,
-                sel?CFloat(cols[i][0],cols[i][1],cols[i][2]):CFloat(cols[i][0]*0.45f,cols[i][1]*0.45f,cols[i][2]*0.45f));
+                activo?CFloat(cols[i][0],cols[i][1],cols[i][2]):CFloat(cols[i][0]*0.45f,cols[i][1]*0.45f,cols[i][2]*0.45f));
         float escL=sel&&foco?1.1f+sinf(t*0.008f)*0.03f:1.f;
         rlPushMatrix(); rlTranslatef(panX+45,by,0); rlScalef(escL,escL,1);
-        Drawing::texto18(0,-7,noms[i], sel?CFloat(cols[i][0],cols[i][1],cols[i][2]):CFloat(0.5f,0.45f,0.4f));
+        Drawing::texto18(0,-7,noms[i], activo?CFloat(cols[i][0],cols[i][1],cols[i][2]):CFloat(0.5f,0.45f,0.4f));
         rlPopMatrix();
         if(sel&&foco) Drawing::cursorAnimado(panX+20,by,t);
+    }
+}
+
+void ConfigJuegoCompletoScreen::drawSlotPicker(GameState& gs, float panX, float panY, float panW, float panH, float t) {
+    Drawing::texto18(panX+panW/2-80, panY+panH-30, "ELEGIR SLOT DE GUARDADO", CFloat(0.4f,1.f,0.4f));
+    drawSeparador(panX+20,panY+panH-48,panX+panW-20, 0.3f,0.6f,0.3f);
+
+    auto slots = SaveSystem::ObtenerSlotsTablero();
+    for (int i = 0; i < 4; i++) {
+        float y = panY+panH-80-i*68.f;
+        bool sel = (i == slotCursor);
+        float h = 58;
+        rlBegin(RL_QUADS);
+        rlColor4f(sel?0.06f:0.03f, sel?0.12f:0.05f, sel?0.06f:0.03f, 0.95f);
+        rlVertex2f(panX+20,y-h/2); rlVertex2f(panX+panW-20,y-h/2);
+        rlVertex2f(panX+panW-20,y+h/2); rlVertex2f(panX+20,y+h/2);
+        rlEnd();
+        if (sel) {
+            float al=0.5f+0.4f*sinf(t*0.012f);
+            rlSetLineWidth(2); rlBegin(RL_LINES);
+            rlColor4f(0.3f*al,0.8f*al,0.3f*al,1);
+            rlVertex2f(panX+20,y-h/2); rlVertex2f(panX+panW-20,y-h/2);
+            rlVertex2f(panX+panW-20,y-h/2); rlVertex2f(panX+panW-20,y+h/2);
+            rlVertex2f(panX+panW-20,y+h/2); rlVertex2f(panX+20,y+h/2);
+            rlVertex2f(panX+20,y+h/2); rlVertex2f(panX+20,y-h/2);
+            rlEnd();
+            Drawing::cursorAnimado(panX+28,y,t);
+        }
+        std::string label = "SLOT " + std::to_string(i+1);
+        if (slots[i].valida) {
+            Drawing::texto18(panX+45,y+8, label+": "+slots[i].nombre,
+                sel?CFloat(1,0.95f,0.6f):CFloat(0.7f,0.65f,0.5f));
+            Drawing::texto12(panX+45,y-10, slots[i].fecha+" | "+slots[i].bando,
+                CFloat(0.5f,0.5f,0.4f));
+        } else {
+            Drawing::texto18(panX+45,y, label+" - vacio",
+                sel?CFloat(0.7f,0.9f,0.7f):CFloat(0.5f,0.5f,0.4f));
+        }
     }
 }
 
 void ConfigJuegoCompletoScreen::Draw(GameState& gs) {
     float t=gs.tiempo, ox=gs.configJCOffset;
     Background::library(gs);
+
+    bool esPVP = (gs.opcionSelModoSel == 0);
+
+    if (esPVP) {
+        // PVP: solo slot picker + nombre
+        float panX=140+ox, panY=80, panW=520, panH=400;
+        drawPanel(panX,panY,panW,panH, 0.65f,0.5f,0.08f, 0.05f,0.03f,0.01f,0.90f);
+        drawTitulo("NUEVA PARTIDA PVP", 400+ox, panY+panH-10, t, 0.85f,0.75f,0.15f);
+        drawSlotPicker(gs, panX, panY, panW, panH, t);
+        // Campo de nombre
+        float nbX=panX+40, nbY=panY+10, nbW=panW-80, nbH=32;
+        drawPanel(nbX,nbY,nbW,nbH, 0.08f,0.06f,0.02f, 0.04f,0.03f,0.01f);
+        if(editandoNombre){
+            float al=0.5f+0.4f*sinf(t*0.012f);
+            rlSetLineWidth(2); rlBegin(RL_LINES);
+            rlColor4f(0.9f*al,0.8f*al,0.2f*al,1);
+            rlVertex2f(nbX,nbY); rlVertex2f(nbX+nbW,nbY);
+            rlVertex2f(nbX+nbW,nbY); rlVertex2f(nbX+nbW,nbY+nbH);
+            rlVertex2f(nbX+nbW,nbY+nbH); rlVertex2f(nbX,nbY+nbH);
+            rlVertex2f(nbX,nbY+nbH); rlVertex2f(nbX,nbY);
+            rlEnd();
+        }
+        Drawing::texto12(nbX-70,nbY+10,"NOMBRE:", editandoNombre?CFloat(1,0.9f,0.5f):CFloat(0.7f,0.6f,0.4f));
+        std::string display = nombrePartida;
+        if(editandoNombre && ((int)(t*0.006f))%2==0) display += "_";
+        Drawing::texto18(nbX+10,nbY+7,display, editandoNombre?CFloat(1,0.95f,0.7f):CFloat(0.8f,0.75f,0.55f));
+        Drawing::instrucciones(panX+40,panY-15,"W/S: Navegar    TAB: Nombre    ENTER: Confirmar    ESC: Volver",t);
+        Drawing::botonVolver(60+ox, 565, t);
+        return;
+    }
+
+    // IA: pantalla original con bando + dificultad
     drawPanel(45+ox,95,710,370, 0.65f,0.5f,0.08f, 0.05f,0.03f,0.01f,0.90f);
     drawTitulo("CONFIGURACION DE PARTIDA", 400+ox, 488, t, 0.85f,0.75f,0.15f);
     drawSeparador(60+ox,465,740+ox, 0.55f,0.4f,0.07f);
@@ -483,6 +573,42 @@ void ConfigJuegoCompletoScreen::HandleInput(GameState& gs) {
         return;
     }
 
+    bool esPVP = (gs.opcionSelModoSel == 0);
+
+    if (esPVP) {
+        // PVP: navegar slots
+        if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP))
+            { if (--slotCursor < 0) slotCursor = 3; }
+        if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN))
+            { if (++slotCursor > 3) slotCursor = 0; }
+        if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_KP_ENTER)) {
+            gs.bandoSel      = BANDO_RANDOM;
+            gs.dificultadSel = (Dificultad)0;
+            gs.nombreGuardado = nombrePartida;
+            PartidaGuardada p;
+            p.slot = slotCursor;
+            p.nombre = nombrePartida;
+            p.modo = "Juego Completo";
+            p.bando = "Random";
+            p.dificultad = 0;
+            p.vsAI = false;
+            p.valida = true;
+            time_t ahora = time(nullptr);
+            char fechaBuf[32];
+            struct tm tmInfo;
+            localtime_s(&tmInfo, &ahora);
+            strftime(fechaBuf, sizeof(fechaBuf), "%d/%m/%Y %H:%M", &tmInfo);
+            p.fecha = fechaBuf;
+            SaveSystem::GuardarSlotTablero(p);
+            gs.partidaActualIdx = slotCursor;
+            SaveSystem::cargarTodas(gs);
+            transicion(gs, TABLERO);
+        }
+        if (IsKeyPressed(KEY_ESCAPE)) transicion(gs, SELECCION_MODO);
+        return;
+    }
+
+    // IA: pantalla original
     bool esIA = (gs.opcionSelModoSel == 1);
     // A/D cambian el panel activo (solo si hay IA que configurar)
     if (IsKeyPressed(KEY_A) || IsKeyPressed(KEY_LEFT))
@@ -539,15 +665,77 @@ void ConfigJuegoCompletoScreen::HandleInput(GameState& gs) {
 void ConfigJuegoCompletoScreen::HandleMouse(GameState& gs) {
     float mxv=(float)GetMouseX()*800.f/GetScreenWidth(),myv=600.f-(float)GetMouseY()*600.f/GetScreenHeight(),ox=gs.configJCOffset;
     bool clicked=IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+    bool moved = (GetMouseDelta().x != 0 || GetMouseDelta().y != 0);
     if(clicked && mxv>40&&mxv<135&&myv>543&&myv<589){ transicion(gs,SELECCION_MODO); return; }
-    // Hover: update focus and selection
+
+    bool esPVP = (gs.opcionSelModoSel == 0);
+
+    if (esPVP) {
+        float panX=140+ox, panY=80, panW=520, panH=400;
+        // Click en slots
+        for (int i = 0; i < 4; i++) {
+            float y = panY+panH-80-i*68.f;
+            float h = 58;
+            if (mxv>panX+20&&mxv<panX+panW-20&&myv>y-h/2&&myv<y+h/2) {
+                if (moved) slotCursor = i;
+                if (clicked) {
+                    slotCursor = i;
+                    // Confirmar directamente al hacer click en un slot
+                    gs.bandoSel = BANDO_RANDOM;
+                    gs.dificultadSel = (Dificultad)0;
+                    gs.nombreGuardado = nombrePartida;
+                    PartidaGuardada p;
+                    p.slot = slotCursor;
+                    p.nombre = nombrePartida;
+                    p.modo = "Juego Completo";
+                    p.bando = "Random";
+                    p.dificultad = 0;
+                    p.vsAI = false;
+                    p.valida = true;
+                    time_t ahora = time(nullptr);
+                    char fechaBuf[32];
+                    struct tm tmInfo;
+                    localtime_s(&tmInfo, &ahora);
+                    strftime(fechaBuf, sizeof(fechaBuf), "%d/%m/%Y %H:%M", &tmInfo);
+                    p.fecha = fechaBuf;
+                    SaveSystem::GuardarSlotTablero(p);
+                    gs.partidaActualIdx = slotCursor;
+                    SaveSystem::cargarTodas(gs);
+                    transicion(gs, TABLERO);
+                    return;
+                }
+            }
+        }
+        // Click en campo nombre
+        float nbX=panX+40, nbY=panY+10, nbW=panW-80, nbH=32;
+        if(clicked && mxv>nbX&&mxv<nbX+nbW&&myv>nbY&&myv<nbY+nbH)
+            editandoNombre = true;
+        return;
+    }
+
+    // IA: pantalla original
+    // Hover: resaltar sin seleccionar; Click: seleccionar
+    hoverBando = -1;
+    hoverDifi  = -1;
     if(mxv>60+ox&&mxv<360+ox&&myv>110&&myv<440){
-        gs.configJCFoco=0;
-        for(int i=0;i<3;i++){float by=440-80-i*82.f;if(myv>by-28&&myv<by+28) gs.opcionBandoSel=i;}
+        if(moved) gs.configJCFoco=0;
+        for(int i=0;i<3;i++){
+            float by=440-80-i*82.f;
+            if(myv>by-28&&myv<by+28){
+                hoverBando=i;
+                if(clicked) gs.opcionBandoSel=i;
+            }
+        }
     }
     if(mxv>440+ox&&mxv<740+ox&&myv>110&&myv<440){
-        gs.configJCFoco=1;
-        for(int i=0;i<3;i++){float by=440-72-i*82.f;if(myv>by-20&&myv<by+20) gs.opcionDifiSel=i;}
+        if(moved) gs.configJCFoco=1;
+        for(int i=0;i<3;i++){
+            float by=440-72-i*82.f;
+            if(myv>by-20&&myv<by+20){
+                hoverDifi=i;
+                if(clicked) gs.opcionDifiSel=i;
+            }
+        }
     }
     // Click: name field
     if(clicked && mxv>160+ox&&mxv<640+ox&&myv>68&&myv<100){
@@ -945,6 +1133,10 @@ void CargarPartidaScreen::accionCargar(GameState& gs) {
         gs.boardStatePendiente = p.boardState;
         gs.partidaActualIdx = p.slot;
         SaveSystem::cargarTodas(gs);
+        // Buscar el indice real en el vector (slot != indice si hay huecos)
+        for (int i = 0; i < (int)gs.partidas.size(); i++) {
+            if (gs.partidas[i].slot == p.slot) { gs.partidaActualIdx = i; break; }
+        }
         transicion(gs, TABLERO);
     } else if (seccionActiva == 1 && slotsCombate[gs.opcionSlotSel].valida) {
         SaveSystem::pendiente = slotsCombate[gs.opcionSlotSel];
@@ -1280,7 +1472,25 @@ void PausaScreen::DrawSlotPicker(GameState& gs, float panX, float panY, float pa
             }
         }
     }
-    Drawing::instrucciones(panX+40,panY+10,"W/S: Navegar    ENTER: Guardar    ESC: Cancelar",t);
+    // Campo de nombre
+    float nbX=panX+40, nbY=panY+42, nbW=panW-80, nbH=28;
+    drawPanel(nbX,nbY,nbW,nbH, 0.08f,0.06f,0.02f, 0.04f,0.03f,0.01f);
+    if(editandoNombre){
+        float al=0.5f+0.4f*sinf(t*0.012f);
+        rlSetLineWidth(2); rlBegin(RL_LINES);
+        rlColor4f(0.3f*al,0.8f*al,0.3f*al,1);
+        rlVertex2f(nbX,nbY); rlVertex2f(nbX+nbW,nbY);
+        rlVertex2f(nbX+nbW,nbY); rlVertex2f(nbX+nbW,nbY+nbH);
+        rlVertex2f(nbX+nbW,nbY+nbH); rlVertex2f(nbX,nbY+nbH);
+        rlVertex2f(nbX,nbY+nbH); rlVertex2f(nbX,nbY);
+        rlEnd();
+    }
+    Drawing::texto12(nbX-70,nbY+8,"NOMBRE:", editandoNombre?CFloat(0.4f,1.f,0.4f):CFloat(0.5f,0.5f,0.4f));
+    std::string displayNombre = nombreGuardado;
+    if(editandoNombre && ((int)(t*0.006f))%2==0) displayNombre += "_";
+    Drawing::texto18(nbX+10,nbY+5,displayNombre, editandoNombre?CFloat(0.7f,1.f,0.7f):CFloat(0.7f,0.7f,0.6f));
+
+    Drawing::instrucciones(panX+20,panY+10,"W/S: Navegar    TAB: Nombre    ENTER: Guardar    ESC: Cancelar",t);
 }
 
 void PausaScreen::OnEnter(GameState& gs) {
@@ -1289,6 +1499,8 @@ void PausaScreen::OnEnter(GameState& gs) {
     gs.guardadoOk     = false;
     submenu = 0;
     slotCursor = 0;
+    editandoNombre = false;
+    nombreGuardado = "";
 }
 
 void PausaScreen::Update(GameState& gs) {
@@ -1380,6 +1592,27 @@ void PausaScreen::Draw(GameState& gs) {
 void PausaScreen::HandleInput(GameState& gs) {
     // --- Submenu: elegir slot para guardar ---
     if (submenu == 1) {
+        // TAB alterna edición de nombre
+        if (IsKeyPressed(KEY_TAB)) {
+            editandoNombre = !editandoNombre;
+            return;
+        }
+        // Si estamos editando el nombre, capturar texto
+        if (editandoNombre) {
+            int ch = GetCharPressed();
+            while (ch > 0) {
+                if (ch >= 32 && ch < 127 && (int)nombreGuardado.size() < 30)
+                    nombreGuardado += (char)ch;
+                ch = GetCharPressed();
+            }
+            if (IsKeyPressed(KEY_BACKSPACE) && !nombreGuardado.empty())
+                nombreGuardado.pop_back();
+            if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_KP_ENTER))
+                editandoNombre = false;
+            if (IsKeyPressed(KEY_ESCAPE))
+                editandoNombre = false;
+            return;
+        }
         if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP)) {
             if (--slotCursor < 0) slotCursor = 3;
         }
@@ -1402,6 +1635,7 @@ void PausaScreen::HandleInput(GameState& gs) {
                 if (gs.partidaActualIdx >= 0 && gs.partidaActualIdx < (int)gs.partidas.size())
                     p = gs.partidas[gs.partidaActualIdx];
                 p.slot = slotCursor;
+                if (!nombreGuardado.empty()) p.nombre = nombreGuardado;
                 p.boardState = gs.tableroActivo->GuardarEstado();
                 p.valida = true;
                 time_t now = time(nullptr);
@@ -1415,7 +1649,7 @@ void PausaScreen::HandleInput(GameState& gs) {
             if (ok) { gs.guardadoOk = true; gs.guardadoTimer = 2.f; }
             submenu = 0;
         }
-        if (IsKeyPressed(KEY_ESCAPE)) submenu = 0;
+        if (IsKeyPressed(KEY_ESCAPE)) { editandoNombre = false; submenu = 0; }
         return;
     }
 
@@ -1435,6 +1669,12 @@ void PausaScreen::HandleInput(GameState& gs) {
         } else if (opt == "GUARDAR PARTIDA") {
             esTablero = (gs.estadoAnterior == TABLERO);
             slotCursor = 0;
+            editandoNombre = false;
+            // Pre-rellenar nombre con el de la partida actual
+            if (esTablero && gs.partidaActualIdx >= 0 && gs.partidaActualIdx < (int)gs.partidas.size())
+                nombreGuardado = gs.partidas[gs.partidaActualIdx].nombre;
+            else
+                nombreGuardado = gs.nombreGuardado.empty() ? "Partida" : gs.nombreGuardado;
             submenu = 1;
         } else if (opt == "OPCIONES") {
             gs.estadoActual = gs.estadoAnterior;
@@ -1461,6 +1701,12 @@ void PausaScreen::HandleMouse(GameState& gs) {
 
     // --- Submenu: slot picker con ratón ---
     if (submenu == 1) {
+        // Click en campo nombre
+        float nbX=panX+40, nbY=panY+42, nbW=panW-80, nbH=28;
+        if(clicked && mxv>nbX&&mxv<nbX+nbW&&myv>nbY&&myv<nbY+nbH){
+            editandoNombre = true;
+            return;
+        }
         for (int i = 0; i < 4; i++) {
             float y = panY+panH-80-i*68.f;
             float h = 58;
@@ -1482,6 +1728,7 @@ void PausaScreen::HandleMouse(GameState& gs) {
                         if (gs.partidaActualIdx >= 0 && gs.partidaActualIdx < (int)gs.partidas.size())
                             p = gs.partidas[gs.partidaActualIdx];
                         p.slot = slotCursor;
+                        if (!nombreGuardado.empty()) p.nombre = nombreGuardado;
                         p.boardState = gs.tableroActivo->GuardarEstado();
                         p.valida = true;
                         time_t now = time(nullptr);
@@ -1511,6 +1758,11 @@ void PausaScreen::HandleMouse(GameState& gs) {
                 else if(opt=="GUARDAR PARTIDA"){
                     esTablero = (gs.estadoAnterior == TABLERO);
                     slotCursor = 0;
+                    editandoNombre = false;
+                    if (esTablero && gs.partidaActualIdx >= 0 && gs.partidaActualIdx < (int)gs.partidas.size())
+                        nombreGuardado = gs.partidas[gs.partidaActualIdx].nombre;
+                    else
+                        nombreGuardado = gs.nombreGuardado.empty() ? "Partida" : gs.nombreGuardado;
                     submenu = 1;
                 }
                 else if(opt=="OPCIONES"){

@@ -117,7 +117,7 @@ public:
         }
 
         // Desfasar animacion: cada pieza arranca en un frame y timer distintos
-        if (!Frames_STILL.empty()) {
+        if (!Frames_STILL.empty() && ifila >= 0 && icolumna >= 0) {
             int offset = ifila * 9 + icolumna;
             frameActual = offset % (int)Frames_STILL.size();
             frameTimer = fmodf(offset * 0.07f, frameSpeed);

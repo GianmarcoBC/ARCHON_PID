@@ -9,6 +9,11 @@ void Magia::Shift_Time(PiezaTablero* personaje, Tablero &t) {
     }
     if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[2] == false) || (personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[2] == false)) {
         if (t.Ciclo != 0 && t.Ciclo != 4) t.avance = !t.avance;
+        // Efecto visual: destello violeta en todas las casillas cambiantes
+        for (int f = 0; f < 9; f++)
+            for (int c = 0; c < 9; c++)
+                if (t.get_colorCasilla(f, c) == ColorCasilla::CAMBIANTE)
+                    t.addSpellEffect(f, c, {180, 100, 255, 255}, 1.2f, true);
         t.turno = t.turno == LUZ ? OSCURIDAD : LUZ;
         t.personaje_seleccionado = nullptr;
         personaje->set_seleccionado(false);
@@ -30,11 +35,16 @@ void Magia::Teleport(PiezaTablero* personaje, Tablero& t) {
     if (t.personaje_seleccionado == nullptr) t.reset_MovimientosPosibles();
 
     if (personaje->get_ID() == tipo_pj::MH && t.turno == OSCURIDAD) {
+        // Efecto visual: destello azul en destino
+        if (t.personaje_seleccionado)
+            t.addSpellEffect(t.personaje_seleccionado->get_fila(), t.personaje_seleccionado->get_columna(), {50, 150, 255, 255}, 1.5f, true);
         t.personaje_seleccionado = nullptr;
         hechizosLuz[0] = true;
         t.modoJuegoactual = ModoJuego::NORMAL;
     }
     if (personaje->get_ID() == tipo_pj::Platero && t.turno == LUZ) {
+        if (t.personaje_seleccionado)
+            t.addSpellEffect(t.personaje_seleccionado->get_fila(), t.personaje_seleccionado->get_columna(), {50, 150, 255, 255}, 1.5f, true);
         t.personaje_seleccionado = nullptr;
         hechizosOscuridad[0] = true;
         t.modoJuegoactual = ModoJuego::NORMAL;
@@ -77,6 +87,7 @@ void Magia::Heal(PiezaTablero* personaje, Tablero& t) {
     if ((personaje->get_ID() == tipo_pj::MH && hechizosLuz[1] == false)) {
         if (t.personaje_seleccionado != nullptr) {
             if (t.personaje_seleccionado->get_equipo() == LUZ) {
+                t.addSpellEffect(t.personaje_seleccionado->get_fila(), t.personaje_seleccionado->get_columna(), {50, 255, 80, 255}, 1.5f, true);
                 t.personaje_seleccionado->heal();
                 t.turno = t.turno == LUZ ? OSCURIDAD : LUZ;
                 t.personaje_seleccionado = nullptr;
@@ -89,6 +100,7 @@ void Magia::Heal(PiezaTablero* personaje, Tablero& t) {
     if ((personaje->get_ID() == tipo_pj::Platero && hechizosOscuridad[1] == false)) {
         if (t.personaje_seleccionado != nullptr) {
             if (t.personaje_seleccionado->get_equipo() == OSCURIDAD) {
+                t.addSpellEffect(t.personaje_seleccionado->get_fila(), t.personaje_seleccionado->get_columna(), {50, 255, 80, 255}, 1.5f, true);
                 t.personaje_seleccionado->heal();
                 t.turno = t.turno == LUZ ? OSCURIDAD : LUZ;
                 t.personaje_seleccionado = nullptr;
@@ -122,6 +134,9 @@ void Magia::Exchange(PiezaTablero* personaje, Tablero& t) {
         int selfila = t.personaje_seleccionado->get_fila();
         int selcolumna = t.personaje_seleccionado->get_columna();
 
+        t.addSpellEffect(auxfila, auxcolumna, {255, 180, 30, 255}, 1.5f, false);
+        t.addSpellEffect(selfila, selcolumna, {255, 180, 30, 255}, 1.5f, false);
+
         t.cuadricula[auxfila][auxcolumna] = t.personaje_seleccionado;
         t.cuadricula[selfila][selcolumna] = auxiliar;
         t.cuadricula[auxfila][auxcolumna]->set_fila_columna(auxfila, auxcolumna);
@@ -152,6 +167,7 @@ void Magia::Imprison(PiezaTablero* personaje, Tablero& t) {
     if ((personaje->get_ID() == tipo_pj::MH)) {
         if (t.personaje_seleccionado != nullptr) {
             if (t.personaje_seleccionado->get_equipo() != LUZ) {
+                t.addSpellEffect(t.personaje_seleccionado->get_fila(), t.personaje_seleccionado->get_columna(), {255, 40, 40, 255}, 1.8f, false);
                 t.personaje_seleccionado->set_imprison(true);
                 t.turno = t.turno == LUZ ? OSCURIDAD : LUZ;
                 hechizosLuz[6] = true;
@@ -164,6 +180,7 @@ void Magia::Imprison(PiezaTablero* personaje, Tablero& t) {
     if ((personaje->get_ID() == tipo_pj::Platero)) {
         if (t.personaje_seleccionado != nullptr) {
             if (t.personaje_seleccionado->get_equipo() != OSCURIDAD) {
+                t.addSpellEffect(t.personaje_seleccionado->get_fila(), t.personaje_seleccionado->get_columna(), {255, 40, 40, 255}, 1.8f, false);
                 t.personaje_seleccionado->set_imprison(true);
                 t.turno = t.turno == LUZ ? OSCURIDAD : LUZ;
                 hechizosOscuridad[6] = true;
@@ -248,6 +265,7 @@ void Magia::Revive(PiezaTablero* personaje, Tablero& t) {
                 if (t.personaje_muerto_seleccionado->get_equipo() == LUZ) EliminaMuerto(t.personaje_muerto_seleccionado, t.cementerio_Luz);
                 else EliminaMuerto(t.personaje_muerto_seleccionado, t.cementerio_Oscuridad);
 
+                t.addSpellEffect(t.fila_seleccionada, t.columna_seleccionada, {255, 255, 200, 255}, 2.0f, true);
                 t.turno = t.turno == LUZ ? OSCURIDAD : LUZ;
                 if (personaje->get_ID() == tipo_pj::MH) hechizosLuz[5] = true;
                 if (personaje->get_ID() == tipo_pj::Platero) hechizosOscuridad[5] = true;
@@ -283,6 +301,7 @@ void Magia::Summon(PiezaTablero* personaje, Tablero& t) {
     t.elemental_ = new PiezaTablero(pjboard::Elemental, filaObj, colObj, equipoLanzador);
     t.cuadricula[filaObj][colObj] = t.elemental_;
 
+    t.addSpellEffect(filaObj, colObj, {255, 120, 30, 255}, 2.0f, true);
     t.summonPendiente_ = true;
     t.combatePendiente_ = true;
     t.atacante_ = t.elemental_;

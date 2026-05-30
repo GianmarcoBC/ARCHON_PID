@@ -56,7 +56,7 @@ void Interacciones::DisparosContraPersonaje(
     std::vector<Disparo>& disparos,
     Personaje& atacante, Personaje& objetivo)
 {
-    float radio = objetivo.Size3D / 2.0f;  // Radio de colision = 2.0
+    float radio = objetivo.Size3D * 0.9f;  // Radio de colision aumentado = 3.6
 
     for (Disparo& d : disparos) {
         if (!d.status_) continue;
