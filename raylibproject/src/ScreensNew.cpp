@@ -787,7 +787,7 @@ void SeleccionEquipoScreen::OnEnter(GameState& gs) {
 }
 
 void SeleccionEquipoScreen::drawBarraStat(float x, float y, float w, int val, Color col) {
-    ::drawBarraStat(x,y,w,val,col);
+    Archon_PID::drawBarraStat(x,y,w,val,col);
 }
 
 void SeleccionEquipoScreen::drawTarjetaEquipo(GameState& gs, int idx,
