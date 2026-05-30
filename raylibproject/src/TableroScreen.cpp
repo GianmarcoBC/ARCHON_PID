@@ -92,6 +92,16 @@ void TableroScreen::Update(GameState& gs) {
             Pj_info pjP1 = getCombatInfo(atacanteEsIA ? ctablero->getID_defensor() : ctablero->getID_atacante());
             Pj_info pjP2 = getCombatInfo(atacanteEsIA ? ctablero->getID_atacante() : ctablero->getID_defensor());
 
+            pjP1.vida = atacanteEsIA ? ctablero->getVidaDefensor() : ctablero->getVidaAtacante();
+            pjP2.vida = atacanteEsIA ? ctablero->getVidaAtacante() : ctablero->getVidaDefensor();
+
+            if (vsAI) {
+                combate = new ControladorCombate(pjP1, pjP2, true, dificultad);
+            }
+            else {
+                combate = new ControladorCombate(pjP1, pjP2, false, 0);
+            }
+
 
             // Create combat: in board mode, AI always controls P2 if vsAI
             if (vsAI) {

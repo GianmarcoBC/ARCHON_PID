@@ -22,13 +22,15 @@ Controlador_Tablero::Controlador_Tablero(bool vsAI, int dificultad, equipo equip
 }
 
 void Controlador_Tablero::Logica_controlador(bool vsAI) {
+    // Bloquear input del jugador si es turno de la IA
+    tablero.bloquearInputJugador = vsAI && (tablero.turno == (bool)equipoAI);
 
     tablero.LogicaTablero();
 
     if (tablero.get_modoJuegoActual() != ModoJuego::NORMAL) return;
-    if (!vsAI || tablero.turno != equipoAI) return;
+    if (!vsAI || tablero.turno != (bool)equipoAI) return;
 
-    // Lanzar el c�lculo en un hilo aparte si no est� ya en curso
+    // Lanzar el calculo en un hilo aparte si no esta ya en curso
     if (!calculandoIA_) {
         calculandoIA_ = true;
         futuroMovIA_ = std::async(std::launch::async,

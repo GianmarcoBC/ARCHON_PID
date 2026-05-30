@@ -465,6 +465,8 @@ void Tablero::reset_seleccion() {
  *    b. Casilla vacia -> mover pieza, cambiar turno, avanzar ciclo
  */
 void Tablero::moverPieza() {
+    if (bloquearInputJugador) return;
+
     seleccionaCasilla();
 
     // Si se clickea una pieza del equipo del turno actual -> seleccionarla

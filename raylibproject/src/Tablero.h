@@ -66,6 +66,7 @@ class Tablero
     std::string ganador{};                          // Ganador de la partida
     bool summonPendiente_{ false };                 // El combate es de un elemental invocado
     PiezaTablero* elemental_{ nullptr };            // Pieza temporal del elemental
+    bool bloquearInputJugador{ false };             // Bloquea los clics si no es el turno del jugador
 
     // --- Renderizado 3D del tablero ---
     static constexpr float cellSize3D = 3.0f;       // Tamanio de cada casilla en unidades 3D

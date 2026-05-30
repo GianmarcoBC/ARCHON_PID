@@ -62,14 +62,17 @@ class PiezaTablero
 public:
     PiezaTablero(PjBoard p, int ifila, int icolumna)
     {
-        vida = 100.0f;
-        vidaMax = 100.0f;
+
         fila = ifila;
         columna = icolumna;
         team = p.team;
         ID = p.ID;
         rangoTablero = p.rangoTablero;
         vuela = p.vuela;
+
+        const Pj_info& combatInfo = getCombatInfo(ID);
+        vida = combatInfo.vida;
+        vidaMax = combatInfo.vida;
 
         // Cargar frames Still, Res y sombras desde Pj_info
         const Pj_info& info = getCombatInfo(ID);
