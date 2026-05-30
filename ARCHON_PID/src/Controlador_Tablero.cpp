@@ -3,7 +3,7 @@
 
 
 
-Controlador_Tablero::Controlador_Tablero(bool vsAI, int dificultad):tablero() {
+Controlador_Tablero::Controlador_Tablero(bool vsAI, int dificultad, equipo equipoAI):tablero(), equipoAI(equipoAI) {
 
     tablero.inicializarTablero();
 
@@ -22,42 +22,43 @@ Controlador_Tablero::Controlador_Tablero(bool vsAI, int dificultad):tablero() {
 
 void Controlador_Tablero::Logica_controlador(bool vsAI) {
 
-   tablero.LogicaTablero();
+    tablero.LogicaTablero();
 
-    if (tablero.turno == equipoAI && vsAI == true) {
+    if (tablero.get_modoJuegoActual() != ModoJuego::NORMAL) return;
+    if (!vsAI || tablero.turno != equipoAI) return;
 
-         MovTablero movimiento = ia_Tablero->decidirMovimiento(tablero.cuadricula);
-
-         PiezaTablero* personaje = tablero.cuadricula[movimiento.filaOrigen][movimiento.colOrigen];
-
-
-         if (tablero.cuadricula[movimiento.filaDestino][movimiento.colDestino] != nullptr) {
-             // La casilla destino tiene una pieza -> comprobar si es enemiga
-             PiezaTablero* personajeAtacado = tablero.cuadricula[movimiento.filaDestino][movimiento.colDestino];
-
-             
-                 // Pieza enemiga: guardar datos y lanzar combate 3D
-                 tablero.combatePendiente_ = true;
-                 tablero.atacante_ = tablero.cuadricula[movimiento.filaOrigen][movimiento.colOrigen];
-                 tablero.defensor_ = personajeAtacado;
-                 tablero.filaOrigenAtacante_ = movimiento.filaOrigen;
-                 tablero.colOrigenAtacante_ = movimiento.colOrigen;
-                 tablero.modoJuegoactual = ModoJuego::COMBATE;
-             
-
-         }
-
-         tablero.piezaAnimando_ = personaje;
-         tablero.cuadricula[movimiento.filaOrigen][movimiento.colOrigen] = nullptr;
-         tablero.cuadricula[movimiento.filaDestino][movimiento.colDestino] = personaje;
-         tablero.cuadricula[movimiento.filaDestino][movimiento.colDestino]->set_fila_columna(movimiento.filaDestino, movimiento.colDestino);
-         
-         personaje->iniciarMovimiento(movimiento.filaDestino, movimiento.colDestino, tablero.cellSize3D);
-         tablero.filaDestinoAnim_ = movimiento.filaDestino;
-         tablero.colDestinoAnim_ = movimiento.colDestino;
-         tablero.modoJuegoactual = ModoJuego::ANIMANDO_MOVIMIENTO;
-
-         
+    // Lanzar el cálculo en un hilo aparte si no está ya en curso
+    if (!calculandoIA_) {
+        calculandoIA_ = true;
+        futuroMovIA_ = std::async(std::launch::async,
+            [this]() {
+                return ia_Tablero->decidirMovimiento(tablero.cuadricula);
+            });
+        return;
     }
 
+    // Comprobar si el hilo ya terminó (sin bloquear)
+    if (futuroMovIA_.wait_for(std::chrono::seconds(0)) != std::future_status::ready) {
+        return;
+    }
+
+    // El resultado está listo: recogerlo y aplicarlo
+    MovTablero movimiento = futuroMovIA_.get();
+    calculandoIA_ = false;
+
+    PiezaTablero* personaje = tablero.cuadricula[movimiento.filaOrigen][movimiento.colOrigen];
+
+    if (tablero.cuadricula[movimiento.filaDestino][movimiento.colDestino] != nullptr) {
+        tablero.combatePendiente_ = true;
+        tablero.atacante_ = personaje;
+        tablero.defensor_ = tablero.cuadricula[movimiento.filaDestino][movimiento.colDestino];
+        tablero.filaOrigenAtacante_ = movimiento.filaOrigen;
+        tablero.colOrigenAtacante_ = movimiento.colOrigen;
+    }
+
+    tablero.piezaAnimando_ = personaje;
+    tablero.filaDestinoAnim_ = movimiento.filaDestino;
+    tablero.colDestinoAnim_ = movimiento.colDestino;
+    personaje->iniciarMovimiento(movimiento.filaDestino, movimiento.colDestino, tablero.cellSize3D);
+    tablero.modoJuegoactual = ModoJuego::ANIMANDO_MOVIMIENTO;
 }

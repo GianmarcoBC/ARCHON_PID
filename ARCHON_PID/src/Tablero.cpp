@@ -68,12 +68,25 @@ void Tablero::LogicaTablero() {
     if (get_modoJuegoActual() == ModoJuego::ANIMANDO_MOVIMIENTO && piezaAnimando_ != nullptr) {
         float dt = GetFrameTime();
         if (piezaAnimando_->UpdateMovimiento(dt)) {
-            // Animacion terminada: completar el movimiento en la cuadricula
-            cambioPosicionPieza(piezaAnimando_, filaDestinoAnim_, colDestinoAnim_);
-            piezaAnimando_ = nullptr;
-            modoJuegoactual = ModoJuego::NORMAL;
-            turno = turno == LUZ ? OSCURIDAD : LUZ;
-            avanceCiclo();
+            if (combatePendiente_) {
+                // La animación llegó al destino: ahora sí lanzar combate
+                // Sacar al defensor de la cuadrícula para que no aparezca debajo del atacante
+                cuadricula[defensor_->get_fila()][defensor_->get_columna()] = nullptr;
+                // Colocar al atacante visualmente en el destino
+                cuadricula[filaOrigenAtacante_][colOrigenAtacante_] = nullptr;
+                cuadricula[filaDestinoAnim_][colDestinoAnim_] = piezaAnimando_;
+                piezaAnimando_->set_fila_columna(filaDestinoAnim_, colDestinoAnim_);
+                piezaAnimando_ = nullptr;
+                modoJuegoactual = ModoJuego::COMBATE;
+            }
+            else {
+                // Movimiento normal sin captura
+                cambioPosicionPieza(piezaAnimando_, filaDestinoAnim_, colDestinoAnim_);
+                piezaAnimando_ = nullptr;
+                modoJuegoactual = ModoJuego::NORMAL;
+                turno = turno == LUZ ? OSCURIDAD : LUZ;
+                avanceCiclo();
+            }
         }
     }
 
@@ -416,16 +429,20 @@ void Tablero::moverPieza() {
             PiezaTablero* personajeAtacado = cuadricula[fila_seleccionada][columna_seleccionada];
 
             if (personajeAtacado->get_equipo() != personaje_seleccionado->get_equipo()) {
-                // Pieza enemiga: guardar datos y lanzar combate 3D
                 combatePendiente_ = true;
                 atacante_ = personaje_seleccionado;
                 defensor_ = personajeAtacado;
                 filaOrigenAtacante_ = personaje_seleccionado->get_fila();
                 colOrigenAtacante_ = personaje_seleccionado->get_columna();
-                modoJuegoactual = ModoJuego::COMBATE;
+                filaDestinoAnim_ = fila_seleccionada;     
+                colDestinoAnim_ = columna_seleccionada;    
 
-                // Limpiar estado de seleccion
-                if (personaje_seleccionado != nullptr) personaje_seleccionado->set_seleccionado(false);
+                // Iniciar animación en lugar de saltar directo a COMBATE
+                personaje_seleccionado->set_seleccionado(false);
+                personaje_seleccionado->iniciarMovimiento(fila_seleccionada, columna_seleccionada, cellSize3D);
+                piezaAnimando_ = personaje_seleccionado;
+                modoJuegoactual = ModoJuego::ANIMANDO_MOVIMIENTO;
+
                 personaje_seleccionado = nullptr;
                 reset_seleccion();
                 reset_MovimientosPosibles();
@@ -478,10 +495,10 @@ void Tablero::resolverCombate(bool ganaAtacante) {
             defensor_->heal();
             cementerio_Oscuridad.push_back(defensor_);
         }
-        // El atacante se mueve a la casilla del defensor
-        cuadricula[defensor_->get_fila()][defensor_->get_columna()] = atacante_;
-        cuadricula[filaOrigenAtacante_][colOrigenAtacante_] = nullptr;
-        atacante_->set_fila_columna(defensor_->get_fila(), defensor_->get_columna());
+        // El atacante ya está en filaDestinoAnim_/colDestinoAnim_ desde la animación
+        // Solo asegurar que set_fila_columna es correcto (la animación ya lo hizo)
+        // No hay que mover nada en la cuadrícula
+
     } else {
         // El atacante muere y va al cementerio de su equipo
         if (atacante_->get_equipo() == LUZ) {
@@ -491,8 +508,11 @@ void Tablero::resolverCombate(bool ganaAtacante) {
             atacante_->heal();
             cementerio_Oscuridad.push_back(atacante_);
         }
-        // La casilla de origen del atacante queda vacia
-        cuadricula[filaOrigenAtacante_][colOrigenAtacante_] = nullptr;
+        // Atacante perdió: limpiar la casilla donde quedó tras la animación
+        cuadricula[filaDestinoAnim_][colDestinoAnim_] = nullptr;
+
+        // Devolver al defensor a su casilla original
+        cuadricula[defensor_->get_fila()][defensor_->get_columna()] = defensor_;
     }
 
     // Volver al modo normal

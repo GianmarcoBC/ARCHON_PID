@@ -29,7 +29,7 @@ int main()
    /* Tablero tablero;
     tablero.inicializarTablero();
 */
-    Controlador_Tablero ctablero(true,1); //// El bool primero cambia si hay IA o no, tambien hay que cambiarlo mas abajo en logicacontrolador
+    Controlador_Tablero ctablero(true,1, OSCURIDAD); //// El bool primero cambia si hay IA o no, tambien hay que cambiarlo mas abajo en logicacontrolador
 
     // Puntero al combate activo (nullptr cuando no hay combate en curso)
     ControladorCombate* combate = nullptr;
@@ -43,16 +43,23 @@ int main()
         }
         else if (ctablero.cget_modoJuegoActual() == ModoJuego::COMBATE)
         {
+			bool atacanteEsIA = false; // Para determinar si el atacante es controlado por IA o por el jugador humano
             // Cuando el tablero detecta un ataque, creamos el ControladorCombate
             // usando los datos de combate (Pj_info) de ambas piezas enfrentadas
             if (combate == nullptr && ctablero.ccombatePendiente())
             {
+                
+                atacanteEsIA = (ctablero.getEquipoAtacante() == ctablero.getEquipoAI());
+
+                Pj_info pjHumano = getCombatInfo(atacanteEsIA ? ctablero.getID_defensor() : ctablero.getID_atacante());
+                Pj_info pjIA = getCombatInfo(atacanteEsIA ? ctablero.getID_atacante() : ctablero.getID_defensor());
+                
                 // Mapear tipo_pj del tablero -> Pj_info con stats/sprites de combate
                 Pj_info pj1 = getCombatInfo(ctablero.getID_atacante());
                 Pj_info pj2 = getCombatInfo(ctablero.getID_defensor());
 
                 // vsIA=true: el defensor es controlado por IA, dificultad=1 (normal)
-                combate = new ControladorCombate(pj1, pj2, true, 1);
+                combate = new ControladorCombate(pjHumano, pjIA, true, 1);
             }
 
             if (combate != nullptr)
@@ -63,13 +70,12 @@ int main()
                 // Al terminar el combate, ENTER devuelve al tablero
                 if (combate->IsGameOver() && IsKeyPressed(KEY_ENTER))
                 {
-                    // Winner==1 significa que gano P1 (el atacante)
-                    bool ganaAtacante = (combate->GetWinner() == 1);
-
-                    // Resolver consecuencias en el tablero (mover/eliminar piezas)
+                    bool ganaHumano = (combate->GetWinner() == 1);
+                    // Si el humano es el atacante, ganaAtacante == ganaHumano
+                    // Si el humano es el defensor, ganaAtacante == !ganaHumano
+                    bool ganaAtacante = atacanteEsIA ? !ganaHumano : ganaHumano;
                     ctablero.cresolverCombate(ganaAtacante);
-                    delete combate;
-                    combate = nullptr;
+                    delete combate; combate = nullptr;
                 }
             }
         }
