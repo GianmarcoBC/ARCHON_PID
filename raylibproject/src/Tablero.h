@@ -146,7 +146,7 @@ public:
 
     // Resuelve el combate: ganaAtacante=true si gana el que se movio
     // El perdedor va al cementerio, el ganador ocupa la casilla
-    void resolverCombate(bool ganaAtacante, float vidaGanador);
+    void resolverCombate(bool ganaAtacante, float vidaGanador = 100.f);
 
     // Serialización del estado del tablero para guardado/carga
     std::string serializarEstado() const;

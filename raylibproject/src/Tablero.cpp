@@ -136,35 +136,35 @@ void Tablero::inicializarTablero() {
     columna_seleccionada = -1;
 
     // --- Equipo LUZ (columnas 0-1, lado izquierdo) ---
-    cuadricula[0][0] = new PiezaTablero(Valkyrie, 0, 0);
-    cuadricula[8][0] = new PiezaTablero(Valkyrie, 8, 0);
-    cuadricula[1][0] = new PiezaTablero(Golem, 1, 0);
-    cuadricula[7][0] = new PiezaTablero(Golem, 7, 0);
-    cuadricula[2][0] = new PiezaTablero(Unicorn, 2, 0);
-    cuadricula[6][0] = new PiezaTablero(Unicorn, 6, 0);
-    cuadricula[3][0] = new PiezaTablero(Djinni, 3, 0);
-    cuadricula[4][0] = new PiezaTablero(MH, 4, 0);          // Lider Luz en el centro
-    cuadricula[5][0] = new PiezaTablero(Phoenix, 5, 0);
-    cuadricula[0][1] = new PiezaTablero(Archer, 0, 1);
-    cuadricula[8][1] = new PiezaTablero(Archer, 8, 1);
+    cuadricula[0][0] = new PiezaTablero(pjboard::Valkyrie, 0, 0);
+    cuadricula[8][0] = new PiezaTablero(pjboard::Valkyrie, 8, 0);
+    cuadricula[1][0] = new PiezaTablero(pjboard::Golem, 1, 0);
+    cuadricula[7][0] = new PiezaTablero(pjboard::Golem, 7, 0);
+    cuadricula[2][0] = new PiezaTablero(pjboard::Unicorn, 2, 0);
+    cuadricula[6][0] = new PiezaTablero(pjboard::Unicorn, 6, 0);
+    cuadricula[3][0] = new PiezaTablero(pjboard::Djinni, 3, 0);
+    cuadricula[4][0] = new PiezaTablero(pjboard::MH, 4, 0);          // Lider Luz en el centro
+    cuadricula[5][0] = new PiezaTablero(pjboard::Phoenix, 5, 0);
+    cuadricula[0][1] = new PiezaTablero(pjboard::Archer, 0, 1);
+    cuadricula[8][1] = new PiezaTablero(pjboard::Archer, 8, 1);
     for (int fila = 1; fila < casillasxlado - 1; fila++) {
-        cuadricula[fila][1] = new PiezaTablero(Knight, fila, 1);  // Peones
+        cuadricula[fila][1] = new PiezaTablero(pjboard::Knight, fila, 1);  // Peones
     }
 
     // --- Equipo OSCURIDAD (columnas 7-8, lado derecho) ---
-    cuadricula[0][8] = new PiezaTablero(Banshee, 0, 8);
-    cuadricula[8][8] = new PiezaTablero(Banshee, 8, 8);
-    cuadricula[1][8] = new PiezaTablero(Troll, 1, 8);
-    cuadricula[7][8] = new PiezaTablero(Troll, 7, 8);
-    cuadricula[2][8] = new PiezaTablero(Basilisk, 2, 8);
-    cuadricula[6][8] = new PiezaTablero(Basilisk, 6, 8);
-    cuadricula[3][8] = new PiezaTablero(ShapeShifter, 3, 8);
-    cuadricula[4][8] = new PiezaTablero(Platero, 4, 8);     // Lider Oscuridad en el centro
-    cuadricula[5][8] = new PiezaTablero(Dragon, 5, 8);
-    cuadricula[0][7] = new PiezaTablero(Manticore, 0, 7);
-    cuadricula[8][7] = new PiezaTablero(Manticore, 8, 7);
+    cuadricula[0][8] = new PiezaTablero(pjboard::Banshee, 0, 8);
+    cuadricula[8][8] = new PiezaTablero(pjboard::Banshee, 8, 8);
+    cuadricula[1][8] = new PiezaTablero(pjboard::Troll, 1, 8);
+    cuadricula[7][8] = new PiezaTablero(pjboard::Troll, 7, 8);
+    cuadricula[2][8] = new PiezaTablero(pjboard::Basilisk, 2, 8);
+    cuadricula[6][8] = new PiezaTablero(pjboard::Basilisk, 6, 8);
+    cuadricula[3][8] = new PiezaTablero(pjboard::ShapeShifter, 3, 8);
+    cuadricula[4][8] = new PiezaTablero(pjboard::Platero, 4, 8);     // Lider Oscuridad en el centro
+    cuadricula[5][8] = new PiezaTablero(pjboard::Dragon, 5, 8);
+    cuadricula[0][7] = new PiezaTablero(pjboard::Manticore, 0, 7);
+    cuadricula[8][7] = new PiezaTablero(pjboard::Manticore, 8, 7);
     for (int fila = 1; fila < casillasxlado - 1; fila++) {
-        cuadricula[fila][7] = new PiezaTablero(Goblin, fila, 7); // Peones
+        cuadricula[fila][7] = new PiezaTablero(pjboard::Goblin, fila, 7); // Peones
     }
 
     // --- Patron de colores de casillas ---
@@ -258,7 +258,7 @@ void Tablero::Draw() {
     // 2. Dibujar casillas
     for (int fila = 0; fila < casillasxlado; fila++) {
         for (int columna = 0; columna < casillasxlado; columna++) {
-            Color col;
+            Color col = { 0, 0, 0, 255 };
             if (get_colorCasilla(fila, columna) == ColorCasilla::BLANCO) col = { 210, 210, 210, 255 };
             if (get_colorCasilla(fila, columna) == ColorCasilla::NEGRO)  col = { 35, 35, 35, 255 };
             if (get_colorCasilla(fila, columna) == ColorCasilla::CAMBIANTE) {
@@ -547,6 +547,7 @@ void Tablero::moverPieza() {
  * y se cambia de turno
  */
 void Tablero::resolverCombate(bool ganaAtacante, float vidaGanador) {
+
     if (ganaAtacante) {
         // Defensor al cementerio
         if (defensor_->get_equipo() == LUZ) { defensor_->heal(); cementerio_Luz.push_back(defensor_); }
@@ -965,7 +966,7 @@ void Tablero::deserializarEstado(const std::string& data) {
                     // formato: tipo:equipo:imprison
                     int tipo = 0, eq2 = 0, imp = 0;
                     sscanf(celda.c_str(), "%d:%d:%d", &tipo, &eq2, &imp);
-                    Pj_info pb = getPjInfo((tipo_pj)tipo);
+                    PjBoard pb = getBoardPj((tipo_pj)tipo);
                     cuadricula[f][c] = new PiezaTablero(pb, f, c, eq2 ? OSCURIDAD : LUZ);
                     if (imp) cuadricula[f][c]->set_imprison(true);
                 }
@@ -976,7 +977,7 @@ void Tablero::deserializarEstado(const std::string& data) {
                 std::istringstream cs(valor);
                 std::string tok;
                 while (std::getline(cs, tok, ',')) {
-                    Pj_info pb = getPjInfo((tipo_pj)std::stoi(tok));
+                    PjBoard pb = getBoardPj((tipo_pj)std::stoi(tok));
                     cementerio_Luz.push_back(new PiezaTablero(pb, -1, -1, LUZ));
                 }
             }
@@ -985,7 +986,7 @@ void Tablero::deserializarEstado(const std::string& data) {
                 std::istringstream cs(valor);
                 std::string tok;
                 while (std::getline(cs, tok, ',')) {
-                    Pj_info pb = getPjInfo((tipo_pj)std::stoi(tok));
+                    PjBoard pb = getBoardPj((tipo_pj)std::stoi(tok));
                     cementerio_Oscuridad.push_back(new PiezaTablero(pb, -1, -1, OSCURIDAD));
                 }
             }
@@ -998,7 +999,7 @@ void Tablero::deserializarEstado(const std::string& data) {
     if (tieneCombate && ataF >= 0 && ataC >= 0 && defTipo >= 0 && defEquipo >= 0) {
         atacante_ = cuadricula[ataF][ataC];
         if (atacante_) {
-            Pj_info pb = getPjInfo((tipo_pj)defTipo);
+            PjBoard pb = getBoardPj((tipo_pj)defTipo);
             defensor_ = new PiezaTablero(pb, defF, defC, defEquipo ? OSCURIDAD : LUZ);
             combatePendiente_ = true;
             filaOrigenAtacante_ = orgF;

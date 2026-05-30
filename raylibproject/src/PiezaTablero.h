@@ -142,6 +142,8 @@ public:
     void set_seleccionado(bool s) { seleccionado = s; }
     bool get_seleccionado() { return seleccionado; }
     bool get_enMovimiento() { return enMovimiento; }
+    float get_vida() const { return vida; }
+    void  set_vida(float v) { vida = v; }
 
     // Inicia animacion de movimiento desde casilla actual hasta destino
     void iniciarMovimiento(int filaDestino, int colDestino, float cellSize);

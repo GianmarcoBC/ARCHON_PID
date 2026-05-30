@@ -292,7 +292,7 @@ void Magia::Summon(PiezaTablero* personaje, Tablero& t) {
     if (filaEl == -1) return; // Sin hueco adyacente, cancelar
 
     equipo equipoLanzador = personaje->get_equipo() == LUZ ? LUZ : OSCURIDAD;
-    t.elemental_ = new PiezaTablero(Elemental, filaEl, colEl, equipoLanzador);
+    t.elemental_ = new PiezaTablero(pjboard::Elemental, filaEl, colEl, equipoLanzador);
     t.cuadricula[filaEl][colEl] = t.elemental_;
 
     t.summonPendiente_ = true;
