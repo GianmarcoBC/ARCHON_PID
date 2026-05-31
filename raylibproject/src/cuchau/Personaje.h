@@ -137,23 +137,20 @@ namespace Archon_PID {
 
         // Libera todas las texturas, modelos y sonidos de GPU/memoria
         ~Personaje() {
-            for (int i = 0; i < Frames_MOV.size(); i++) {
-                UnloadModel(shadow_MOV[i]);
-                UnloadTexture(Frames_MOV_shadow[i]);
-                UnloadTexture(Frames_MOV[i]);
-            }
-            for (int i = 0; i < Frames_STILL.size(); i++) {
-                UnloadModel(shadow_STILL[i]);
-                UnloadTexture(Frames_STILL_shadow[i]);
-                UnloadTexture(Frames_STILL[i]);
-            }
-            for (int i = 0; i < Frames_ATK.size(); i++) {
-                UnloadModel(shadow_ATK[i]);
-                UnloadTexture(Frames_ATK_shadow[i]);
-                UnloadTexture(Frames_ATK[i]);
-            }
-            UnloadTexture(Ataque);
-            UnloadSound(efecto_ataque);
+            for (size_t i = 0; i < shadow_MOV.size(); i++) UnloadModel(shadow_MOV[i]);
+            for (size_t i = 0; i < Frames_MOV.size(); i++) UnloadTexture(Frames_MOV[i]);
+            for (size_t i = 0; i < Frames_MOV_shadow.size(); i++) UnloadTexture(Frames_MOV_shadow[i]);
+
+            for (size_t i = 0; i < shadow_STILL.size(); i++) UnloadModel(shadow_STILL[i]);
+            for (size_t i = 0; i < Frames_STILL.size(); i++) UnloadTexture(Frames_STILL[i]);
+            for (size_t i = 0; i < Frames_STILL_shadow.size(); i++) UnloadTexture(Frames_STILL_shadow[i]);
+
+            for (size_t i = 0; i < shadow_ATK.size(); i++) UnloadModel(shadow_ATK[i]);
+            for (size_t i = 0; i < Frames_ATK.size(); i++) UnloadTexture(Frames_ATK[i]);
+            for (size_t i = 0; i < Frames_ATK_shadow.size(); i++) UnloadTexture(Frames_ATK_shadow[i]);
+
+            if (Ataque.id > 0)                UnloadTexture(Ataque);
+            if (efecto_ataque.frameCount > 0) UnloadSound(efecto_ataque);
         }
     };
 }

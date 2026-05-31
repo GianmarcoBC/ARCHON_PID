@@ -258,20 +258,26 @@ namespace Archon_PID {
 
     void Personaje::copy(Personaje& other)
     {
-        Player.Ataque = other.Player.Ataque;
+        // Copiar solo datos de juego (valores, no handles de GPU)
         Player.attack_speed = other.Player.attack_speed;
         Player.cooldown = other.Player.cooldown;
-        Player.Efecto_ataque = other.Player.Efecto_ataque;
         Player.fuerza = other.Player.fuerza;
         Player.rango_max = other.Player.rango_max;
         Player.vel = other.Player.vel;
-        Player.vida = other.Player.vida;
+        Player.vida = other.GetMaxVida();
         Player.tipoAtaque = other.Player.tipoAtaque;
-
         max_vida = other.max_vida;
         cooldown = other.cooldown;
-        Ataque = other.Ataque;
-        efecto_ataque = other.efecto_ataque;
+
+        // Liberar recursos propios actuales antes de recargar
+        if (Ataque.id > 0)                UnloadTexture(Ataque);
+        if (efecto_ataque.frameCount > 0) UnloadSound(efecto_ataque);
+
+        // Recargar desde disco con las rutas del otro personaje — cada instancia tiene su propio handle
+        Player.Ataque = other.Player.Ataque;
+        Player.Efecto_ataque = other.Player.Efecto_ataque;
+        Ataque = LoadTexture(other.Player.Ataque.data());
+        efecto_ataque = LoadSound(other.Player.Efecto_ataque.data());
     }
 
     //  Shoot — Crea un disparo desde la posicion del personaje
