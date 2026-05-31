@@ -539,12 +539,14 @@ namespace Archon_PID {
                 { "Julián Jiménez Hernández", "Programacion / Gameplay / Animacion"  },
                 { "Gianmarco Barcelloni-Corte", "Programacion / Gameplay / Graficos" },
                 { "Sara Abril Pato", "Programacion / Gameplay"         },
-                { "Iván Yankowich", "Programación / Musica y sonido"           }
+                { "Iván Yankowich", "Programación / Musica y sonido"           },
+                { "Agradecimientos especiales a", ""},
+                { "Claudia Portones De La Rosa",  "Diseñadora de Concepto \nArtista de Personajes"}
             };
-            for (int i = 0; i < 4; i++) {
-                Drawing::texto18(100 + ox, 410 - i * 36.0f,
+            for (int i = 0; i < 6; i++) {
+                Drawing::texto18(100 + ox, 410 - 1.4 * i * 36.0f,
                     creditos[i].nombre, CFloat(0.08f, 0.04f, 0.01f));
-                Drawing::texto12(100 + ox, 392 - i * 36.0f,
+                Drawing::texto12(100 + ox, 392 - 1.4 * i * 36.0f,
                     creditos[i].rol, CFloat(0.35f, 0.22f, 0.06f));
             }
             // Número de página izquierda
